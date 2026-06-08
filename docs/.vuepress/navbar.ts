@@ -104,6 +104,58 @@ export default navbar([
     }]
   },
   {
+    text: "AI / LLM",
+    prefix: "/md/ai/",
+    children: [{
+      text: "LangChain",
+      prefix: "langchain/",
+      children: [
+        "ai-langchain-overview",
+        "ai-langchain-setup",
+        "ai-langchain-model",
+        "ai-langchain-prompt",
+        "ai-langchain-output-parser",
+        "ai-langchain-chain",
+        "ai-langchain-doc-loader",
+        "ai-langchain-embedding",
+        "ai-langchain-vector-db",
+        "ai-langchain-rag",
+        "ai-langchain-memory",
+        "ai-langchain-tools",
+        "ai-langchain-agent",
+        "ai-langchain-langgraph",
+        "ai-langchain-callback",
+        "ai-langchain-error-handling",
+        "ai-langchain-cache",
+      ]
+    }, {
+      text: "大模型训练",
+      prefix: "llm-training/",
+      children: [
+        "ai-llm-training-why",
+        "ai-llm-training-file-structure",
+        "ai-llm-training-local-deploy",
+        "ai-llm-training-api-call",
+        "ai-llm-training-pipeline",
+        "ai-llm-training-ocr",
+        "ai-llm-training-easy-dataset",
+        "ai-llm-training-dataset-gen",
+        "ai-llm-training-llamafactory",
+        "ai-llm-training-params",
+        "ai-llm-training-tuning",
+        "ai-llm-training-evaluation",
+      ]
+    }, {
+      text: "LlamaIndex",
+      prefix: "llamaindex/",
+      children: ["ai-llamaindex-overview"]
+    }, {
+      text: "RAG 企业问答",
+      prefix: "rag/",
+      children: ["ai-rag-enterprise-qa"]
+    }]
+  },
+  {
     text: "主题文档",
     icon: "note",
     link: "https://vuepress-theme-hope.github.io/v2/zh/",
