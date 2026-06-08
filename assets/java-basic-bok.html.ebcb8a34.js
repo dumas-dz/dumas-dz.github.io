@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as a,c as o,a as t}from"./app.56bdc8c6.js";const c={},s=t("p",null,"Java \u57FA\u7840\u77E5\u8BC6\u4F53\u7CFB",-1),_=[s];function r(n,l){return a(),o("div",null,_)}var m=e(c,[["render",r],["__file","java-basic-bok.html.vue"]]);export{m as default};
