@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as r,c as o,a as c}from"./app.7e2cd597.js";const t={},_=c("p",null,"gRPC \u8BE6\u89E3",-1),a=[_];function s(n,l){return r(),o("div",null,a)}var m=e(t,[["render",s],["__file","framework-rpc-grpc-overview.html.vue"]]);export{m as default};
