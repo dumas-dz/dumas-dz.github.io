@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as t,a as n}from"./app.56bdc8c6.js";const r={},s=n("p",null,"MongoDB \u8BE6\u89E3",-1),_=[s];function c(a,l){return o(),t("div",null,_)}var m=e(r,[["render",c],["__file","db-nosql-mongodb-overview.html.vue"]]);export{m as default};
