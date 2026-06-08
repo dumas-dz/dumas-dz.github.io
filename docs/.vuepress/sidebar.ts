@@ -199,13 +199,6 @@ export default sidebar({
       children: [
         "ai-llamaindex-overview",
       ],
-    }, {
-      text: "RAG 企业问答",
-      prefix: "rag/",
-      collapsable: true,
-      children: [
-        "ai-rag-enterprise-qa",
-      ],
     }
   ]
 });

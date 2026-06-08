@@ -149,10 +149,6 @@ export default navbar([
       text: "LlamaIndex",
       prefix: "llamaindex/",
       children: ["ai-llamaindex-overview"]
-    }, {
-      text: "RAG 企业问答",
-      prefix: "rag/",
-      children: ["ai-rag-enterprise-qa"]
     }]
   },
   {
