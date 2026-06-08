@@ -1,7 +1,6 @@
 ---
-title: AI / LLM
+title: LLM
 category:
-  - AI
   - LLM
 ---
-AI / LLM
+LLM

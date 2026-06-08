@@ -104,7 +104,7 @@ export default navbar([
     }]
   },
   {
-    text: "AI / LLM",
+    text: "LLM",
     prefix: "/md/ai/",
     children: [{
       text: "LangChain",
