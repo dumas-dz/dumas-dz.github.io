@@ -106,30 +106,14 @@ export default navbar([
     text: "LLM",
     prefix: "/md/llm/",
     children: [{
-      text: "应用开发",
-      prefix: "app-dev/",
-      children: [
-        { text: "LangChain", prefix: "langchain/", children: [
-          "ai-langchain-overview", "ai-langchain-setup", "ai-langchain-model",
-          "ai-langchain-prompt", "ai-langchain-output-parser", "ai-langchain-chain",
-          "ai-langchain-doc-loader", "ai-langchain-embedding", "ai-langchain-vector-db",
-          "ai-langchain-rag", "ai-langchain-memory", "ai-langchain-tools",
-          "ai-langchain-agent", "ai-langchain-langgraph", "ai-langchain-callback",
-          "ai-langchain-error-handling", "ai-langchain-cache",
-        ]},
-        { text: "LlamaIndex", prefix: "llamaindex/", children: ["ai-llamaindex-overview"] },
-      ]
+      text: "应用开发 - LangChain",
+      link: "app-dev/langchain/ai-langchain-overview",
     }, {
-      text: "模型训练",
-      prefix: "model-training/",
-      children: [
-        "ai-llm-training-why", "ai-llm-training-file-structure",
-        "ai-llm-training-local-deploy", "ai-llm-training-api-call",
-        "ai-llm-training-pipeline", "ai-llm-training-ocr",
-        "ai-llm-training-easy-dataset", "ai-llm-training-dataset-gen",
-        "ai-llm-training-llamafactory", "ai-llm-training-params",
-        "ai-llm-training-tuning", "ai-llm-training-evaluation",
-      ]
+      text: "应用开发 - LlamaIndex",
+      link: "app-dev/llamaindex/ai-llamaindex-overview",
+    }, {
+      text: "模型训练 - 全流程实战",
+      link: "model-training/ai-llm-training-why",
     }]
   },
   {
