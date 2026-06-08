@@ -18,45 +18,27 @@ export default sidebar({
       text: "Java 面向对象和基础",
       prefix: "basic/",
       collapsable: true,
-      children: [
-        "java-basic-oop",
-        "java-basic-bok",
-      ],
+      children: ["java-basic-oop", "java-basic-bok"],
     }, {
       text: "Java进阶 - 集合框架",
       prefix: "collection/",
       collapsable: true,
-      children: [
-        "java-collection-overview",
-      ],
+      children: ["java-collection-overview"],
     }, {
       text: "Java进阶 - 并发框架",
       prefix: "thread/",
       collapsable: true,
-      children: [
-        "java-thread-x-overview",
-        "java-thread-x-theory-basic",
-        "java-thread-x-thread-basic",
-        "java-thread-x-juc-overview",
-      ],
+      children: ["java-thread-x-overview", "java-thread-x-theory-basic", "java-thread-x-thread-basic", "java-thread-x-juc-overview"],
     }, {
       text: "Java进阶 - IO框架",
       prefix: "io/",
       collapsable: true,
-      children: [
-        "java-io-overview",
-      ],
+      children: ["java-io-overview"],
     }, {
       text: "Java进阶 - JVM相关",
       prefix: "jvm/",
       collapsable: true,
-      children: [
-        "java-jvm-classloader",
-        "java-jvm-class-enhencer",
-        "java-jvm-jmm-struct",
-        "java-jvm-gc",
-        "java-jvm-debug-tools-ref",
-      ],
+      children: ["java-jvm-classloader", "java-jvm-class-enhencer", "java-jvm-jmm-struct", "java-jvm-gc", "java-jvm-debug-tools-ref"],
     }
   ],
   "/md/db": [
@@ -64,26 +46,17 @@ export default sidebar({
       text: "数据库基础和原理",
       prefix: "sql/",
       collapsable: true,
-      children: [
-        "db-sql-theory",
-        "db-sql-lan",
-      ],
+      children: ["db-sql-theory", "db-sql-lan"],
     }, {
       text: "SQL 数据库",
       prefix: "sql-mysql/",
       collapsable: true,
-      children: [
-        "db-sql-mysql-overview",
-      ],
+      children: ["db-sql-mysql-overview"],
     }, {
       text: "NoSQL 数据库",
       prefix: "nosql/",
       collapsable: true,
-      children: [
-        "db-nosql-redis-overview",
-        "db-nosql-mongodb-overview",
-        "db-nosql-elasticsearch-overview",
-      ],
+      children: ["db-nosql-redis-overview", "db-nosql-mongodb-overview", "db-nosql-elasticsearch-overview"],
     }
   ],
   "/md/spring": [
@@ -152,53 +125,43 @@ export default sidebar({
   ],
   "/md/llm": [
     {
-      text: "LangChain",
-      prefix: "langchain/",
+      text: "应用开发",
+      prefix: "app-dev/",
       collapsable: true,
       children: [
-        "ai-langchain-overview",
-        "ai-langchain-setup",
-        "ai-langchain-model",
-        "ai-langchain-prompt",
-        "ai-langchain-output-parser",
-        "ai-langchain-chain",
-        "ai-langchain-doc-loader",
-        "ai-langchain-embedding",
-        "ai-langchain-vector-db",
-        "ai-langchain-rag",
-        "ai-langchain-memory",
-        "ai-langchain-tools",
-        "ai-langchain-agent",
-        "ai-langchain-langgraph",
-        "ai-langchain-callback",
-        "ai-langchain-error-handling",
-        "ai-langchain-cache",
+        {
+          text: "LangChain",
+          prefix: "langchain/",
+          collapsable: true,
+          children: [
+            "ai-langchain-overview", "ai-langchain-setup", "ai-langchain-model",
+            "ai-langchain-prompt", "ai-langchain-output-parser", "ai-langchain-chain",
+            "ai-langchain-doc-loader", "ai-langchain-embedding", "ai-langchain-vector-db",
+            "ai-langchain-rag", "ai-langchain-memory", "ai-langchain-tools",
+            "ai-langchain-agent", "ai-langchain-langgraph", "ai-langchain-callback",
+            "ai-langchain-error-handling", "ai-langchain-cache",
+          ],
+        },
+        {
+          text: "LlamaIndex",
+          prefix: "llamaindex/",
+          collapsable: true,
+          children: ["ai-llamaindex-overview"],
+        },
       ],
-    }, {
-      text: "大模型训练",
-      prefix: "llm-training/",
+    },
+    {
+      text: "模型训练",
+      prefix: "model-training/",
       collapsable: true,
       children: [
-        "ai-llm-training-why",
-        "ai-llm-training-file-structure",
-        "ai-llm-training-local-deploy",
-        "ai-llm-training-api-call",
-        "ai-llm-training-pipeline",
-        "ai-llm-training-ocr",
-        "ai-llm-training-easy-dataset",
-        "ai-llm-training-dataset-gen",
-        "ai-llm-training-llamafactory",
-        "ai-llm-training-params",
-        "ai-llm-training-tuning",
-        "ai-llm-training-evaluation",
+        "ai-llm-training-why", "ai-llm-training-file-structure",
+        "ai-llm-training-local-deploy", "ai-llm-training-api-call",
+        "ai-llm-training-pipeline", "ai-llm-training-ocr",
+        "ai-llm-training-easy-dataset", "ai-llm-training-dataset-gen",
+        "ai-llm-training-llamafactory", "ai-llm-training-params",
+        "ai-llm-training-tuning", "ai-llm-training-evaluation",
       ],
-    }, {
-      text: "LlamaIndex",
-      prefix: "llamaindex/",
-      collapsable: true,
-      children: [
-        "ai-llamaindex-overview",
-      ],
-    }
+    },
   ]
 });
