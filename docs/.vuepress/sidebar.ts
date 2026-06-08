@@ -150,7 +150,7 @@ export default sidebar({
       children: ["arch-microservice-overview"]
     }
   ],
-  "/md/ai": [
+  "/md/llm": [
     {
       text: "LangChain",
       prefix: "langchain/",

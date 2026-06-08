@@ -105,7 +105,7 @@ export default navbar([
   },
   {
     text: "LLM",
-    prefix: "/md/ai/",
+    prefix: "/md/llm/",
     children: [{
       text: "LangChain",
       prefix: "langchain/",
