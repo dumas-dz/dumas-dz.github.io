@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as r,a as t}from"./app.c4252332.js";const c={},s=t("p",null,"\u63A7\u5236\u53CD\u8F6C\uFF08IOC\uFF09",-1),_=[s];function a(n,i){return o(),r("div",null,_)}var f=e(c,[["render",a],["__file","spring-framework-ioc.html.vue"]]);export{f as default};
