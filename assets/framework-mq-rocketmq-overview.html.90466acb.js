@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as r,a as t}from"./app.ed6e35bb.js";const c={},_=t("p",null,"RocketMQ \u77E5\u8BC6\u4F53\u7CFB",-1),a=[_];function s(m,n){return o(),r("div",null,a)}var i=e(c,[["render",s],["__file","framework-mq-rocketmq-overview.html.vue"]]);export{i as default};
