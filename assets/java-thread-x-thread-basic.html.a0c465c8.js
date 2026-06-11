@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as a,c as t,a as r}from"./app.c4252332.js";const c={},o=r("p",null,"Java \u5E76\u53D1\u7EBF\u7A0B\u57FA\u7840",-1),s=[o];function _(n,d){return a(),t("div",null,s)}var h=e(c,[["render",_],["__file","java-thread-x-thread-basic.html.vue"]]);export{h as default};

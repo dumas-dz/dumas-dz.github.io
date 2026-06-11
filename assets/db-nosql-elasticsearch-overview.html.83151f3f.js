@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as c,c as s,a as t}from"./app.c4252332.js";const o={},r=t("p",null,"ElasticSearch \u8BE6\u89E3",-1),a=[r];function l(_,n){return c(),s("div",null,a)}var f=e(o,[["render",l],["__file","db-nosql-elasticsearch-overview.html.vue"]]);export{f as default};

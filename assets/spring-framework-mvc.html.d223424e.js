@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as r,c as o,a as t}from"./app.c4252332.js";const c={},n=t("p",null,"SpringMVC",-1),s=[n];function _(a,i){return r(),o("div",null,s)}var f=e(c,[["render",_],["__file","spring-framework-mvc.html.vue"]]);export{f as default};
