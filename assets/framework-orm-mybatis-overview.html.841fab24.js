@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as r,c as o,a as t}from"./app.d848612b.js";const a={},s=t("p",null,"MyBatis \u6E90\u7801\u8BE6\u89E3",-1),_=[s];function c(i,m){return r(),o("div",null,_)}var f=e(a,[["render",c],["__file","framework-orm-mybatis-overview.html.vue"]]);export{f as default};

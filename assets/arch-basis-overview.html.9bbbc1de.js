@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as r,c as o,a as s}from"./app.d848612b.js";const t={},a=s("p",null,"\u67B6\u6784\u77E5\u8BC6\u4F53\u7CFB",-1),c=[a];function _(n,i){return r(),o("div",null,c)}var m=e(t,[["render",_],["__file","arch-basis-overview.html.vue"]]);export{m as default};

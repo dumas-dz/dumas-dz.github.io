@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as t,a as r}from"./app.d848612b.js";const l={},n=r("p",null,"SpringCloud Netflix \u77E5\u8BC6\u4F53\u7CFB",-1),c=[n];function i(s,_){return o(),t("div",null,c)}var d=e(l,[["render",i],["__file","spring-cloud-netflix-overview.html.vue"]]);export{d as default};
