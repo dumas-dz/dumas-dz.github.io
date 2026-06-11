@@ -7,7 +7,6 @@ tag:
   - 大模型训练
 ---
 
-
 ## 一、DeepSeek-OCR-2 核心特性
 
 2026年1月27日，距离初代DeepSeek-OCR模型发布仅过去不到三个月，DeepSeek团队便推出了第二代模型——**DeepSeek-OCR-2**。这一次迭代，不再是常规的性能提升，而是**打破了OCR模型的能力天花板**。
@@ -48,7 +47,6 @@ DeepSeek-OCR-2的能力也远不止精准啊识别，它还可以做到
 
 通过笔者前面对DeepSeek-OCR-2模型的强大性能的介绍，相信大家已经迫不及待的想体验DeepSeek-OCR-2模型。要真正掌握该模型的使用，动手实践肯定是最关键的一步，接下来笔者就分享如何在本地环境中部署DeepSeek-OCR-2模型并使用。
 
-
 ### 2.1 DeepSeek-OCR-2 本地部署（含完整命令）
 
 下面笔者将分 9 个步骤，在 Lab4AI 云实例上完成模型部署。**每一步都附有可直接复制的命令**，建议大家跟随操作，不要跳步。
@@ -69,8 +67,6 @@ modelscope download --model deepseek-ai/Deepseek-0CR-2 --local_dir /workspace/de
 5. 克隆官方项目仓库: 在workspace目录下执行命令git clone https://github.com/deepseek-ai/DeepSeek-OCR-2.git克隆官方项目仓库，仓库中包含后续要用到的所有推理脚本与工具类，接下来笔者也会用它的项目包进行文件的转换:
 
 6. 安装 PyTorch 与配套库: 在 deepseekocr2 虚拟环境中安装指定版本的 PyTorch（必须与 CUDA 11.8 匹配）：pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu118
-
-7. 安装特供版 vLLM（关键！） DeepSeek-OCR-2 基于特定分支编译的 vLLM 进行优化，严禁使用 pip install vllm 直接安装，否则推理效率会大幅下降。编译完成的包笔者已经帮助大家下载下来了，大家可以关注同名微信公众号： 大模型真好玩， 并回复deepseek-ocr-2获得whl文件，然后将该whl文件拖到服务器workspace目录下，最后执行pip install vllm-0.8.5+cu118-cp38-abi3-manylinux1_x86_64.whl
 
 8. 安装项目基础依赖: 执行命令cd DeepSeek-OCR-2进入到git clone的目录文件夹下，执行pip install -r requirements.txt命令安装项目基础依赖,该步骤最后可能因某些依赖版本冲突而报错（如 pydantic 或 transformers 版本），不影响核心功能，可忽略.
 
@@ -189,8 +185,6 @@ images/                 # PDF 中抽取的所有图片，供 Markdown 引用
 
 - 公式（即使为扫描图片）也被识别为 LaTeX 行内公式。
 
-**这一能力，已经无限接近“文档数字化”的终极形态。** 本章节的所有测试样例大家均可关注笔者同名微信公众号：**大模型真好玩**， 并私信**deepseek-ocr-2**获得。
-
 ## 三、OCR工具解析结果的后处理：从“读出来”到“用起来”
 
 如果说 OCR 的核心价值在于**将非结构化文档转化为结构化数据**，那么后处理环节则决定了**这些数据能否真正转化为生产力**。
@@ -266,6 +260,3 @@ OCR解析 → Markdown + 图片文件夹 → 图片描述生成（离线）→ M
 ## 四、总结
 
 本文以DeepSeek-OCR-2为例，详解其核心特性、本地部署及vLLM推理实战。并延伸后处理策略，涵盖数据清洗、RAG优化到多模态检索，打通从“读出来”到“用起来”的全链路，为高质量数据集构建提供实战指南。有了OCR工具等统一格式后，接下来数据处理流程的重要工作就是构建数据集了，下篇内容笔者将分享当前通用的数据处理工具EasyDataset, 大家敬请期待~
-
-
-除大模型训练外，笔者也在同步更新《深入浅出LangChain&LangGraph AI Agent 智能体开发》免费专栏，要说明该专栏适合所有对 LangChain 感兴趣的学习者，无论之前是否接触过 LangChain。该专栏基于笔者在实际项目中的深度使用经验，系统讲解了使用LangChain/LangGraph如何开发智能体，目前已更新 38 讲，并持续补充实战与拓展内容。欢迎感兴趣的同学关注笔者的掘金账号与专栏，也可关注笔者的同名微信公众号**大模型真好玩**，每期分享涉及的代码均可在公众号私信: **LangChain智能体开发**免费获取。
