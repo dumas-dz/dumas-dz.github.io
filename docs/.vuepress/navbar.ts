@@ -110,7 +110,7 @@ export default navbar([
       link: "app-dev/langchain/ai-langchain-overview",
     }, {
       text: "应用开发 - LlamaIndex",
-      link: "app-dev/llamaindex/ai-llamaindex-overview",
+      link: "app-dev/llamaindex/ai-llamaindex-outline",
     }, {
       text: "模型训练 - 全流程实战",
       link: "model-training/ai-llm-training-why",
