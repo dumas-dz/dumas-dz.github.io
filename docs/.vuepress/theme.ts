@@ -14,7 +14,7 @@ export default hopeTheme({
 
   logo: "/logo.svg",
 
-  repo: "dumasz/dumasz.github.io",
+  repo: "dumas-dz/dumas-dz.github.io",
 
   docsDir: "docs",
 
