@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as a,c as o,a as t}from"./app.f75811df.js";const c={},s=t("p",null,"Java \u9762\u5411\u5BF9\u8C61\u57FA\u7840",-1),_=[s];function r(n,l){return a(),o("div",null,_)}var m=e(c,[["render",r],["__file","java-basic-oop.html.vue"]]);export{m as default};

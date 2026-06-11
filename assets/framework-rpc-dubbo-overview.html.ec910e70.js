@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as r,a as t}from"./app.d848612b.js";const c={},_=t("p",null,"Dubbo \u8BE6\u89E3",-1),a=[_];function s(n,l){return o(),r("div",null,a)}var m=e(c,[["render",s],["__file","framework-rpc-dubbo-overview.html.vue"]]);export{m as default};
