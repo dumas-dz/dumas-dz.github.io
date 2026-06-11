@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o,c as a,a as r}from"./app.ed6e35bb.js";const t={},l=r("p",null,"SpringCloud Alibaba \u77E5\u8BC6\u4F53\u7CFB",-1),c=[l];function i(n,s){return o(),a("div",null,c)}var p=e(t,[["render",i],["__file","spring-cloud-alibaba-overview.html.vue"]]);export{p as default};

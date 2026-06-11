@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as t,c as r,a as o}from"./app.ceeb05d3.js";const c={},s=o("p",null,"\u5206\u5E03\u5F0F\u7406\u8BBA\u548C\u4E00\u81F4\u6027\u7B97\u6CD5",-1),_=[s];function a(i,n){return t(),r("div",null,_)}var f=e(c,[["render",a],["__file","arch-distributed-overview.html.vue"]]);export{f as default};

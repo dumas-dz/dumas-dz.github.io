@@ -1,0 +1,1 @@
+import{_ as e}from"./plugin-vue_export-helper.21dcd24c.js";import{o as t,c as a,a as c}from"./app.ceeb05d3.js";const o={},_=c("p",null,"JVM \u5783\u573E\u56DE\u6536\u673A\u5236",-1),r=[_];function s(n,l){return t(),a("div",null,r)}var i=e(o,[["render",s],["__file","java-jvm-gc.html.vue"]]);export{i as default};
