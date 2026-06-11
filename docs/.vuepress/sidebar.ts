@@ -147,7 +147,6 @@ export default sidebar({
           prefix: "llamaindex/",
           collapsable: true,
           children: [
-            "ai-llamaindex-outline",
             "ai-llamaindex-01-llm",
             "ai-llamaindex-02-ecosystem",
             "ai-llamaindex-03-quickstart",
