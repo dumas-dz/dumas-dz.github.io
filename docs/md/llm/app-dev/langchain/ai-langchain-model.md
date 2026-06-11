@@ -7,7 +7,6 @@ tag:
   - LangChain
 ---
 
-> 原文链接：[掘金](https://juejin.cn/column/7616994432275267627)
 
 ### 3.1 LLM 与 ChatModel 的区别与适用场景
 

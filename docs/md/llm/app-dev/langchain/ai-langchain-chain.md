@@ -7,7 +7,6 @@ tag:
   - LangChain
 ---
 
-> 原文链接：[掘金](https://juejin.cn/column/7616994432275267627)
 
 ## 6.1 什么是 Chain？链式思维的核心
 

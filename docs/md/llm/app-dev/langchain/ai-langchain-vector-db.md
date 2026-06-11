@@ -7,7 +7,6 @@ tag:
   - LangChain
 ---
 
-> 原文链接：[掘金](https://juejin.cn/column/7616994432275267627)
 
 ## 9.1 向量数据库选型指南（Chroma、FAISS、Pinecone、Milvus）
 

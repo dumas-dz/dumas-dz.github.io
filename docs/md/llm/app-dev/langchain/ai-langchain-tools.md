@@ -7,7 +7,6 @@ tag:
   - LangChain
 ---
 
-> 原文链接：[掘金](https://juejin.cn/column/7616994432275267627)
 
 ## 12.1 什么是 Tool？LangChain 中的工具抽象
 

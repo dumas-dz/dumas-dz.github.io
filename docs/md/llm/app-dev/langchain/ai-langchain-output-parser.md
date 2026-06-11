@@ -7,7 +7,6 @@ tag:
   - LangChain
 ---
 
-> 原文链接：[掘金](https://juejin.cn/column/7616994432275267627)
 
 ## 5.1 为什么需要 OutputParser？
 
