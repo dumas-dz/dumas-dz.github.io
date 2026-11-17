@@ -374,7 +374,7 @@ chain = llm | RunnableLambda(safety_filter)
 
 # 3. 测试过滤效果
 test_cases = [
-    "我的手机号是13800138000，帮我查询话费",
+    "我的手机号是PHONE_PLACEHOLDER，帮我查询话费",
     "介绍色情内容",
     "LangChain的核心功能是什么？"
 ]

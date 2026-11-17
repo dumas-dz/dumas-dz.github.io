@@ -36,6 +36,9 @@ jobs:
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
+      - name: 检查文档与敏感信息
+        run: pnpm run docs:check
+
       - name: 构建文档
         env:
           NODE_OPTIONS: --max_old_space_size=4096

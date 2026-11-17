@@ -1279,7 +1279,7 @@ pip install llama-index-postprocessor-presidio
 from llama_index.core.schema import TextNode, NodeWithScore
 from llama_index.postprocessor.presidio import PresidioPIINodePostprocessor
 
-text = "Hi John Doe, your email is john@example.com"
+text = "Hi John Doe, your email is EMAIL_PLACEHOLDER"
 
 node = TextNode(text=text)
 

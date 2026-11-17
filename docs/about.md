@@ -124,8 +124,8 @@ outline: [2, 3]
 
 - 个人网站：[https://dumas-dz.github.io](https://dumas-dz.github.io)
 - GitHub：[dumas-dz](https://github.com/dumas-dz)
-- 邮箱：[dumas.dz.ma@hotmail.com](mailto:dumas.dz.ma@hotmail.com)
+- 联系渠道：优先通过 [GitHub](https://github.com/dumas-dz) 联系
 
 ::: tip 公开信息说明
-本页面只公开展示职业能力、工作经历、项目案例和工作联系方式，不包含电话号码、住址、家庭信息或其他不必要的个人敏感信息。
+本页面只公开展示职业能力、工作经历和项目案例，不包含电话号码、邮箱、住址、家庭信息或其他个人敏感信息。
 :::

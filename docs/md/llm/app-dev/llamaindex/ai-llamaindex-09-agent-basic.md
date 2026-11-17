@@ -591,16 +591,16 @@ function calling 模型会解释 prompts 和上下文，根据训练中学到的
 
 | ID | Name | Department | Salary | Email |
 | --- | --- | --- | --- | --- |
-| 1 | Alice | IT | 36420.77 | Alice_IT@org.com |
-| 2 | Karen | Finance | 57705.06 | Alice_Finance@org.com |
-| 3 | Helen | IT | 52612.51 | Helen_IT@org.com |
-| 4 | Jackie | Finance | 61374.58 | Jack_Finance@org.com |
-| 5 | David | Finance | 32242.72 | David_Finance@org.com |
-| 6 | Cora | HR | 62040.53 | Alice_HR@org.com |
-| 7 | Ingrid | IT | 70821.96 | Alice_IT@org.com |
-| 8 | Jack | IT | 57268.89 | Jack_IT@org.com |
-| 9 | Bob | Finance | 76868.23 | Bob_Finance@org.com |
-| 10 | Bill | HR | 74161.45 | Bob_HR@org.com |
+| 1 | Alice | IT | 36420.77 | EMAIL_PLACEHOLDER |
+| 2 | Karen | Finance | 57705.06 | EMAIL_PLACEHOLDER |
+| 3 | Helen | IT | 52612.51 | EMAIL_PLACEHOLDER |
+| 4 | Jackie | Finance | 61374.58 | EMAIL_PLACEHOLDER |
+| 5 | David | Finance | 32242.72 | EMAIL_PLACEHOLDER |
+| 6 | Cora | HR | 62040.53 | EMAIL_PLACEHOLDER |
+| 7 | Ingrid | IT | 70821.96 | EMAIL_PLACEHOLDER |
+| 8 | Jack | IT | 57268.89 | EMAIL_PLACEHOLDER |
+| 9 | Bob | Finance | 76868.23 | EMAIL_PLACEHOLDER |
+| 10 | Bill | HR | 74161.45 | EMAIL_PLACEHOLDER |
 
 **表 9.1 —— `Employees.db` 文件中的示例 `Employees` 表**
 

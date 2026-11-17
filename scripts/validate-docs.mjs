@@ -4,6 +4,7 @@ import path from "node:path";
 const docsRoot = path.resolve("docs");
 const publicRoot = path.join(docsRoot, ".vuepress", "public");
 const markdownFiles = [];
+const textFiles = [];
 const placeholderPatterns = [
   /\bTODO\b/i,
   /^#+\s*标题[一二三四五六七八九十]+/m,
@@ -14,11 +15,13 @@ function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if ([".vuepress", "node_modules"].includes(entry.name)) continue;
+      if ([".cache", ".temp", "dist", "node_modules"].includes(entry.name)) continue;
       walk(full);
-    } else if (entry.name.endsWith(".md")) {
-      markdownFiles.push(full);
+      continue;
     }
+
+    if (/\.(?:md|ts|js|scss|json)$/i.test(entry.name)) textFiles.push(full);
+    if (entry.name.endsWith(".md")) markdownFiles.push(full);
   }
 }
 
@@ -103,11 +106,45 @@ function fileExistsForRoute(sourceFile, target) {
   );
 }
 
+const sensitivePatterns = [
+  { name: "手机号", regex: /(?<!\d)1[3-9]\d{9}(?!\d)/g },
+  { name: "脱敏手机号", regex: /1[3-9]\d{2}\*{4}\d{4}/g },
+  { name: "身份证号", regex: /(?<!\d)\d{17}[0-9Xx](?!\d)/g },
+  {
+    name: "银行卡号",
+    regex: /(?:卡号|card(?: number)?)[^\d]{0,8}(?<!\d)\d{16,19}(?!\d)/gi,
+  },
+  {
+    name: "邮箱地址",
+    regex: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g,
+  },
+  {
+    name: "私钥",
+    regex: /-----BEGIN [A-Z ]*PRIVATE KEY-----/g,
+  },
+  {
+    name: "明文助记词",
+    regex: /(?:mnemonic|seed phrase)\s*[:=]\s*["'][a-z]+(?:\s+[a-z]+){11,}["']/gi,
+  },
+];
+
 walk(docsRoot);
 
 const errors = [];
 const warnings = [];
 let linkCount = 0;
+
+for (const file of textFiles) {
+  const rel = path.relative(process.cwd(), file);
+  const text = fs.readFileSync(file, "utf8");
+
+  for (const { name, regex } of sensitivePatterns) {
+    regex.lastIndex = 0;
+    if (regex.test(text)) {
+      errors.push(`${rel}: 检测到疑似敏感信息（${name}）`);
+    }
+  }
+}
 
 for (const file of markdownFiles) {
   const rel = path.relative(process.cwd(), file);

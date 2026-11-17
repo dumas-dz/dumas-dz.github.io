@@ -129,7 +129,7 @@ def append_audit(path: str, event: AuditEvent) -> None:
 if __name__ == "__main__":
     os.environ["TOKEN_HMAC_KEY"] = os.environ.get("TOKEN_HMAC_KEY", "demo-token-key")
     os.environ["AUDIT_HMAC_KEY"] = os.environ.get("AUDIT_HMAC_KEY", "demo-audit-key")
-    print(mask_text("联系 test@example.com 或 13812345678，卡号 6222021234567890123"))
+    print(mask_text("联系 EMAIL_PLACEHOLDER 或 PHONE_PLACEHOLDER，卡号 SENSITIVE_NUMBER_PLACEHOLDER"))
     print(stable_token("customer-001"))
     append_audit(
         "audit.jsonl",

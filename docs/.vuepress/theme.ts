@@ -33,7 +33,6 @@ export default hopeTheme({
     intro: "/about.html",
     medias: {
       GitHub: "https://github.com/dumas-dz",
-      Email: "dumas.dz.ma@hotmail.com",
     },
   },
 

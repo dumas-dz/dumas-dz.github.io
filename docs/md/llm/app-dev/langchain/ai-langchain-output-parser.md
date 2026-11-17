@@ -195,7 +195,7 @@ chat_model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), temperature=0.3)
 chain = prompt | chat_model | json_parser
 
 # 测试文本
-text = "用户张三，年龄25岁，邮箱zhangsan@163.com，手机号13800138000，职业是Python开发工程师。"
+text = "用户张三，年龄25岁，邮箱EMAIL_PLACEHOLDER，手机号PHONE_PLACEHOLDER，职业是Python开发工程师。"
 result = chain.invoke({"text": text})
 
 print("解析后的JSON对象：", result)
@@ -206,7 +206,7 @@ print("结果类型：", type(result))
 代码来源：LangChain JSONOutputParser官方示例（python.langchain.com/docs/langch…）；
 
 运行结果：
-解析后的JSON对象： {'username': '张三', 'age': 25, 'email': 'zhangsan@163.com', 'phone': '13800138000', 'occupation': 'Python开发工程师'}
+解析后的JSON对象： {'username': '张三', 'age': 25, 'email': 'EMAIL_PLACEHOLDER', 'phone': 'PHONE_PLACEHOLDER', 'occupation': 'Python开发工程师'}
 用户名字段： 张三
 结果类型： <class 'dict'>
 
@@ -415,7 +415,7 @@ chat_model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), temperature=0.3)
 chain = prompt | chat_model | pydantic_parser
 
 # 测试文本
-text = "用户张三（手机号13800138000）在2024-06-03 09:30:00下单，订单号789012，金额299.00元，状态已发货。订单包含2件商品：LangChain教程（单价99.00元）、Python实战（单价100.00元）。"
+text = "用户张三（手机号PHONE_PLACEHOLDER）在2024-06-03 09:30:00下单，订单号789012，金额299.00元，状态已发货。订单包含2件商品：LangChain教程（单价99.00元）、Python实战（单价100.00元）。"
 result = chain.invoke({"text": text})
 
 print("完整订单详情：")
@@ -502,7 +502,7 @@ chat_model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), temperature=0.3)
 chain = prompt | chat_model | xml_parser
 
 # 测试文本
-text = "用户李四，28岁，邮箱lisi@qq.com，职业是产品经理。"
+text = "用户李四，28岁，邮箱EMAIL_PLACEHOLDER，职业是产品经理。"
 result = chain.invoke({"text": text})
 
 print("XML解析结果：", result)
@@ -510,7 +510,7 @@ print("XML解析结果：", result)
 
 代码来源：LangChain自定义OutputParser官方文档（python.langchain.com/docs/langch…）；
 
-运行结果：XML解析结果： {'username': '李四', 'age': '28', 'email': 'lisi@qq.com', 'occupation': '产品经理'}
+运行结果：XML解析结果： {'username': '李四', 'age': '28', 'email': 'EMAIL_PLACEHOLDER', 'occupation': '产品经理'}
 
 ### 5.5.2 实战示例2：解析Markdown表格
 
