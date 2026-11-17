@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 调优
+description: "本章聚焦 RAG 系统的可观测性与评估：使用 Instrumentation 模块追踪工作流，Faithfulness/Relevancy 等评估指标，以及评估→追踪→调整的迭代优化循环。"
+order: 22
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 调优 RAG - 可观测性与评估
 本章聚焦 RAG 系统的可观测性与评估：使用 Instrumentation 模块追踪工作流，Faithfulness/Relevancy 等评估指标，以及评估→追踪→调整的迭代优化循环。
 
 ### 技术要求
@@ -94,7 +96,7 @@ Dispatchers：它们是路由机制：从 LlamaIndex 代码中接收 spans 和 e
 
 由于我们会使用 `.docx` 格式的示例合同，请在运行示例前确保你已经安装必要包：
 
-```code
+```bash
 pip install docx2txt
 ```
 
@@ -104,7 +106,7 @@ pip install docx2txt
 
 确保在创建任何 indexes 或运行任何 queries 之前设置 instrumentation。如果你在附加 span handler 之前实例化 `VectorStoreIndex`，那么 indexing spans 会被静默丢失，你不会在 trace 输出中看到它们。
 
-```javascript
+```python
 import llama_index.core.instrumentation as instrument
 import models_config
 from llama_index.core.instrumentation.span_handlers import SimpleSpanHandler
@@ -115,7 +117,7 @@ dispatcher = instrument.get_dispatcher()
 dispatcher.add_span_handler(span_handler)
 ```
 
-```ini
+```python
 documents = SimpleDirectoryReader('files').load_data()
 index = VectorStoreIndex.from_documents(documents)
 query_engine = index.as_query_engine()
@@ -264,7 +266,7 @@ Labeled evaluation 用于 correctness 等指标，需要为每个 query 提供 g
 
 还有一件值得一提的事：LlamaIndex 提供了一种方式，可以从你的 indexed documents 中自动生成 evaluation datasets。使用一个名为 `generate_question_context_pairs()` 的函数，你可以让 LLM 基于实际数据创建一组测试问题。这是一个非常棒的捷径，可以在不花几个小时手动写问题的情况下，快速启动评估数据集。如果你在使用该函数时遇到 import error，请通过运行以下命令确保你的 `llama-index-core` 包是最新的：
 
-```css
+```bash
 pip install --upgrade llama-index-core
 ```
 
@@ -290,7 +292,7 @@ pip install --upgrade llama-index-core
 
 讲完这些后，让我们先构建一个小型 RAG pipeline，它索引一个示例合同文档，并回答关于其条款和义务的问题：
 
-```ini
+```python
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 import models_config
 from llama_index.llms.openai import OpenAI
@@ -311,7 +313,7 @@ print(response)
 
 注意，我们同时导入了 `models_config` 和 `OpenAI`。前者基本上会把默认 LLM 设置为 Gemma3:4B，后者是我们实例化 judge LLM，也就是 GPT-5.2 所需要的。输出应该类似下面这样：
 
-```python
+```text
 The service provider's main obligations include:
 
 *   Providing Support Services as defined in the agreement, excluding specific items like software development, third-party system support, hardware procurement, and end-user training.
@@ -331,7 +333,7 @@ The service provider's main obligations include:
 
 我们用 judge LLM 创建 evaluator，并调用它的 `evaluate_response()` 方法：
 
-```ini
+```python
 judge_llm = OpenAI(model="gpt-5.2", temperature=0)
 faithfulness_evaluator = FaithfulnessEvaluator(llm=judge_llm)
 faith_result = faithfulness_evaluator.evaluate_response(
@@ -344,7 +346,7 @@ print(f"Passing: {faith_result.passing}")
 
 结果对象有两个关键属性。`passing` 属性是一个布尔值，`True` 表示响应是 faithful 的，`False` 表示 judge 检测到潜在幻觉。`feedback` 属性包含 judge 的原始裁决。对于 `FaithfulnessEvaluator`，这只是 `YES` 或 `NO`，因为底层 prompt 会直接询问 judge：响应是否受到上下文支持。如果你需要理解为什么某个响应失败，就必须自己检查检索上下文，并将其与响应比较。正如我们稍后将看到的，`CorrectnessEvaluator` 在推理解释方面会更慷慨。
 
-```ini
+```python
 relevancy_evaluator = RelevancyEvaluator(llm=judge_llm)
 rel_result = relevancy_evaluator.evaluate_response(
     query=query,
@@ -357,7 +359,7 @@ print(f"Passing: {rel_result.passing}")
 
 `CorrectnessEvaluator` 类增加了第三个组成部分：你自己提供的参考答案。这就是我们前面讨论过的 labeled evaluation 方法：
 
-```ini
+```python
 correctness_evaluator = CorrectnessEvaluator(llm=judge_llm)
 cor_result = correctness_evaluator.evaluate(
     query=query,
@@ -369,7 +371,7 @@ print(f"Passing: {cor_result.passing}")
 print(f"Feedback: {cor_result.feedback}")
 ```
 
-```vbnet
+```yaml
 Score: 2.0
 Passing: False
 Feedback: The answer is relevant to the question but contains significant errors and omissions: it omits the obligation to deliver monthly reports, gives the wrong availability target (99.5% vs reference 99.9%), and does not state the specified 4-hour response requirement (instead gives a generic priority-based response). It also adds extra contractual items (confidentiality, fees) not mentioned in the reference.
@@ -413,7 +415,7 @@ for query_id, query_text in list(qa_dataset.queries.items())[:3]:
 
 在循环中一次运行一个 query 的 evaluators 会非常慢。每次评估都至少涉及一次 LLM 调用，也就是 judge。如果你用两个指标评估 50 个 queries，那就是 100 次 LLM 调用，而且是顺序运行。`BatchEvalRunner` 类通过异步并行运行评估来解决这个问题：
 
-```ini
+```python
 import asyncio
 import models_config
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
@@ -432,14 +434,14 @@ qa_dataset = generate_question_context_pairs(nodes, num_questions_per_chunk=2)
 
 为了简单起见，这个示例使用我们的默认本地模型，但为了获得有意义结果，你应该像前面展示的那样传入一个更强 judge：
 
-```ini
+```text
 faithfulness_eval = FaithfulnessEvaluator()
 relevancy_eval = RelevancyEvaluator()
 ```
 
 在代码的第一部分，我们加载文档并处理 node splitting，随后生成 evaluation `qa_dataset` 对象。接下来是 batch evaluation 部分：
 
-```ini
+```text
 runner = BatchEvalRunner(
     {"faithfulness": faithfulness_eval,
      "relevancy": relevancy_eval},
@@ -474,7 +476,7 @@ print(f"Relevancy:    {relevancy_score:.1%}")
 
 我们的 evaluation pipeline 最终输出会类似下面这样：
 
-```makefile
+```yaml
 Faithfulness: 81.8%
 Relevancy:    100.0%
 ```
@@ -497,7 +499,7 @@ Relevancy:    100.0%
 
 在做任何其他事情之前，让我们先接入 instrumentation 模块，以便追踪 pipeline 内部发生了什么。我们将使用本章前面学到的内容：
 
-```javascript
+```python
 import models_config
 import llama_index.core.instrumentation as instrument
 from llama_index.core.instrumentation.span_handlers import SimpleSpanHandler
@@ -511,7 +513,7 @@ dispatcher.add_span_handler(span_handler)
 
 ### 构建 RAG pipeline
 
-```ini
+```python
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
 
@@ -530,7 +532,7 @@ query_engine = index.as_query_engine(similarity_top_k=2)
 
 我们将为每个 node 生成两个问题，这应该会给我们一个合理的测试查询集合，并且我们会使用 OpenAI 的 GPT-5-mini 模型作为 judge：
 
-```ini
+```python
 from llama_index.core.evaluation import generate_question_context_pairs
 from llama_index.llms.openai import OpenAI
 
@@ -556,7 +558,7 @@ print(f"Generated {len(eval_questions)} evaluation questions")
 
 来看代码：
 
-```ini
+```python
 import asyncio
 from llama_index.core.evaluation import (
     FaithfulnessEvaluator,
@@ -577,7 +579,7 @@ async def run_evaluations():
     )
 ```
 
-```ini
+```text
 improved_qe = index.as_query_engine(similarity_top_k=5)
     improved_results = await runner.aevaluate_queries(
         query_engine=improved_qe,
@@ -593,7 +595,7 @@ improved_qe = index.as_query_engine(similarity_top_k=5)
 
 现在该看看我们做得怎么样：
 
-```scss
+```python
 faith_results = eval_results["faithfulness"]
 rel_results = eval_results["relevancy"]
  faith_score = sum(1 for r in faith_results if r.passing) / len(faith_results)
@@ -629,7 +631,7 @@ Failing queries:
 
 有意思！Faithfulness 是 85.0%，还不错，但仍有提升空间。Relevancy 是 70.0%，明显更低。在这个案例中，看失败 queries，会发现一种模式：几个失败都涉及特定主题的问题，例如 penalties、data protection、force majeure，这些相关信息很可能存在于文档中，但没有出现在 top 2 检索 nodes 中。
 
-```css
+```python
 for span in span_handler.completed_spans:
     if "retrieve" in span.id_.lower():
         print(f"Retrieval span: {span.id_}")

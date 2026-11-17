@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在理解LangChain的Memory之前，我们先明确一个核心问题：大语言模型（LLM）本身是“无状态”的——每次调用模型，它都只基于当前输入的Prompt进行生成，完全不会记住上一轮的对话内容。"
+order: 100
+outline: [2, 3]
 ---
 
-
+# LangChain - Memory 记忆机制
 ## 11.1 为什么需要 Memory？
 
 在理解LangChain的Memory之前，我们先明确一个核心问题：大语言模型（LLM）本身是“无状态”的——每次调用模型，它都只基于当前输入的Prompt进行生成，完全不会记住上一轮的对话内容。
@@ -16,7 +19,7 @@ tag:
 
 ### 11.1.1 无Memory的对话痛点（代码示例）
 
-```
+```python
 from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 import os
@@ -49,15 +52,12 @@ LangChain的Memory本质是一个「对话存储与管理工具」，核心作�
 
 - 存储对话历史：记录用户与模型的每一轮问答（用户输入+模型输出）；
 
-存储对话历史：记录用户与模型的每一轮问答（用户输入+模型输出）；
 
 - 提取关键信息：从对话历史中提取用户偏好、实体、上下文关联等核心内容；
 
-提取关键信息：从对话历史中提取用户偏好、实体、上下文关联等核心内容；
 
 - 注入Prompt：在每次调用LLM时，自动将对话历史（或提取的关键信息）注入Prompt，让模型“记住”上下文。
 
-注入Prompt：在每次调用LLM时，自动将对话历史（或提取的关键信息）注入Prompt，让模型“记住”上下文。
 
 ### 11.1.3 Memory的核心流程（极简图例）
 
@@ -79,7 +79,7 @@ LangChain提供了多种内置Memory，适配不同场景（如简单对话、�
 
 ### 11.2.1 快速上手（代码示例）
 
-```
+```python
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 
@@ -111,21 +111,18 @@ print("助手：", response3)
 
 - return_messages：是否返回完整的对话消息（格式为列表，包含用户和助手的消息对象），建议设为True，便于后续查看和调试；
 
-return_messages：是否返回完整的对话消息（格式为列表，包含用户和助手的消息对象），建议设为True，便于后续查看和调试；
 
 - memory_key：对话历史在Prompt中的变量名，默认是“history”，无需修改，除非自定义Prompt模板；
 
-memory_key：对话历史在Prompt中的变量名，默认是“history”，无需修改，除非自定义Prompt模板；
 
 - output_key：模型输出的变量名，默认是“response”，与ConversationChain兼容。
 
-output_key：模型输出的变量名，默认是“response”，与ConversationChain兼容。
 
 ### 11.2.3 查看缓存的对话历史
 
 可通过Memory的load_memory_variables方法，查看当前缓存的所有对话历史，便于调试：
 
-```
+```python
 # 查看缓存的对话历史
 history = memory.load_memory_variables({})
 print("缓存的对话历史：")
@@ -137,11 +134,9 @@ for msg in history["history"]:
 
 - 适用场景：短对话、简单交互（如个人助手、简单咨询），无需压缩对话历史；
 
-适用场景：短对话、简单交互（如个人助手、简单咨询），无需压缩对话历史；
 
 - 局限：长对话（如10轮以上）会导致Prompt过长，消耗大量token，甚至超出LLM输入限制（如gpt-3.5-turbo默认输入限制为4096token）。
 
-局限：长对话（如10轮以上）会导致Prompt过长，消耗大量token，甚至超出LLM输入限制（如gpt-3.5-turbo默认输入限制为4096token）。
 
 引用来源：LangChain ConversationBufferMemory 官方文档。
 
@@ -153,7 +148,7 @@ for msg in history["history"]:
 
 ### 11.3.1 快速上手（代码示例）
 
-```
+```python
 from langchain.memory import ConversationSummaryMemory
 
 # 1. 初始化LLM（同时用于生成回答和摘要）
@@ -190,15 +185,12 @@ for msg in summary["history"]:
 
 - llm：必须传入LLM，用于生成对话摘要（摘要的质量依赖LLM的能力）；
 
-llm：必须传入LLM，用于生成对话摘要（摘要的质量依赖LLM的能力）；
 
 - summary_prompt：自定义摘要生成的Prompt模板，可根据需求调整（默认模板已足够使用）；
 
-summary_prompt：自定义摘要生成的Prompt模板，可根据需求调整（默认模板已足够使用）；
 
 - return_messages：与ConversationBufferMemory一致，返回完整的对话消息（摘要形式）。
 
-return_messages：与ConversationBufferMemory一致，返回完整的对话消息（摘要形式）。
 
 ### 11.3.3 与ConversationBufferMemory对比
 
@@ -216,7 +208,7 @@ return_messages：与ConversationBufferMemory一致，返回完整的对话消�
 
 ### 11.4.1 快速上手（代码示例）
 
-```
+```python
 from langchain.memory import EntityMemory
 from langchain.memory.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
 
@@ -242,7 +234,7 @@ query3 = "帮我推荐一款符合我需求的手机"
 
 可通过memory.entity_store查看提取的所有实体及其关联信息，直观了解EntityMemory的工作效果：
 
-```
+```python
 # 查看提取的实体及关联信息
 print("提取的实体信息：")
 for entity, info in memory.entity_store.items():
@@ -251,7 +243,7 @@ for entity, info in memory.entity_store.items():
 
 运行结果示例：
 
-```
+```text
 提取的实体信息：
 实体：小明，关联信息：用户姓名，想买价格在5000元左右、适合拍照的手机。
 实体：手机，关联信息：用户小明想买的产品，预算5000元左右，要求适合拍照。
@@ -263,15 +255,12 @@ for entity, info in memory.entity_store.items():
 
 - llm：必须传入LLM，用于提取实体、生成实体关联信息；
 
-llm：必须传入LLM，用于提取实体、生成实体关联信息；
 
 - entity_cache_limit：实体缓存的最大数量，默认是100，超过后会自动删除最早的实体；
 
-entity_cache_limit：实体缓存的最大数量，默认是100，超过后会自动删除最早的实体；
 
 - prompt：需使用EntityMemory专属的Prompt模板（ENTITY_MEMORY_CONVERSATION_TEMPLATE），否则无法正常提取实体。
 
-prompt：需使用EntityMemory专属的Prompt模板（ENTITY_MEMORY_CONVERSATION_TEMPLATE），否则无法正常提取实体。
 
 ### 11.4.4 适用场景
 
@@ -279,15 +268,12 @@ EntityMemory适合需要“提取关键信息、忽略无关对话”的场景�
 
 - 客服对话：提取用户姓名、需求、产品偏好等；
 
-客服对话：提取用户姓名、需求、产品偏好等；
 
 - 个人助手：提取用户日程、偏好、常用需求等；
 
-个人助手：提取用户日程、偏好、常用需求等；
 
 - 产品咨询：提取用户预算、产品需求、使用场景等。
 
-产品咨询：提取用户预算、产品需求、使用场景等。
 
 引用来源：LangChain EntityMemory 官方文档。
 
@@ -299,7 +285,7 @@ EntityMemory适合需要“提取关键信息、忽略无关对话”的场景�
 
 ### 11.5.1 快速上手（代码示例）
 
-```
+```python
 from langchain.memory import VectorStoreRetrieverMemory
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
@@ -333,47 +319,37 @@ memory = VectorStoreRetrieverMemory(
 
 - 每一轮对话结束后，将“用户输入+模型输出”拼接成一段文本，生成向量；
 
-每一轮对话结束后，将“用户输入+模型输出”拼接成一段文本，生成向量；
 
 - 将向量和文本存入向量数据库（如Chroma、Pinecone）；
 
-将向量和文本存入向量数据库（如Chroma、Pinecone）；
 
 - 新查询发起时，将查询生成向量，在向量数据库中检索最相关的2-3轮历史对话；
 
-新查询发起时，将查询生成向量，在向量数据库中检索最相关的2-3轮历史对话；
 
 - 将检索到的相关对话注入Prompt，让模型基于相关历史生成回答。
 
-将检索到的相关对话注入Prompt，让模型基于相关历史生成回答。
 
 #### 核心优势
 
 - 支持长对话：无需存储完整对话，通过检索快速定位相关历史，节省token；
 
-支持长对话：无需存储完整对话，通过检索快速定位相关历史，节省token；
 
 - 检索精准：基于语义检索，能快速找到与当前查询相关的历史细节，避免遗漏；
 
-检索精准：基于语义检索，能快速找到与当前查询相关的历史细节，避免遗漏；
 
 - 可持久化：向量数据库支持持久化，对话历史可长期保存，重启程序后仍可复用。
 
-可持久化：向量数据库支持持久化，对话历史可长期保存，重启程序后仍可复用。
 
 ### 11.5.3 关键参数解析
 
 - retriever：向量检索器，由向量数据库生成，k值表示检索前k个最相关的历史对话；
 
-retriever：向量检索器，由向量数据库生成，k值表示检索前k个最相关的历史对话；
 
 - memory_key：对话历史在Prompt中的变量名，需与ConversationChain的Prompt模板对应；
 
-memory_key：对话历史在Prompt中的变量名，需与ConversationChain的Prompt模板对应；
 
 - input_key：用户输入的变量名，默认是“input”，无需修改；
 
-input_key：用户输入的变量名，默认是“input”，无需修改；
 
 - output_key：模型输出的变量名，默认是“response”，与ConversationChain兼容。
 
@@ -383,15 +359,12 @@ VectorStoreRetrieverMemory适合长对话、需要精准检索历史细节的场
 
 - 长期客服对话：需要记住用户之前的咨询记录、需求细节；
 
-长期客服对话：需要记住用户之前的咨询记录、需求细节；
 
 - 复杂咨询场景：用户多次询问不同角度的问题，需要关联历史细节；
 
-复杂咨询场景：用户多次询问不同角度的问题，需要关联历史细节；
 
 - 需要持久化对话历史的场景：重启程序后，仍能记住之前的对话。
 
-需要持久化对话历史的场景：重启程序后，仍能记住之前的对话。
 
 引用来源：LangChain VectorStoreRetrieverMemory 官方文档。
 
@@ -405,11 +378,9 @@ LangChain内置的Memory虽然能满足大部分场景，但在某些特殊业�
 
 - load_memory_variables(self, inputs: Dict[str, Any])：加载内存中的变量（如对话历史），返回一个字典（key为变量名，value为内存内容）；
 
-load_memory_variables(self, inputs: Dict[str, Any])：加载内存中的变量（如对话历史），返回一个字典（key为变量名，value为内存内容）；
 
 - save_context(self, inputs: Dict[str, Any], outputs: Dict[str, str])：保存当前对话上下文（用户输入+模型输出）到内存中。
 
-save_context(self, inputs: Dict[str, Any], outputs: Dict[str, str])：保存当前对话上下文（用户输入+模型输出）到内存中。
 
 可选实现方法：clear(self)：清空内存中的所有内容。
 
@@ -417,7 +388,7 @@ save_context(self, inputs: Dict[str, Any], outputs: Dict[str, str])：保存当�
 
 需求：自定义一个Memory，专门存储用户的偏好信息（如咖啡偏好、甜点偏好），并将偏好信息持久化到本地文件（txt），重启程序后仍可加载。
 
-```
+```python
 from langchain.memory.base import BaseMemory
 from typing import Dict, Any, List
 
@@ -501,19 +472,15 @@ query3 = "根据我的偏好，推荐一款搭配"
 
 - 提取逻辑：示例中用简单的字符串分割提取偏好，实际业务中可结合LLM、正则表达式，实现更精准的信息提取；
 
-提取逻辑：示例中用简单的字符串分割提取偏好，实际业务中可结合LLM、正则表达式，实现更精准的信息提取；
 
 - 持久化：示例中持久化到本地txt文件，也可对接数据库（如MySQL、MongoDB），实现更可靠的存储；
 
-持久化：示例中持久化到本地txt文件，也可对接数据库（如MySQL、MongoDB），实现更可靠的存储；
 
 - 灵活性：可根据业务需求，添加任意自定义逻辑（如偏好分类、偏好权重、过期时间等）；
 
-灵活性：可根据业务需求，添加任意自定义逻辑（如偏好分类、偏好权重、过期时间等）；
 
 - 兼容性：自定义Memory继承自BaseMemory，可直接集成到ConversationChain、Agent中，与LangChain其他组件无缝兼容。
 
-兼容性：自定义Memory继承自BaseMemory，可直接集成到ConversationChain、Agent中，与LangChain其他组件无缝兼容。
 
 引用来源：LangChain 自定义Memory 官方文档。
 
@@ -527,7 +494,7 @@ query3 = "根据我的偏好，推荐一款搭配"
 
 RetrievalQAChain（RAG问答链）默认没有记忆能力，无法关联对话历史。我们可以通过「ConversationalRetrievalChain」，将RetrievalQAChain与Memory结合，实现具备记忆能力的RAG问答系统。
 
-```
+```python
 from langchain.chains import ConversationalRetrievalChain
 
 # 1. 初始化基础组件（向量数据库+嵌入模型，模拟私有文档库）
@@ -563,7 +530,7 @@ print("助手：", response2["answer"])
 
 Agent（智能体）需要根据用户需求，自主调用工具完成任务，而Memory能让Agent记住用户的需求、之前的操作，实现连贯的任务执行。LangChain的Agent可直接集成各类Memory，只需在初始化时传入memory参数。
 
-```
+```python
 from langchain.agents import AgentType, initialize_agent
 from langchain.tools import Tool
 
@@ -606,15 +573,12 @@ response2 = agent.run(query2)
 
 - Chain集成Memory：不同Chain对Memory的要求不同，如ConversationalRetrievalChain要求Memory的memory_key必须是“chat_history”，需注意参数匹配；
 
-Chain集成Memory：不同Chain对Memory的要求不同，如ConversationalRetrievalChain要求Memory的memory_key必须是“chat_history”，需注意参数匹配；
 
 - Agent集成Memory：需选择支持对话的Agent类型（如CHAT_CONVERSATIONAL_REACT_DESCRIPTION），并指定agent_scope为“chat_history”；
 
-Agent集成Memory：需选择支持对话的Agent类型（如CHAT_CONVERSATIONAL_REACT_DESCRIPTION），并指定agent_scope为“chat_history”；
 
 - Memory选择：根据场景选择合适的Memory，短对话用ConversationBufferMemory，长对话用ConversationSummaryMemory或VectorStoreRetrieverMemory。
 
-Memory选择：根据场景选择合适的Memory，短对话用ConversationBufferMemory，长对话用ConversationSummaryMemory或VectorStoreRetrieverMemory。
 
 引用来源：LangChain Agent 集成Memory 官方文档、ConversationalRetrievalChain 官方文档。
 
@@ -626,25 +590,21 @@ Memory选择：根据场景选择合适的Memory，短对话用ConversationBuffe
 
 - 记住用户姓名、产品偏好（如咖啡类型、甜度、温度）；
 
-记住用户姓名、产品偏好（如咖啡类型、甜度、温度）；
 
 - 支持多轮连贯对话，能关联上一轮的需求细节；
 
-支持多轮连贯对话，能关联上一轮的需求细节；
 
 - 用户偏好持久化到本地（txt文件），重启程序不丢失；
 
-用户偏好持久化到本地（txt文件），重启程序不丢失；
 
 - 结合LLM生成个性化的客服回复，贴合用户偏好。
 
-结合LLM生成个性化的客服回复，贴合用户偏好。
 
 ### 11.8.2 实战准备
 
 #### 1. 安装依赖
 
-```
+```bash
 pip install langchain openai python-dotenv
 ```
 
@@ -652,13 +612,13 @@ pip install langchain openai python-dotenv
 
 创建.env文件，填入OpenAI API密钥：
 
-```
+```text
 OPENAI_API_KEY=你的OpenAI API密钥
 ```
 
 ### 11.8.3 完整实战代码（可直接运行）
 
-```
+```python
 
 # ---------------------- 1. 自定义偏好Memory（持久化） ----------------------
 class UserPreferenceMemory(BaseMemory):
@@ -745,7 +705,7 @@ while True:
 
 ### 11.8.4 实战测试示例（直观参考）
 
-```
+```text
 欢迎使用咖啡客服助手！请告诉我你的需求（输入'退出'结束对话）：
 用户：我叫小明
 助手：你好呀小明！很高兴为你服务～ 请问你喜欢喝什么类型的咖啡呢？比如拿铁、美式、卡布奇诺等。
@@ -763,19 +723,15 @@ while True:
 
 - 优化偏好提取：结合LLM或正则表达式，实现更精准的偏好提取（如提取“我喜欢喝少冰的无糖拿铁”中的多个偏好）；
 
-优化偏好提取：结合LLM或正则表达式，实现更精准的偏好提取（如提取“我喜欢喝少冰的无糖拿铁”中的多个偏好）；
 
 - 对接数据库：将用户偏好从本地txt文件，迁移到MySQL、MongoDB，支持多用户、大规模存储；
 
-对接数据库：将用户偏好从本地txt文件，迁移到MySQL、MongoDB，支持多用户、大规模存储；
 
 - 添加工具集成：集成支付、订单查询工具，让客服助手不仅能记住偏好，还能完成下单、查单等操作；
 
-添加工具集成：集成支付、订单查询工具，让客服助手不仅能记住偏好，还能完成下单、查单等操作；
 
 - 优化回复模板：根据不同场景（如新用户、老用户），设计不同的Prompt模板，提升用户体验。
 
-优化回复模板：根据不同场景（如新用户、老用户），设计不同的Prompt模板，提升用户体验。
 
 ## 本章总结
 
@@ -783,22 +739,17 @@ while True:
 
 - Memory的核心价值：解决LLM“无状态”问题，让模型记住对话历史和关键信息，实现连贯多轮交互；
 
-Memory的核心价值：解决LLM“无状态”问题，让模型记住对话历史和关键信息，实现连贯多轮交互；
 
 - 内置Memory选型：短对话用ConversationBufferMemory，长对话用ConversationSummaryMemory，提取实体用EntityMemory，长对话精准检索用VectorStoreRetrieverMemory；
 
-内置Memory选型：短对话用ConversationBufferMemory，长对话用ConversationSummaryMemory，提取实体用EntityMemory，长对话精准检索用VectorStoreRetrieverMemory；
 
 - 自定义Memory：继承BaseMemory类，实现load_memory_variables、save_context两个核心方法，可贴合业务需求实现个性化记忆逻辑；
 
-自定义Memory：继承BaseMemory类，实现load_memory_variables、save_context两个核心方法，可贴合业务需求实现个性化记忆逻辑；
 
 - 集成场景：Memory可无缝集成到Chain（如ConversationalRetrievalChain）和Agent中，让整个系统具备记忆能力；
 
-集成场景：Memory可无缝集成到Chain（如ConversationalRetrievalChain）和Agent中，让整个系统具备记忆能力；
 
 - 实战重点：结合持久化存储，让Memory能长期保存关键信息（如用户偏好），提升系统实用性。
 
-实战重点：结合持久化存储，让Memory能长期保存关键信息（如用户偏好），提升系统实用性。
 
 下一章将讲解LangChain的Agent（智能体）核心用法，结合Memory和工具调用，实现能自主完成复杂任务的智能系统。

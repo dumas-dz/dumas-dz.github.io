@@ -3,11 +3,11 @@ import navbar from "./navbar";
 import sidebar from "./sidebar";
 
 export default hopeTheme({
-  hostname: "https://vuepress-theme-hope-v2-demo.mrhope.site",
+  hostname: "https://dumas-dz.github.io",
 
   author: {
-    name: "Mr.Dumas",
-    url: "https://mrhope.site",
+    name: "Dumas",
+    url: "https://dumas-dz.github.io",
   },
 
   iconAssets: "iconfont",
@@ -18,29 +18,22 @@ export default hopeTheme({
 
   docsDir: "docs",
 
-  navbar: navbar,
+  navbar,
 
-  sidebar: sidebar,
+  sidebar,
 
-  footer: "默认页脚",
+  footer: "Dumas's Lib | 个人学习知识库与技术实践",
 
-  displayFooter: false,
+  displayFooter: true,
 
   pageInfo: ["Author", "Original", "Date", "Category", "Tag", "ReadingTime"],
 
   blog: {
-    description: "后端开发者",
-    intro: "/intro.html",
+    description: "Java / AI 应用开发工程师",
+    intro: "/about.html",
     medias: {
+      GitHub: "https://github.com/dumas-dz",
       Email: "dumas.dz.ma@hotmail.com",
-      Gitee: "https://gitee.com/dumasz",
-      GitHub: "https://github.com/dumasz",
-    },
-  },
-
-  encrypt: {
-    config: {
-      "/guide/encrypt.html": ["123456"],
     },
   },
 

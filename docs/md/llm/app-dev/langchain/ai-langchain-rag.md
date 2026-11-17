@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在学习实操前，我们先搞懂 RAG 的核心逻辑——它本质是“检索”与“生成”的结合体，核心目标是让 LLM 的回答“有依据、不胡编、可追溯”。"
+order: 150
+outline: [2, 3]
 ---
 
-
+# LangChain - RAG 检索增强生成
 ## 10.1 RAG 原理与典型架构
 
 在学习实操前，我们先搞懂 RAG 的核心逻辑——它本质是“检索”与“生成”的结合体，核心目标是让 LLM 的回答“有依据、不胡编、可追溯”。相比纯 LLM 生成，RAG 能灵活接入最新文档、私有数据（如公司内部文档），无需重新训练模型，性价比极高。
@@ -26,19 +29,15 @@ LangChain 封装了 RAG 的核心流程，无需从零搭建，其典型架构�
 
 - 文档加载：加载私有文档（如公司年报、PDF、Markdown），支持多格式；
 
-文档加载：加载私有文档（如公司年报、PDF、Markdown），支持多格式；
 
 - 文本预处理与分块：清洗无效内容、分割长文本（适配嵌入模型和 LLM 输入限制）；
 
-文本预处理与分块：清洗无效内容、分割长文本（适配嵌入模型和 LLM 输入限制）；
 
 - 向量嵌入生成：将每个文本块转为嵌入向量；
 
-向量嵌入生成：将每个文本块转为嵌入向量；
 
 - 向量存储：将嵌入向量和原始文本存入向量数据库（如 Chroma、Pinecone），构建私有文档库。
 
-向量存储：将嵌入向量和原始文本存入向量数据库（如 Chroma、Pinecone），构建私有文档库。
 
 #### 2. 在线推理阶段（用户交互时实时执行）
 
@@ -46,23 +45,18 @@ LangChain 封装了 RAG 的核心流程，无需从零搭建，其典型架构�
 
 - 用户查询：用户输入问题（如“2023年公司营收是多少？”）；
 
-用户查询：用户输入问题（如“2023年公司营收是多少？”）；
 
 - 查询嵌入：将用户查询转为向量嵌入；
 
-查询嵌入：将用户查询转为向量嵌入；
 
 - 语义检索：从向量数据库中检索出与查询最相关的文本块；
 
-语义检索：从向量数据库中检索出与查询最相关的文本块；
 
 - prompt 构造：将“用户查询 + 检索到的相关文本”拼接成 prompt；
 
-prompt 构造：将“用户查询 + 检索到的相关文本”拼接成 prompt；
 
 - LLM 生成：将 prompt 输入 LLM，生成基于检索内容的回答，同时返回回答来源。
 
-LLM 生成：将 prompt 输入 LLM，生成基于检索内容的回答，同时返回回答来源。
 
 #### RAG 架构图例（极简易懂）
 
@@ -87,7 +81,7 @@ LangChain 提供了 RetrievalQAChain 组件，它是 RAG 系统的“一键搭�
 
 #### 1. 安装核心依赖
 
-```
+```bash
 pip install langchain chromadb sentence-transformers openai python-dotenv
 ```
 
@@ -99,7 +93,7 @@ pip install langchain chromadb sentence-transformers openai python-dotenv
 
 ### 10.2.2 一键搭建 RAG 问答系统（代码示例）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -169,27 +163,22 @@ chain_type：检索到的文本与查询的拼接方式，新手优先选stuff�
 
 - stuff：将所有检索到的文本全部拼接进 prompt，适合短文本、检索结果少的场景；
 
-stuff：将所有检索到的文本全部拼接进 prompt，适合短文本、检索结果少的场景；
 
 - map_reduce：先单独处理每个检索文本，再汇总生成回答，适合长文本、多检索结果；
 
-map_reduce：先单独处理每个检索文本，再汇总生成回答，适合长文本、多检索结果；
 
 - refine：逐步优化回答，先基于第一个文本生成初步回答，再结合后续文本优化，精度高但速度慢。
 
-refine：逐步优化回答，先基于第一个文本生成初步回答，再结合后续文本优化，精度高但速度慢。
 
 - retriever：检索器，由向量数据库调用 as_retriever()生成，k=3 表示检索前3个最相似的文本块；
 
-retriever：检索器，由向量数据库调用 as_retriever()生成，k=3 表示检索前3个最相似的文本块；
 
 - return_source_documents：是否返回来源文档，建议设为 True，便于验证回答的准确性、追溯依据。
 
-return_source_documents：是否返回来源文档，建议设为 True，便于验证回答的准确性、追溯依据。
 
 ### 10.2.4 运行结果示例（直观参考）
 
-```
+```text
 回答： 2023年公司云计算板块营收30亿元，同比增长30%。
 
 来源文档：
@@ -200,15 +189,12 @@ return_source_documents：是否返回来源文档，建议设为 True，便于�
 
 - LLM 替换：若不想用 OpenAI，可替换为本地化 LLM（如 Llama 3），只需修改 llm 的初始化代码；
 
-LLM 替换：若不想用 OpenAI，可替换为本地化 LLM（如 Llama 3），只需修改 llm 的初始化代码；
 
 - 文档替换：将示例 texts 替换为你的私有文档（如公司年报、技术文档），即可实现针对私有数据的问答；
 
-文档替换：将示例 texts 替换为你的私有文档（如公司年报、技术文档），即可实现针对私有数据的问答；
 
 - 引用来源：LangChain RetrievalQA 链类型文档。
 
-引用来源：LangChain RetrievalQA 链类型文档。
 
 ## 10.3 自定义检索器（Retriever）逻辑
 
@@ -218,25 +204,21 @@ LLM 替换：若不想用 OpenAI，可替换为本地化 LLM（如 Llama 3），
 
 - 场景1：自定义检索数量（k值）和相似度阈值（过滤低相似度结果）；
 
-场景1：自定义检索数量（k值）和相似度阈值（过滤低相似度结果）；
 
 - 场景2：结合元数据过滤（如只检索2023年的文档、只检索某个板块的内容）；
 
-场景2：结合元数据过滤（如只检索2023年的文档、只检索某个板块的内容）；
 
 - 场景3：自定义检索策略（如先过滤元数据，再进行语义检索）；
 
-场景3：自定义检索策略（如先过滤元数据，再进行语义检索）；
 
 - 场景4：组合多个检索源（如同时从 Chroma 和 Pinecone 中检索）。
 
-场景4：组合多个检索源（如同时从 Chroma 和 Pinecone 中检索）。
 
 ### 10.3.2 自定义检索器（基础版：调整参数）
 
 最常用的自定义方式：调整检索数量、设置相似度阈值，过滤低质量检索结果，避免无效信息干扰 LLM 生成。
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -285,7 +267,7 @@ print("\n来源文档：", result["source_documents"])  # 无相关文档，返�
 
 实际场景中，我们可能需要“只检索某个特定条件的文档”（如只检索云计算板块的内容），此时可在检索器中结合元数据过滤，精准定位所需内容。
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -351,7 +333,7 @@ for doc in result["source_documents"]:
 
 若以上方式仍无法满足需求，可通过 LangChain 的 BaseRetriever 类，完全自定义检索逻辑（如先检索、再过滤、再排序），灵活性拉满。
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -414,15 +396,12 @@ for doc in result["source_documents"]:
 
 - 自定义检索器的核心是“按需调整检索逻辑”，无需过度复杂，能解决实际问题即可；
 
-自定义检索器的核心是“按需调整检索逻辑”，无需过度复杂，能解决实际问题即可；
 
 - 元数据过滤、相似度阈值是最常用的自定义方式，优先掌握；
 
-元数据过滤、相似度阈值是最常用的自定义方式，优先掌握；
 
 - 引用来源：LangChain 自定义检索器官方文档。
 
-引用来源：LangChain 自定义检索器官方文档。
 
 ## 10.4 多路召回与重排序（Re-ranking）
 
@@ -432,11 +411,9 @@ for doc in result["source_documents"]:
 
 - 多路召回：同时使用多种检索方式（如向量语义检索 + 关键词检索），从不同维度获取候选文档，避免单一检索的局限性；
 
-多路召回：同时使用多种检索方式（如向量语义检索 + 关键词检索），从不同维度获取候选文档，避免单一检索的局限性；
 
 - 重排序（Re-ranking）：对多路召回得到的候选文档，使用专门的重排序模型（如 Cross-BERT）进行二次打分，结合语义相似度和关键词匹配度，最终筛选出最相关的文档。
 
-重排序（Re-ranking）：对多路召回得到的候选文档，使用专门的重排序模型（如 Cross-BERT）进行二次打分，结合语义相似度和关键词匹配度，最终筛选出最相关的文档。
 
 简单来说：多路召回“广撒网”，重排序“精筛选”，两者结合能大幅提升检索精度，适合大规模、复杂文档场景。
 
@@ -444,7 +421,7 @@ for doc in result["source_documents"]:
 
 LangChain 支持组合多个检索器，实现多路召回，以下示例结合“向量语义检索”和“关键词检索”，获取更全面的候选文档。
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -500,7 +477,7 @@ for doc in result["source_documents"]:
 
 多路召回得到候选文档后，使用重排序模型（如 CrossEncoder）对候选文档进行二次打分，筛选出最相关的内容，提升检索精度。LangChain 集成了 Sentence-Transformers 的重排序模型，使用简单。
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -559,15 +536,12 @@ for doc in result["source_documents"]:
 
 - 多路召回适合大规模文档场景，小规模文档（如个人知识库）无需使用，避免增加复杂度；
 
-多路召回适合大规模文档场景，小规模文档（如个人知识库）无需使用，避免增加复杂度；
 
 - 重排序模型会增加一定的计算成本，可根据精度需求选择是否使用（轻量模型如 ms-marco-MiniLM-L-6-v2 速度较快）；
 
-重排序模型会增加一定的计算成本，可根据精度需求选择是否使用（轻量模型如 ms-marco-MiniLM-L-6-v2 速度较快）；
 
 - 引用来源：LangChain 多路召回文档、LangChain 重排序文档。
 
-引用来源：LangChain 多路召回文档、LangChain 重排序文档。
 
 ## 10.5 查询扩展与 HyDE 技术
 
@@ -583,7 +557,7 @@ for doc in result["source_documents"]:
 
 #### 代码示例（LangChain 实现查询扩展）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -640,21 +614,18 @@ HyDE 是比查询扩展更高级的优化技术，核心逻辑：
 
 - 根据用户查询，让 LLM 生成一个“假设性的文档”（即假设存在一篇能完美回答该查询的文档）；
 
-根据用户查询，让 LLM 生成一个“假设性的文档”（即假设存在一篇能完美回答该查询的文档）；
 
 - 将这个“假设性文档”生成嵌入向量，用该向量进行检索；
 
-将这个“假设性文档”生成嵌入向量，用该向量进行检索；
 
 - 由于假设性文档包含更丰富的语义信息，检索精度会比直接用用户查询向量更高。
 
-由于假设性文档包含更丰富的语义信息，检索精度会比直接用用户查询向量更高。
 
 示例：用户查询“公司营收”，LLM 生成假设文档“2023年公司总营收100亿元，同比增长20%，其中人工智能板块50亿元，云计算板块30亿元，大数据板块20亿元”，用该文档的向量检索，能更精准匹配到相关文档。
 
 #### 代码示例（LangChain 实现 HyDE）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
@@ -715,15 +686,12 @@ for doc in result["source_documents"]:
 
 - 分块过大：嵌入向量无法精准捕捉文本语义，检索时容易匹配到无关内容；
 
-分块过大：嵌入向量无法精准捕捉文本语义，检索时容易匹配到无关内容；
 
 - 分块过小：上下文信息丢失（如一句话被分割成两段），LLM 生成回答时无法理解完整逻辑；
 
-分块过小：上下文信息丢失（如一句话被分割成两段），LLM 生成回答时无法理解完整逻辑；
 
 - 无规则分块：分割时破坏文本结构（如标题与内容分离），导致检索和生成效果变差。
 
-无规则分块：分割时破坏文本结构（如标题与内容分离），导致检索和生成效果变差。
 
 ### 10.6.2 LangChain 常用分块策略（实战首选）
 
@@ -731,7 +699,7 @@ LangChain 提供了多种分块器，其中 RecursiveCharacterTextSplitter 是�
 
 #### 1. 基础分块（RecursiveCharacterTextSplitter）
 
-```
+```python
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # 模拟长文档（公司年报片段）
@@ -766,7 +734,7 @@ for i, chunk in enumerate(chunks):
 
 对于有明确结构的长文档（如年报、手册，含标题、小标题），可使用 MarkdownTextSplitter 或 HTMLTextSplitter，按文档结构分块，保留标题与内容的关联，提升检索精度。
 
-```
+```python
 from langchain.text_splitter import MarkdownTextSplitter
 
 # 模拟带Markdown结构的长文档（公司年报）
@@ -804,23 +772,18 @@ for i, chunk in enumerate(chunks):
 
 - chunk_size 选择：根据嵌入模型的输入限制调整，一般为 100-300 字符（all-MiniLM-L6-v2 支持更长文本，可设为 300-500）；
 
-chunk_size 选择：根据嵌入模型的输入限制调整，一般为 100-300 字符（all-MiniLM-L6-v2 支持更长文本，可设为 300-500）；
 
 - chunk_overlap 选择：建议为 chunk_size 的 10%-20%（如 chunk_size=200，overlap=20-40），保留上下文关联；
 
-chunk_overlap 选择：建议为 chunk_size 的 10%-20%（如 chunk_size=200，overlap=20-40），保留上下文关联；
 
 - 分割符优先级：优先按段落（\n\n）、句子（。、，）分割，避免破坏文本结构；
 
-分割符优先级：优先按段落（\n\n）、句子（。、，）分割，避免破坏文本结构；
 
 - 长文档预处理：先去除无效内容（如空白、重复段落），再分块，减少无效分块；
 
-长文档预处理：先去除无效内容（如空白、重复段落），再分块，减少无效分块；
 
 - 分块后验证：分块后检查是否有上下文断裂、标题与内容分离的情况，及时调整参数。
 
-分块后验证：分块后检查是否有上下文断裂、标题与内容分离的情况，及时调整参数。
 
 ### 10.6.4 关键提醒
 

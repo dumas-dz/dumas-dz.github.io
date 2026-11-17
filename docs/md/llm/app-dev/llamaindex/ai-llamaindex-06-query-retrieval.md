@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 检索
+description: "本章详解各类 Retriever 机制，包括 Dense Retrieval（向量检索）、Sparse Retrieval（BM25 关键词检索）、Hybrid Search（混合检索），以及元数据过滤器的使用。"
+order: 16
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 查询数据 - 上下文检索
 本章详解各类 Retriever 机制，包括 Dense Retrieval（向量检索）、Sparse Retrieval（BM25 关键词检索）、Hybrid Search（混合检索），以及元数据过滤器的使用。
 
 ## 技术要求
@@ -34,7 +36,7 @@ tag:
 
 和往常一样，LlamaIndex 提供了多种方式来完成一个任务，因此 retriever 可以通过几种方式构建。最简单的方式是直接从 `Index` 对象构建。假设我们已经完成文档摄取，下面的代码会构建一个索引，然后基于该索引结构构建一个 retriever：
 
-```ini
+```python
 import models_config
 from llama_index.core import SummaryIndex, SimpleDirectoryReader
 
@@ -51,7 +53,7 @@ print(result[0].text)
 
 第二种选项是直接实例化，如下面示例所示：
 
-```ini
+```python
 import models_config
 from llama_index.core import SummaryIndex, SimpleDirectoryReader
 from llama_index.core.retrievers import SummaryIndexEmbeddingRetriever
@@ -87,7 +89,7 @@ print(result[0].text)
 
 `VectorStoreIndex` 使用的默认 retriever 是 `VectorIndexRetriever`。它可以很容易地通过以下方式构建：
 
-```ini
+```text
 index = VectorStoreIndex.from_documents(documents)
 retriever = index.as_retriever()
 ```
@@ -130,7 +132,7 @@ retriever = index.as_retriever()
 
 想象一个在线购物搜索系统，购物者输入：`breathable trail shoes under $120 with good ankle support`。`VectorIndexAutoRetriever` 会将其转换为结构化过滤条件，例如：
 
-```makefile
+```yaml
 category: trail running
 features: breathable, ankle support
 price: < $120
@@ -150,7 +152,7 @@ price: < $120
 
 可以通过下面命令构建这个 retriever：
 
-```ini
+```text
 index = SummaryIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode = 'default')
 ```
@@ -163,7 +165,7 @@ retriever = index.as_retriever(retriever_mode = 'default')
 
 我们可以用下面命令构建它：
 
-```ini
+```text
 index = SummaryIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='embedding')
 ```
@@ -182,7 +184,7 @@ embeddings 会在检索需要时动态创建。在检索期间，如果某个节
 
 可以用下面命令构建这个 retriever：
 
-```ini
+```text
 index = SummaryIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='llm')
 ```
@@ -209,7 +211,7 @@ retriever = index.as_retriever(retriever_mode='llm')
 
 我们可以用下面命令构建它：
 
-```ini
+```text
 index = DocumentSummaryIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='llm')
 ```
@@ -234,7 +236,7 @@ retriever 会分批处理查询，每个批次包含指定数量的节点，并�
 
 可以使用下面代码构建这个 retriever：
 
-```ini
+```text
 index = DocumentSummaryIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='embedding')
 ```
@@ -259,7 +261,7 @@ retriever = index.as_retriever(retriever_mode='embedding')
 
 我们可以像这样构建这个 retriever：
 
-```ini
+```text
 index = TreeIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='select_leaf')
 ```
@@ -280,7 +282,7 @@ retriever = index.as_retriever(retriever_mode='select_leaf')
 
 ### `TreeSelectLeafEmbeddingRetriever`
 
-```ini
+```text
 index = TreeIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='select_leaf_embedding')
 ```
@@ -299,7 +301,7 @@ retriever = index.as_retriever(retriever_mode='select_leaf_embedding')
 
 构建这个 retriever 最快的方式如下：
 
-```ini
+```text
 index = TreeIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='all_leaf')
 ```
@@ -314,7 +316,7 @@ retriever = index.as_retriever(retriever_mode='all_leaf')
 
 可以用下面命令构建它：
 
-```ini
+```text
 index = TreeIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='root')
 ```
@@ -341,7 +343,7 @@ retriever = index.as_retriever(retriever_mode='root')
 
 可以使用下面命令构建这种 retriever：
 
-```ini
+```text
 index = KeywordTableIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='default')
 ```
@@ -352,7 +354,7 @@ retriever = index.as_retriever(retriever_mode='default')
 
 这个 retriever 可以这样构建：
 
-```ini
+```text
 index = KeywordTableIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='simple')
 ```
@@ -361,7 +363,7 @@ retriever = index.as_retriever(retriever_mode='simple')
 
 可以使用下面命令定义它：
 
-```ini
+```text
 index = KeywordTableIndex.from_documents(documents)
 retriever = index.as_retriever(retriever_mode='rake')
 ```
@@ -390,7 +392,7 @@ retriever = index.as_retriever(retriever_mode='rake')
 
 要实例化一个 `PGRetriever` 对象，我们采用与前面讨论过的其他 retrievers 相同的方法：
 
-```ini
+```text
 index = PropertyGraphIndex.from_documents(documents)
 retriever = index.as_retriever()
 ```
@@ -547,7 +549,7 @@ LlamaIndex 默认提供快速查询方法。正如我们看到的，只需要几
 
 首先，我们必须处理必要导入，并定义用户与部门之间的映射：
 
-```javascript
+```python
 import models_config
 from llama_index.core.vector_stores.types import MetadataFilter, MetadataFilters
 from llama_index.core import VectorStoreIndex
@@ -558,7 +560,7 @@ user_departments = {"Alice": "Security", "Bob": "IT"}
 
 然后，我们必须定义两个节点，它们都存储 `incident` 这一概念的定义。区别在于元数据，它指定了该定义适用的部门：
 
-```arduino
+```text
 nodes = [
     TextNode(
         text=(
@@ -577,7 +579,7 @@ nodes = [
 
 接下来，我们必须定义负责过滤和检索的函数：
 
-```ini
+```python
 def show_report(index, user, query):
     user_department = user_departments[user]
 
@@ -598,7 +600,7 @@ def show_report(index, user, query):
 
 现在，如果我们在每个用户的上下文中运行同一个查询，就会根据用户所属部门得到不同答案：
 
-```perl
+```text
 index = VectorStoreIndex(nodes)
 query = "What is an incident?"
 
@@ -608,7 +610,7 @@ show_report(index, "Bob", query)
 
 输出如下：
 
-```vbscript
+```text
 Response for Alice: An incident is an accidental or malicious event that has the potential to cause unwanted effects on the security of our IT assets.
 Response for Bob: An incident is an unexpected interruption or degradation of an IT service.
 ```
@@ -639,7 +641,7 @@ Response for Bob: An incident is an unexpected interruption or degradation of an
 
 下面是一个示例，我们使用 filter operators 和 filter aggregation conditions 实现更复杂场景：
 
-```ini
+```python
 from llama_index.core.vector_stores.types import (
     MetadataFilter,
     MetadataFilters,
@@ -681,7 +683,7 @@ filters = MetadataFilters(
 
 下面是一个非常简单的 selector 实现，它使用 LLM 从预定义选项列表中返回单个选项：
 
-```ini
+```python
 import models_config
 from llama_index.core.selectors.llm_selectors import LLMSingleSelector
 
@@ -696,7 +698,7 @@ selector = LLMSingleSelector.from_defaults()
 
 在这部分代码中，我们将选项定义为字符串列表，并通过 `.select()` 方法发送给 LLM。`.select()` 方法接收定义好的选项和用户查询作为参数：
 
-```ini
+```python
 decision = selector.select(
     options,
     query="What's the definition of space?"
@@ -712,7 +714,7 @@ print(decision.reason)
 
 在真实应用中，你会使用 `decision.index` 从对应的 retrievers 或 tools 列表中进行选择，例如：
 
-```ini
+```text
 chosen_retriever = list_of_retrievers[decision.index]
 ```
 
@@ -728,7 +730,7 @@ agentic functionality 的一个核心元素是 tool——一种支持上下文�
 
 LlamaHub 中已经开发并提供了丰富的 tools 集合：[llamahub.ai/?tab=tools。…](https://llamahub.ai/?tab=tools%E3%80%82%E8%BF%99%E4%BA%9B) tools 可以执行各种具体功能，从编写并发送电子邮件，到查询各种 API 或与计算机文件系统交互。
 
-```ini
+```python
 import models_config
 from llama_index.core.selectors import LLMMultiSelector
 from llama_index.core.retrievers import RouterRetriever
@@ -748,7 +750,7 @@ summary_retriever = summary_index.as_retriever()
 
 正如前面的代码片段所示，首先，我们从 GitHub 仓库的 `files` 子文件夹中取出两个示例文件。第一个文件包含关于古罗马的信息，第二个是关于狗的通用文本。然后，我们为每个文件创建一个索引，并从每个索引创建一个 retriever。现在，我们必须定义 tools：
 
-```ini
+```text
 vector_tool = RetrieverTool.from_defaults(
     retriever=vector_retriever,
     name="rome_tool",
@@ -764,7 +766,7 @@ summary_tool = RetrieverTool.from_defaults(
 
 正如你所看到的，我们将每个 retriever 包装进 `RetrieverTool` 中，并添加了清晰描述，供 selector 使用。接下来，我们必须构建 `RouterRetriever`：
 
-```ini
+```python
 retriever = RouterRetriever(
     selector=LLMMultiSelector.from_defaults(),
     retriever_tools=[
@@ -781,7 +783,7 @@ for r in response:
     print(r.text)
 ```
 
-```arduino
+```text
 retriever.retrieve("What can you tell me about the Ancient Rome?")
 ```
 
@@ -789,13 +791,13 @@ retriever.retrieve("What can you tell me about the Ancient Rome?")
 
 现在，看下面这段代码：
 
-```arduino
+```text
 retriever.retrieve("Tell me all you know about dogs")
 ```
 
 这会调用 `summary_tool`。因为我们使用的是 `LLMMultiSelector`，所以也可以处理两个 retriever 都应该被使用的情况，例如：
 
-```arduino
+```text
 retriever.retrieve("Tell me about dogs in Ancient Rome")
 ```
 
@@ -848,7 +850,7 @@ print(query_bundle.query_str)
 
 运行代码后，`DecomposeQueryTransform` 会接收我们原始且相当模糊的查询。然后，它使用一个专门设计的 prompt，通过 LLM 生成一个更精确的查询。在我们的示例中，输出应该类似如下：
 
-```sql
+```text
 What were some famous buildings in ancient Rome?
 ```
 
@@ -862,7 +864,7 @@ LlamaIndex 还提供 `OpenAIQuestionGenerator`，这是专门为 OpenAI 模型�
 
 下面是我们之前在“使用 selectors 实现更高级的决策逻辑”一节中讨论 selectors 和 routers 时用过的代码。这一次，我们会稍微调整它，用来展示 `LLMQuestionGenerator` 如何工作：
 
-```javascript
+```python
 import models_config
 from llama_index.core.question_gen.llm_generators import LLMQuestionGenerator
 from llama_index.core.tools import RetrieverTool, ToolMetadata
@@ -878,7 +880,7 @@ summary_index = SummaryIndex.from_documents([documents[1]])
 
 接下来，对于每个索引，我们在 `ToolMetadata` 结构中定义名称和描述。这些信息会被 `LLMQuestionGenerator` 用来理解每个 retriever 的角色，以及它可能回答什么类型的问题：
 
-```ini
+```text
 vector_tool_metadata = ToolMetadata(
     name="Vector Tool",
     description="Use this for answering questions about Ancient Rome"
@@ -892,7 +894,7 @@ summary_tool_metadata = ToolMetadata(
 
 接下来，我们定义两个 retrievers：
 
-```ini
+```text
 vector_tool = RetrieverTool(
     retriever=vector_index.as_retriever(),
     metadata=vector_tool_metadata
@@ -906,7 +908,7 @@ summary_tool = RetrieverTool(
 
 现在进入子查询生成部分。首先，我们用默认设置初始化一个 `LLMQuestionGenerator` 对象。然后，我们构建一个 `QueryBundle` 对象，用来包含从用户那里收到的原始查询。这个 `QueryBundle` 会作为参数传给 question generator：
 
-```ini
+```text
 question_generator = LLMQuestionGenerator.from_defaults()
 
 query_bundle = QueryBundle(
@@ -930,7 +932,7 @@ for sub_question in sub_questions:
 
 最终，生成的问题可能类似如下：
 
-```yaml
+```text
 Summary Tool: What are the different breeds of dog?
 Summary Tool: What was the role of dogs in ancient Rome?
 Vector Tool: What were the most important events in Ancient Rome?
@@ -1031,13 +1033,13 @@ BM25 是 TF-IDF 方法的一种改进，是用于 sparse retrieval 的更复杂�
 
 要使用这个特定 retriever，你需要通过运行下面命令安装对应 LlamaIndex 集成包：
 
-```perl
+```bash
 pip install llama-index-retrievers-bm25
 ```
 
 这个包底层使用流行的 `rank-bm25` 库。安装完成后，你可以用下面示例代码测试：
 
-```ini
+```python
 import models_config
 from llama_index.retrievers.bm25 import BM25Retriever
 from llama_index.core.node_parser import SentenceSplitter
@@ -1059,7 +1061,7 @@ nodes = splitter.get_nodes_from_documents(
 
 我们使用的是最开始的两个示例文件，其中包含关于古罗马和不同狗品种的数据。在这个示例中，我使用了 `SentenceSplitter`，并配置了相对较小的 chunk size。这是因为示例文件体积较小，我想生成更细粒度、以句子为结构的节点，以便更好地展示 `BM25Retriever` 的工作方式。接下来，让我们实现 retriever：
 
-```ini
+```python
 retriever = BM25Retriever.from_defaults(
     nodes=nodes,
     similarity_top_k=2
@@ -1118,7 +1120,7 @@ dense retrieval 很可能产生更好结果的一个典型使用场景，是设�
 
 一个好的第一步，是查看检索到的 `NodeWithScore` 对象本身。这允许我们回答几个非常简单但非常重要的问题：哪些节点被返回了？顺序是什么？它们是否来自我们预期的文档？它们是否包含我们以为存在的元数据？是否真的分配了 score？很多时候，仅仅打印这些信息，就能立即揭示问题是在检索阶段，还是发生在更下游。
 
-```scss
+```python
 import models_config
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 
@@ -1168,7 +1170,7 @@ hit-rate 衡量正确节点是否出现在 top-k 结果中的任意位置，而 
 
 下面是我在前面某节中用于解释 metadata filtering 的代码示例的简化版本：
 
-```ini
+```python
 import models_config
 from llama_index.core import VectorStoreIndex
 from llama_index.core.schema import TextNode

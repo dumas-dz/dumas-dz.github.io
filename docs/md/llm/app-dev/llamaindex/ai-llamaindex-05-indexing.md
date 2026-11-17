@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 索引
+description: "本章深入 LlamaIndex 的索引机制，重点讲解 VectorStoreIndex（主力索引，约 80% 场景）和 Embeddings 原理，并对比 SummaryIndex、TreeIndex、KeywordIndex 等多种..."
+order: 15
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 使用 LlamaIndex 索引
 本章深入 LlamaIndex 的索引机制，重点讲解 VectorStoreIndex（主力索引，约 80% 场景）和 Embeddings 原理，并对比 SummaryIndex、TreeIndex、KeywordIndex 等多种索引类型及其适用场景。
 
 ## 技术要求
@@ -75,7 +77,7 @@ print("Index created successfully!")
 
 值得一提的是，`use_async` 标志并不局限于索引构建。你也可以在后续将索引转换为 Query Engine 或 retriever 时激活异步处理。只需要向方法调用传入 `use_async=True`，例如：
 
-```ini
+```text
 index.as_query_engine(use_async=True)
 ```
 
@@ -159,7 +161,7 @@ index.as_query_engine(use_async=True)
 
 对于两个向量 A 和 B，欧氏距离计算方式如下：
 
-```scss
+```text
 distance(A, B) = sqrt(Σ(A_i - B_i)^2)
 ```
 
@@ -167,7 +169,7 @@ distance(A, B) = sqrt(Σ(A_i - B_i)^2)
 
 在我们的例子中，向量 A 是 `[2,3]`，向量 B 是 `[4,1]`。它们之间的欧氏距离为：
 
-```scss
+```text
 sqrt((2 - 4)^2 + (3 - 1)^2) = sqrt(4 + 4) = sqrt(8)
 ```
 
@@ -177,13 +179,13 @@ sqrt((2 - 4)^2 + (3 - 1)^2) = sqrt(4 + 4) = sqrt(8)
 
 默认情况下，LlamaIndex 使用 OpenAI 的 `text-embedding-ada-002` 模型。这个模型在语义精度、成本和性能之间取得了很强的平衡。它既用于索引构建期间对文档进行 embedding，也用于检索期间将查询转换为向量。但根据你的目标和约束，这个默认模型并不总是最合适的。有时，当你想索引大量数据时，使用这种托管模型带来的成本可能会超出预算。还有些时候，你可能担心专有数据隐私，更倾向于使用本地模型。或者，在某些情况下，你可能想针对某个特定主题或技术领域使用更专业的模型。运行本地 embeddings 的一个很棒选择是 Hugging Face。
 
-```perl
+```bash
 pip install llama-index-embeddings-huggingface
 ```
 
 下面是一个快速复习，展示如何在 LlamaIndex 中使用自定义 embedding 模型，而不是依赖全局配置的默认模型：
 
-```ini
+```python
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 embedding_model = HuggingFaceEmbedding(
@@ -245,7 +247,7 @@ vector store 是一种专门的存储层，用于保存从文档中生成的高�
 
 首先，我们创建索引，它会负责对文档进行 embedding：
 
-```ini
+```python
 import models_config
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 
@@ -255,7 +257,7 @@ index = VectorStoreIndex.from_documents(documents)
 
 正如你所看到的，我们使用 `SimpleDirectoryReader` 从仓库 `ch5/data` 文件夹中应该可用的示例文件生成文档对象列表。然后，我们从这些文档创建索引。接下来，为了持久化这个索引，我们使用 `persist()` 方法：
 
-```bash
+```python
 index.storage_context.persist(persist_dir="index_cache")
 print("Index persisted to disk.")
 ```
@@ -264,7 +266,7 @@ print("Index persisted to disk.")
 
 ### 持久化一个索引实际保存了什么？
 
-```ini
+```python
 from llama_index.core import StorageContext, load_index_from_storage
 
 storage_context = StorageContext.from_defaults(
@@ -295,14 +297,14 @@ print("Index loaded successfully!")
 
 作为示例，让我们探索如何使用 ChromaDB 定制向量存储。ChromaDB 是一个高效的开源向量引擎。
 
-```arduino
+```bash
 pip install chromadb
 pip install llama-index-vector-stores-chroma
 ```
 
 然后，我们添加必要导入：
 
-```javascript
+```python
 import models_config
 import chromadb
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -313,7 +315,7 @@ from llama_index.core import (
 
 接下来，我们初始化 Chroma client，并在 Chroma 中创建一个 collection 来存储数据：
 
-```ini
+```text
 db = chromadb.PersistentClient(path="chroma_database")
 chroma_collection = db.get_or_create_collection(
     "my_chroma_store"
@@ -324,7 +326,7 @@ chroma_collection = db.get_or_create_collection(
 
 接下来，我们使用 `ChromaVectorStore` 初始化一个定制 vector store，并将其接入 `StorageContext`：
 
-```ini
+```text
 vector_store = ChromaVectorStore(
     chroma_collection=chroma_collection
 )
@@ -334,7 +336,7 @@ storage_context = StorageContext.from_defaults(
 )
 ```
 
-```ini
+```text
 documents = SimpleDirectoryReader("files").load_data()
 
 index = VectorStoreIndex.from_documents(
@@ -345,14 +347,14 @@ index = VectorStoreIndex.from_documents(
 
 现在可以使用 `get()` 方法显示 Chroma collection 的完整内容：
 
-```scss
+```python
 results = chroma_collection.get()
 print(results)
 ```
 
 随后，在未来会话中恢复这个索引也非常简单：
 
-```ini
+```text
 index = VectorStoreIndex.from_vector_store(
     vector_store=vector_store,
     storage_context=storage_context
@@ -411,7 +413,7 @@ Summary index 提供了一种直接但强大的数据索引方式，用于检索
 
 创建 `SummaryIndex` 是一个直接的过程：
 
-```ini
+```python
 import models_config
 from llama_index.core import SummaryIndex, SimpleDirectoryReader
 
@@ -428,7 +430,7 @@ print(response)
 
 如果你已经正确克隆本书 GitHub 仓库结构，并且有一个包含两个文本文件的 `files` 子文件夹，前面代码片段的输出应该如下：
 
-```css
+```text
 I have loaded two documents.
 ```
 
@@ -456,7 +458,7 @@ LlamaIndex 的索引工具库并不止于广受好评的 `VectorStoreIndex`，�
 
 创建 `DocumentSummaryIndex` 涉及一系列步骤，从聚合文档开始，然后进行摘要。下面的代码片段展示了创建这个索引的基础设置：
 
-```ini
+```python
 import models_config
 from llama_index.core import (
     DocumentSummaryIndex, SimpleDirectoryReader
@@ -472,7 +474,7 @@ index = DocumentSummaryIndex.from_documents(
 
 这个过程包括从目录中读取文档、将它们解析成节点、总结文档，然后将对应节点与这些摘要关联起来，以便快速检索。接下来，让我们观察这个过程中生成的摘要：
 
-```scss
+```python
 summary1 = index.get_document_summary(documents[0].doc_id)
 summary2 = index.get_document_summary(documents[1].doc_id)
 
@@ -520,7 +522,7 @@ RAKE 方法特别擅长识别文本主体中重要的短语或关键词。RAKE �
 
 创建 `KeywordTableIndex` 非常直接：
 
-```ini
+```python
 import models_config
 from llama_index.core import KeywordTableIndex, SimpleDirectoryReader
 
@@ -540,7 +542,7 @@ print(response)
 
 和前一个示例一样，如果你已经正确克隆 GitHub 仓库结构，并且有一个包含两个文本文件的 `files` 子文件夹，前面代码片段的输出应该大致类似：
 
-```erlang
+```text
 The Colosseum and the Pantheon were famous buildings in ancient Rome.
 ```
 
@@ -596,7 +598,7 @@ tree index 引入了一种层级化的信息组织与检索方法。不同于简
 
 要实现 `TreeIndex`，你可以参考下面这个简单示例：
 
-```ini
+```python
 import models_config
 from llama_index.core import TreeIndex, SimpleDirectoryReader
 
@@ -681,7 +683,7 @@ property graph 是一种图，其中每个节点和边都可以保存 key-value 
 
 下面是构建和查询 property graph 的一种简单方式：
 
-```ini
+```python
 import models_config
 from llama_index.core import (
     PropertyGraphIndex, SimpleDirectoryReader
@@ -737,13 +739,13 @@ CLIP，也就是 Contrastive Language–Image Pre-training，是 OpenAI 开发�
 
 这个过程与 `VectorStoreIndex` 等其他索引类型非常相似，但有一个重要区别：当你针对 `MultiModalVectorStoreIndex` 运行查询时，需要使用具备视觉能力的 LLM；否则，就无法使用这个索引的完整能力。因此，在运行下一个示例之前，请确保你有额外 7GB 可用磁盘空间，并在 Ollama 中安装这个模型：
 
-```code
+```bash
 ollama pull llava:7b
 ```
 
 安装好 LLaVA 视觉模型之后，你可以在这里查看它的描述：[ollama.com/library/lla…](https://ollama.com/library/llava)。下面是一个构建并查询`MultiModalVectorStoreIndex` 的简单示例：
 
-```ini
+```python
 from llama_index.core.indices import MultiModalVectorStoreIndex
 from llama_index.core import SimpleDirectoryReader
 from llama_index.llms.ollama import Ollama
@@ -816,7 +818,7 @@ LlamaIndex 中的 `ComposableGraph` 表示一种复杂的信息结构化方式�
 
 下面是一个展示 `ComposableGraph` 用法的简单代码示例：
 
-```ini
+```python
 import models_config
 from llama_index.core import (
     ComposableGraph, SimpleDirectoryReader,
@@ -852,7 +854,7 @@ print(response)
 
 下一步，我们构建一个包含两个 tree indexes 及其摘要的 composable graph。对于这个示例，代码输出应该类似如下：
 
-```css
+```text
 I can tell you about the ancient Roman civilization and dogs and their various breeds, traits, and personalities.
 ```
 
@@ -880,7 +882,7 @@ query engine 会基于查询从根索引中检索相关节点。对于每个相�
 
 如果你从目录加载文件，最简单的方法是让 `SimpleDirectoryReader` 自动基于文件名分配稳定 ID，如下面示例所示：
 
-```ini
+```python
 from llama_index.core import SimpleDirectoryReader
 
 reader = SimpleDirectoryReader("files", filename_as_id=True)
@@ -892,7 +894,7 @@ for doc in documents:
 
 这个示例的输出会显示 `files` 子文件夹中两个示例文件的名称：
 
-```code
+```text
 sample_document1.txt
 sample_document2.txt
 ```
@@ -920,7 +922,7 @@ Text: Some content
 
 向现有索引添加新文档也很直接。我们不需要重建整个索引。下面的示例先通过 Ollama 设置我们的 `Gemma3:4B` 模型，然后手动创建一个文档。
 
-```arduino
+```python
 import models_config
 from llama_index.core import Document, VectorStoreIndex
 
@@ -931,7 +933,7 @@ index = VectorStoreIndex.from_documents(
 
 接下来，我们插入新文档，并检查新的索引内容。
 
-```arduino
+```python
 from llama_index.core import Document, VectorStoreIndex
 
 index = VectorStoreIndex.from_documents(
@@ -951,7 +953,7 @@ for node in response.source_nodes:
 
 输出应该类似如下：
 
-```less
+```text
 After insert:
 Original code ALPHA123.
 ```
@@ -962,7 +964,7 @@ Original code ALPHA123.
 
 当现有文档内容发生变化时，你可以更新它，而不必手动删除并重新插入。在这种情况下，文档拥有与已有文档相同的 `id`：
 
-```vbscript
+```python
 index.update_ref_doc(Document(text="Updated code GAMMA777.", id_="doc_2"))
 
 response = index.as_query_engine().query("What's in the documents?")
@@ -974,7 +976,7 @@ for node in response.source_nodes:
 
 这应该会产生下面的输出：
 
-```less
+```text
 After update:
 Updated code GAMMA777.
 ```
@@ -985,7 +987,7 @@ Updated code GAMMA777.
 
 从索引中移除文档和我们目前介绍的其他操作一样简单：
 
-```vbscript
+```python
 index.delete_ref_doc("doc_2" , delete_from_docstore=True)
 
 response = index.as_query_engine().query("What's in the documents?")
@@ -997,7 +999,7 @@ for node in response.source_nodes:
 
 现在输出如下：
 
-```arduino
+```text
 After delete:
 Original code ALPHA123.
 ```
@@ -1012,7 +1014,7 @@ Original code ALPHA123.
 
 首先，我们从来源重新加载文档：
 
-```ini
+```python
 import models_config
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 
@@ -1024,7 +1026,7 @@ index = VectorStoreIndex.from_documents(documents)
 
 接下来，我们刷新索引：
 
-```scss
+```python
 refreshed = index.refresh_ref_docs(documents)
 
 print(refreshed)
@@ -1032,7 +1034,7 @@ print(refreshed)
 
 在这个例子中，因为文件没有变化，输出如下：
 
-```python
+```json
 [False, False]
 ```
 
@@ -1074,7 +1076,7 @@ print(refreshed)
 
 下面是一个基础示例，展示如何使用 `MockLLM` 估算构建 tree index 的 LLM 成本。首先，让我们处理必要导入：
 
-```javascript
+```python
 import tiktoken
 from llama_index.core import (
     TreeIndex, SimpleDirectoryReader, Settings
@@ -1091,7 +1093,7 @@ from llama_index.core.callbacks import (
 
 接下来设置 `MockLLM`：
 
-```ini
+```text
 llm = MockLLM(max_tokens=256)
 
 token_counter = TokenCountingHandler(
@@ -1106,19 +1108,19 @@ Settings.llm=llm
 
 我们刚刚创建了一个 `MockLLM` 实例，并指定最大 token 限制，以作为最坏情况下的最大成本。现在，我们用下面这行代码，用与真实 LLM 模型匹配的 tokenizer 初始化 `TokenCountingHandler`：
 
-```arduino
+```text
 tiktoken.encoding_for_model("gpt-3.5-turbo").encode
 ```
 
 这个 handler 会跟踪 token 使用量。这个结构会模拟一个 LLM，而不会真正调用 `gpt-3.5-turbo` API。接下来，我们摄取数据：
 
-```scss
+```text
 documents = SimpleDirectoryReader(
     "cost_prediction_samples"
 ).load_data()
 ```
 
-```ini
+```python
 index = TreeIndex.from_documents(
     documents=documents,
     num_children=2,
@@ -1136,7 +1138,7 @@ print("Total LLM Token Count:", token_counter.total_llm_token_count)
 
 下面是第二个示例。它与前一个类似，但这一次，我们先估算构建 vector store index 的 embedding 成本，然后估算查询索引的总成本。首先，让我们处理导入：
 
-```javascript
+```python
 import tiktoken
 from llama_index.core import (
     MockEmbedding, VectorStoreIndex,
@@ -1150,7 +1152,7 @@ from llama_index.core.llms.mock import MockLLM
 
 接下来，我们设置 `MockEmbedding` 和 `MockLLM` 对象：
 
-```ini
+```text
 embed_model = MockEmbedding(embed_dim=1536)
 llm = MockLLM(max_tokens=256)
 
@@ -1167,7 +1169,7 @@ Settings.callback_manager=callback_manager
 
 初始化 `MockEmbedding` 和 `MockLLM` 对象之后，我们定义了 `TokenCountingHandler` 和 `CallbackManager`，并将它们包装进自定义 `Settings` 中。现在，是时候加载示例文档，并使用自定义 `Settings` 构建 vector store index 了：
 
-```ini
+```python
 documents = SimpleDirectoryReader(
     "cost_prediction_samples"
 ).load_data()
@@ -1187,7 +1189,7 @@ print("Embedding Token Count:",
 
 为了获得完整视图，我们还可以进一步估算搜索成本：
 
-```scss
+```python
 query_engine = index.as_query_engine(service_context=service_context)
 
 response = query_engine.query("What's the cat's name?")

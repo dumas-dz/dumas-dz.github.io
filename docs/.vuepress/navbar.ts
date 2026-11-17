@@ -1,124 +1,59 @@
 import { navbar } from "vuepress-theme-hope";
 
 export default navbar([
-  "/",
+  { text: "首页", link: "/" },
+  { text: "知识地图", link: "/md/" },
   {
-    text: "Java",
-    prefix: "/md/java/",
+    text: "Web3 开发",
     children: [
-      {
-        text: "Java 面向对象和基础",
-        prefix: "basic/",
-        children: ["java-basic-oop", "java-basic-bok"],
-      }, {
-        text: "Java进阶 - 集合框架",
-        prefix: "collection/",
-        children: ["java-collection-overview"],
-      }, {
-        text: "Java进阶 - 并发框架",
-        prefix: "thread/",
-        children: ["java-thread-x-overview", "java-thread-x-theory-basic", "java-thread-x-thread-basic", "java-thread-x-juc-overview"],
-      }, {
-        text: "Java进阶 - IO框架",
-        prefix: "io/",
-        children: ["java-io-overview"]
-      }, {
-        text: "Java进阶 - JVM相关",
-        prefix: "jvm/",
-        children: ["java-jvm-classloader", "java-jvm-class-enhencer", "java-jvm-jmm-struct", "java-jvm-gc", "java-jvm-debug-tools-ref"]
-      }]
-  }, {
-    text: "数据库",
-    prefix: "/md/db/",
-    children: [{
-      text: "数据库基础和原理",
-      prefix: "sql/",
-      children: ["db-sql-theory", "db-sql-lan"]
-    }, {
-      text: "SQL 数据库",
-      prefix: "sql-mysql/",
-      children: ["db-sql-mysql-overview"]
-    }, {
-      text: "NoSQL 数据库",
-      prefix: "nosql/",
-      children: ["db-nosql-redis-overview", "db-nosql-mongodb-overview", "db-nosql-elasticsearch-overview"]
-    }],
+      { text: "Web3 知识地图", link: "/md/web3/" },
+      { text: "Solidity 基础", link: "/md/web3/03-solidity-basics.html" },
+      { text: "智能合约安全", link: "/md/web3/04-smart-contract-security.html" },
+      { text: "DApp 架构", link: "/md/web3/09-dapp-architecture.html" },
+    ],
   },
   {
-    text: "Spring",
-    prefix: "/md/spring/",
-    children: [{
-      text: "Spring Framework",
-      prefix: "spring-framework/",
-      children: ["spring-framework-overview", "spring-framework-introduce", "spring-framework-ioc", "spring-framework-aop", "spring-framework-mvc"]
-    }, {
-      text: "SpringCloud",
-      prefix: "spring-cloud/",
-      children: ["spring-cloud-overview", "spring-cloud-netflix-overview", "spring-cloud-alibaba-overview", "spring-cloud-tencent-overview"]
-    }, {
-      text: "SpringBoot 系列",
-      prefix: "spring-boot/",
-      children: ["spring-boot-overview", "spring-boot-guide", "spring-boot-interface-resp", "spring-boot-mysql"]
-    }]
-  }, {
-    text: "框架｜中间件",
-    prefix: "/md/framework/",
-    children: [{
-      text: "ORM 框架",
-      prefix: "orm/",
-      children: ["framework-orm-mybatis-overview"]
-    }, {
-      text: "MQ 消息队列",
-      prefix: "mq/",
-      children: ["framework-mq-rocketmq-overview", "framework-mq-rabbitmq-overview", "framework-mq-kafka-overview"]
-    }, {
-      text: "RPC 中间件",
-      prefix: "rpc/",
-      children: ["framework-rpc-dubbo-overview", "framework-rpc-grpc-overview"]
-    }, {
-      text: "Netty",
-      prefix: "netty/",
-      children: ["framework-netty-overview"]
-    }, {
-      text: "分库分表框架",
-      prefix: "ds-sharding/",
-      children: ["framework-ds-sharding-sphere-overview"]
-    }]
+    text: "AI 应用开发",
+    children: [
+      { text: "AI 应用知识地图", link: "/md/llm/" },
+      { text: "AI 基础", link: "/md/llm/foundations/" },
+      { text: "Agent 架构", link: "/md/llm/agent/" },
+      { text: "RAG 知识库", link: "/md/llm/rag/" },
+      { text: "Workflow 与 LangGraph", link: "/md/llm/workflow/" },
+      { text: "MCP 与工具协议", link: "/md/llm/mcp/" },
+    ],
   },
   {
-    text:"架构",
-    prefix:"/md/arch/",
-    children:[{
-      text: "架构基础和技术点",
-      prefix: "basis/",
-      children: ["arch-basis-overview"]
-    },{
-      text: "分布式系统",
-      prefix: "distributed/",
-      children: ["arch-distributed-overview"]
-    },{
-      text: "微服务系统",
-      prefix: "microservice/",
-      children: ["arch-microservice-overview"]
-    }]
+    text: "AI 工程与交付",
+    children: [
+      { text: "工程化", link: "/md/llm/engineering/" },
+      { text: "评测与可观测性", link: "/md/llm/evaluation/" },
+      { text: "安全与治理", link: "/md/llm/security/" },
+      { text: "部署与优化", link: "/md/llm/deploy/" },
+      { text: "LangChain", link: "/md/llm/app-dev/langchain/" },
+      { text: "LlamaIndex", link: "/md/llm/app-dev/llamaindex/" },
+      { text: "模型训练", link: "/md/llm/model-training/" },
+    ],
   },
   {
-    text: "LLM",
-    prefix: "/md/llm/",
-    children: [{
-      text: "应用开发 - LangChain",
-      link: "app-dev/langchain/ai-langchain-overview",
-    }, {
-      text: "应用开发 - LlamaIndex",
-      link: "app-dev/llamaindex/ai-llamaindex-01-llm",
-    }, {
-      text: "模型训练 - 全流程实战",
-      link: "model-training/ai-llm-training-why",
-    }]
+    text: "Java 技术栈",
+    children: [
+      { text: "Java", link: "/md/java/" },
+      { text: "Spring", link: "/md/spring/" },
+      { text: "数据库", link: "/md/db/" },
+      { text: "框架与中间件", link: "/md/framework/" },
+      { text: "架构与分布式", link: "/md/arch/" },
+      { text: "工程方法论", link: "/md/dev-spec/" },
+    ],
   },
   {
-    text: "主题文档",
-    icon: "note",
-    link: "https://vuepress-theme-hope.github.io/v2/zh/",
-  }
+    text: "项目与关于",
+    children: [
+      { text: "项目案例", link: "/portfolio/" },
+      { text: "个人介绍", link: "/about.html" },
+      { text: "学习路线", link: "/guide/learning-path.html" },
+      { text: "内容规范", link: "/guide/content-standard.html" },
+    ],
+  },
+  { text: "GitHub", link: "https://github.com/dumas-dz" },
 ]);

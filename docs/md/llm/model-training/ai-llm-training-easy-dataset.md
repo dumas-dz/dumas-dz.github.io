@@ -5,8 +5,12 @@ category:
   - LLM Training
 tag:
   - 大模型训练
+description: "EasyDataset 是一款专为大模型微调设计的数据集构建工具，旨在解决高质量领域数据集准备过程中的诸多痛点。"
+order: 40
+outline: [2, 3]
 ---
 
+# 大模型训练 - EasyDataset 文档处理
 ## 一、EasyDataset安装和使用
 
 ### 1.1 EasyDataset核心特性概览

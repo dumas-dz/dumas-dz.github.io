@@ -5,8 +5,12 @@ category:
   - LLM Training
 tag:
   - 大模型训练
+description: "2026年1月27日，距离初代DeepSeek-OCR模型发布仅过去不到三个月，DeepSeek团队便推出了第二代模型——DeepSeek-OCR-2。"
+order: 90
+outline: [2, 3]
 ---
 
+# 大模型训练 - OCR 工具实战
 ## 一、DeepSeek-OCR-2 核心特性
 
 2026年1月27日，距离初代DeepSeek-OCR模型发布仅过去不到三个月，DeepSeek团队便推出了第二代模型——**DeepSeek-OCR-2**。这一次迭代，不再是常规的性能提升，而是**打破了OCR模型的能力天花板**。

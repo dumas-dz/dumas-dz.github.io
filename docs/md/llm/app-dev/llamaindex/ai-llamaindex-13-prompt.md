@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - Prompt
+description: "本章讲解提示工程在 RAG 中的应用：RichPromptTemplate 模板、Zero-shot/Few-shot/CoT/ToT/Prompt Chaining 等策略，以及成本优化技术。"
+order: 23
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 提示工程指南与最佳实践
 本章讲解提示工程在 RAG 中的应用：RichPromptTemplate 模板、Zero-shot/Few-shot/CoT/ToT/Prompt Chaining 等策略，以及成本优化技术。
 
 ### 技术要求
@@ -66,7 +68,7 @@ tag:
 
 `TitleExtractor` prompts 的默认值存储在两个常量中：
 
-```ini
+```yaml
 DEFAULT_TITLE_NODE_TEMPLATE = """\
 Context: {context_str}. Give a title that summarizes all of \ the unique entities, titles or themes found in the context. Title: """
 DEFAULT_TITLE_COMBINE_TEMPLATE = """\
@@ -83,7 +85,7 @@ metadata extractors（例如 `TitleExtractor`）使用的 prompt templates 直�
 
 为了展示差异，下面用两种风格表达同一个 `text_qa_template`。首先，这是使用 `PromptTemplate` 的经典方法，也就是 f-string 语法：
 
-```swift
+```python
 from llama_index.core import PromptTemplate
 classic_template = PromptTemplate(
     "Context information is below.\n"
@@ -99,7 +101,7 @@ classic_template = PromptTemplate(
 
 现在是使用 `RichPromptTemplate` 的现代方法，也就是 Jinja 语法：
 
-```swift
+```python
 from llama_index.core.prompts import RichPromptTemplate
 rich_template = RichPromptTemplate(
     "Context information is below.\n"
@@ -115,7 +117,7 @@ rich_template = RichPromptTemplate(
 
 对于这种简单模板，两种方法几乎相同。主要可见差异是 `{ }` 与 `{{ }}`。不过，`RichPromptTemplate` 的真正威力会在更高级场景中显现，例如直接在模板中定义 chat roles，或遍历一组检索到的 nodes：
 
-```python
+```text
 chat_qa_template = RichPromptTemplate(
     """
     {% chat role="system" %}
@@ -141,20 +143,20 @@ chat_qa_template = RichPromptTemplate(
 
 由于使用 LlamaIndex 构建的 RAG 工作流可能包含许多依赖 LLM 交互的不同组件，而且并非所有 prompt templates 都能在代码库中轻松定位，因此框架提供了一种简单方法，用于识别某个具体组件使用的模板。这个方法叫作 `get_prompts()`，可以用于 agents、retrievers、query engines、response synthesizers，以及许多其他 RAG 组件。当你调试意外行为时，这尤其有用。如果模型响应感觉不对劲，检查底层 prompt template 往往是理解原因的最快方式。下面是一个简单示例，展示我们如何使用它获取一个构建在 `SummaryIndex` 之上的 query engine 所使用的 prompt templates 列表：
 
-```ini
+```python
 from llama_index.core import SummaryIndex, SimpleDirectoryReader
 documents = SimpleDirectoryReader("files").load_data()
 summary_index = SummaryIndex.from_documents(documents)
 qe = summary_index.as_query_engine()
 ```
 
-```ini
+```text
 prompts = qe.get_prompts()
 ```
 
 `get_prompts()` 方法返回的字典，会把用于识别 query engine 中不同 prompt 类型的 keys，映射到实际 prompt templates。代码最后一部分负责遍历并显示 keys 及其对应 templates：
 
-```css
+```python
 for k, p in prompts.items():
     print(f"Prompt Key: {k}")
     print("Text:")
@@ -178,7 +180,7 @@ for k, p in prompts.items():
 
 在 LlamaIndex 中，每个暴露 `get_prompts()` 方法的 RAG 组件，也都提供了一个用于修改这些 prompt templates 的对应方法：`update_prompts()` 方法。因此，这是修改某个特定 prompt template 最简单的方法。让我们继续使用上一节的例子，并尝试一个不同的 prompt。这一次，我们将调整 `text_qa_template` 模板，让它在回答 query 时也依赖 LLM 自身知识。默认的 `text_qa_template` 模板通常如下：
 
-```markdown
+```text
 Context information is below.
 ---------------------
 {context_str}
@@ -190,7 +192,7 @@ Answer:
 
 在下面的示例中，我们会对这个模板做一个非常微妙的改动，并看看它将如何影响 query engine 的行为。让我们看看代码：
 
-```ini
+```python
 from llama_index.core import SummaryIndex, SimpleDirectoryReader
 from llama_index.core import PromptTemplate
 documents = SimpleDirectoryReader("files").load_data()
@@ -200,14 +202,14 @@ qe = summary_index.as_query_engine()
 
 到目前为止，代码与前一个示例相同，只多了一个额外 import，几分钟后我会解释它。不过这一次，我们会先使用默认模板运行一次 query。稍后我们会把这个响应作为参考：
 
-```bash
+```python
 print(qe.query("Who burned Rome?"))
 print("------------------------")
 ```
 
 现在该修改 `text_qa_template` 模板了。我们首先定义一个包含新版本的字符串：
 
-```makefile
+```text
 new_qa_template = (
 "Context information is below."
 "---------------------"
@@ -222,18 +224,18 @@ new_qa_template = (
 
 如果你仔细比较新版本和原始模板，会注意到一个微妙但非常重要的变化。在这个新版本中，我指示模型不仅要应用检索上下文中提供的知识，还要使用它自己关于该主题的知识。现在是时候使用我们在代码开头添加的那个新 import 了。因为 `update_prompts()` 方法要求 prompts 采用 `BasePromptTemplate` 格式，所以必须先确保我们的新 prompt 按如下方式结构化：
 
-```ini
+```text
 template = PromptTemplate(new_qa_template)
 ```
 
-```arduino
+```python
 qe.update_prompts(
     {"response_synthesizer: text_qa_template": template}
 )
 print(qe.query("Who burned Rome?"))
 ```
 
-```ini
+```python
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.extractors import TitleExtractor
@@ -245,7 +247,7 @@ nodes = parser.get_nodes_from_documents(documents)
 
 示例第一部分负责把示例文件摄入为 documents，然后把它们切分成单独 nodes。我们先使用上一节看到的默认 prompt templates 来抽取标题：
 
-```ini
+```python
 title_extractor = TitleExtractor(summaries=["self"])
 meta = title_extractor.extract(nodes)
 print("\nFirst title: " +meta[0]['document_title'])
@@ -254,12 +256,12 @@ print("Second title: " +meta[1]['document_title'])
 
 到目前为止，输出应该类似这样：
 
-```sql
+```text
 First title: "The Enduring Influence of Ancient Rome: Architecture, Engineering, Conquest, and Legacy"
 Second title: "The Enduring Bond: Dogs as Loyal Companions - Exploring the Unbreakable Connection Between Humans and Man's Best Friend"
 ```
 
-```ini
+```python
 combine_template = (
     "{context_str}. Based on the above candidate titles "
     "and content, what is the comprehensive title for "
@@ -276,7 +278,7 @@ print("Second title: "+meta[1]['document_title']
 
 因为我们在这个自定义 prompt 中添加了一条额外指令，extractor 现在应该生成更短标题。第二次运行的输出应该大致如下：
 
-```sql
+```text
 First title: "Roman Legacy: Architecture, Engineering, Conquest"
 Second title: "Man's Best Friend: The Enduring Bond"
 ```
@@ -419,7 +421,7 @@ decoder-only 模型可以从给定 prompt 解码或生成后续词语或 tokens�
 
 使用 few-shot prompting 时，请记住，示例格式和输入文本分布都是可能影响表现的重要因素。虽然 few-shot prompting 方法会提高较简单任务得到正确答案的概率，但面对更复杂推理场景时，它仍然可能吃力。下面是使用该技术的一个实际 prompt 示例：
 
-```csharp
+```yaml
 Classify the following reviews as positive or negative sentiment:
 <The food was delicious and the service was excellent!> // Positive
 <I waited over an hour and my meal arrived cold.> // Negative
@@ -433,7 +435,7 @@ Output:
 
 这个方法最早由 Wei 等人在 2022 年论文《Chain-of-Thought Prompting Elicits Reasoning in Large Language Models》（[doi.org/10.48550/ar…](https://doi.org/10.48550/arXiv.2201.11903)）中提出，对需要推理或多步骤流程的 LLM 任务产生了令人印象深刻的结果。我们可以使用 CoT prompting 鼓励模型拆解问题，并展示其思考过程。可以在 prompts 中包含示例，在 prompt 中演示逐步推理过程。下面是一个实际 prompt 示例：
 
-```vbnet
+```text
 There are 15 students in a class. 8 students have dogs as pets.
 If 3 more students get a dog, how many of them would have a dog as a pet then?
 Step 1) Initially there are 15 students and 8 have dogs
@@ -459,7 +461,7 @@ Long 2023 年，《Large Language Model Guided Tree-of-Thought》（[doi.org/10.
 
 下面是一个示例 prompt：
 
-```vbnet
+```text
 Let's simulate a verbal conversation between three experts who tackle a complex puzzle.
 Each expert outlines one step in their thought process before exchanging insights with the others, without adding any unnecessary remarks. As they progress, any expert who identifies a flaw in their reasoning exits the discussion. The process continues until a solution is found or all available options have been exhausted. The problem they need to solve is:
 "Using only numbers 3, 3, 7, 7 and basic arithmetic operations, is it possible to obtain the value 25?"

@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在LangChain中，提示模板（Prompt Template）是一个包含“固定文本”和“动态变量”的结构化模板，用于生成可复用、标准化的提示文本，传递给大模型进行生成。"
+order: 140
+outline: [2, 3]
 ---
 
-
+# LangChain - Prompt 模板
 ## 4.1 什么是提示模板？为何要模板化？
 
 在LangChain中，**提示模板（Prompt Template）**是一个包含“固定文本”和“动态变量”的结构化模板，用于生成可复用、标准化的提示文本，传递给大模型进行生成。简单来说，就是将“重复的提示结构”抽离出来，把需要动态替换的内容（如用户问题、产品名称、场景参数）设为变量，后续只需传入变量，即可快速生成完整提示。
@@ -18,33 +21,26 @@ tag:
 
 - 重复劳动：每次调用模型都要编写完整提示（如客服话术的固定开场白、问答的格式要求），效率低下；
 
-重复劳动：每次调用模型都要编写完整提示（如客服话术的固定开场白、问答的格式要求），效率低下；
 
 - 格式不统一：不同开发者编写的提示格式不一致，导致模型输出杂乱，难以维护；
 
-格式不统一：不同开发者编写的提示格式不一致，导致模型输出杂乱，难以维护；
 
 - 变量管理混乱：当提示中包含多个动态内容（如用户ID、订单号、问题类型）时，手动拼接容易出错，且不易调试。
 
-变量管理混乱：当提示中包含多个动态内容（如用户ID、订单号、问题类型）时，手动拼接容易出错，且不易调试。
 
 ### 4.1.2 提示模板的核心价值
 
 - 可复用：一次定义模板，多次调用，只需传入不同变量，无需重复编写固定内容；
 
-可复用：一次定义模板，多次调用，只需传入不同变量，无需重复编写固定内容；
 
 - 标准化：统一提示格式，确保模型输出符合预期，降低调试成本；
 
-标准化：统一提示格式，确保模型输出符合预期，降低调试成本；
 
 - 可维护：模板集中管理，修改固定内容时，所有调用处同步生效，无需逐个修改；
 
-可维护：模板集中管理，修改固定内容时，所有调用处同步生效，无需逐个修改；
 
 - 易扩展：支持动态变量、条件判断、少样本示例等，适配复杂场景。
 
-易扩展：支持动态变量、条件判断、少样本示例等，适配复杂场景。
 
 ### 4.1.3 直观对比：模板化 vs 非模板化
 
@@ -60,7 +56,7 @@ LangChain提供3种创建PromptTemplate的方式，按需选择，最常用的�
 
 #### 1. 基础方式：from_template()（推荐）
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 
 # 1. 定义模板（{变量名} 表示动态变量）
@@ -83,7 +79,7 @@ print("生成的提示：", prompt)
 
 当模板变量较多时，可显式指定变量列表，避免遗漏或错误：
 
-```
+```python
 
 # 显式指定variables参数，明确模板中的变量
 prompt_template = PromptTemplate(
@@ -103,7 +99,7 @@ print(prompt)
 
 当模板内容较长（如复杂的客服话术、少样本示例），可将模板写入文件（如txt），再通过from_file()加载，便于维护：
 
-```
+```text
 
 # 1. 新建prompt_template.txt文件，写入模板内容：
 # 你是一名技术面试官，针对{position}岗位，提出1个{difficulty}难度的面试题，要求包含考察点。
@@ -120,21 +116,18 @@ prompt = prompt_template.format(position="Python开发", difficulty="中等")
 
 - 模板中的变量必须用{变量名}包裹，且格式要统一（不能混合使用{{变量名}}）；
 
-模板中的变量必须用{变量名}包裹，且格式要统一（不能混合使用{{变量名}}）；
 
 - format()方法必须传入所有模板变量，否则会报错（可通过partial_format()方法部分注入变量，后续补充）；
 
-format()方法必须传入所有模板变量，否则会报错（可通过partial_format()方法部分注入变量，后续补充）；
 
 - PromptTemplate生成的是纯文本，可直接传递给LLM的invoke()方法，或作为ChatModel消息的content。
 
-PromptTemplate生成的是纯文本，可直接传递给LLM的invoke()方法，或作为ChatModel消息的content。
 
 ### 4.2.3 实战小技巧：partial_format() 部分变量注入
 
 当模板中有多个变量，且部分变量固定（如“角色设定”）、部分变量动态（如“用户问题”）时，可使用partial_format()先注入固定变量，生成新的模板，后续只需注入动态变量：
 
-```
+```python
 
 # 模板：包含固定变量（role）和动态变量（question）
 template = "你是{role}，请回答用户问题：{question}，要求简洁易懂。"
@@ -160,7 +153,7 @@ print("prompt2：", prompt2)
 
 ChatPromptTemplate由多个ChatMessageTemplate组成，每个ChatMessageTemplate对应一种消息类型（System、Human、AI），示例如下：
 
-```
+```python
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
@@ -204,7 +197,7 @@ print("模型响应：", response.content)
 
 对于简单的多轮对话模板，可使用ChatPromptTemplate.from_template()快速创建，无需单独定义每个ChatMessageTemplate：
 
-```
+```python
 from langchain_core.prompts import ChatPromptTemplate
 
 # 简化写法：用列表定义消息类型和模板，格式：["消息类型: 模板内容"]
@@ -227,7 +220,7 @@ print(chat_model.invoke(messages).content)
 
 ChatPromptTemplate支持包含AI消息模板，用于构建复杂的多轮对话场景（如历史对话复用）：
 
-```
+```python
 
 # 多轮对话模板：系统消息→用户消息→AI消息→新用户消息
     "system: 你是数学老师，回答问题时步骤清晰。",
@@ -258,7 +251,7 @@ for msg in messages:
 
 当变量是列表（如多个产品、多个问题）时，模板可自动将列表格式化为自然语言，无需手动循环拼接：
 
-```
+```text
 
 # 模板：包含列表变量{products}
 template = "请为以下产品各写一句宣传语：{products}，要求每句不超过10字。"
@@ -274,7 +267,7 @@ template = "请为以下产品各写一句宣传语：{products}，要求每句�
 
 通过if-else语法，根据变量值动态调整提示内容，适配不同场景：
 
-```
+```python
 
 # 模板：条件格式化（根据{difficulty}调整提示）
 template = """
@@ -300,7 +293,7 @@ print("困难难度：", prompt2)
 
 当变量中包含特殊字符（如{、}、引号）时，模板会自动转义，避免格式化报错，而f-string需要手动处理：
 
-```
+```text
 
 # 变量中包含特殊字符{ }
 template = "用户输入的内容是：{user_input}，请解析其中的关键信息。"
@@ -326,7 +319,7 @@ LangChain的提示模板支持直接嵌入少样本示例，无需额外编写�
 
 将少样本示例直接写入模板，作为固定内容，动态变量仅注入用户输入，适合示例数量少（1~3个）的场景：
 
-```
+```python
 
 # 少样本模板：包含2个示例，动态变量{user_input}
 请将用户输入的文本分类为「正面」「负面」「中性」，示例如下：
@@ -348,7 +341,7 @@ print("分类结果：", chat_model.invoke([{"role": "user", "content": prompt}]
 
 当示例数量较多（3个以上）时，可使用FewShotPromptTemplate，将“示例列表”和“模板”分离，便于示例的管理和复用：
 
-```
+```python
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
 
 # 1. 定义示例列表（可单独维护，便于修改）
@@ -382,19 +375,15 @@ print("少样本提示：", prompt)
 
 - 示例要典型：选择覆盖不同场景、不同结果的示例，让模型全面理解任务；
 
-示例要典型：选择覆盖不同场景、不同结果的示例，让模型全面理解任务；
 
 - 示例数量适中：1~5个即可，过多会增加提示长度（消耗tokens），过少则模型无法理解规则；
 
-示例数量适中：1~5个即可，过多会增加提示长度（消耗tokens），过少则模型无法理解规则；
 
 - 格式统一：所有示例的输入、输出格式保持一致，避免模型混淆；
 
-格式统一：所有示例的输入、输出格式保持一致，避免模型混淆；
 
 - 结合系统提示：在模板前缀中加入系统提示，明确任务要求，提升模型表现。
 
-结合系统提示：在模板前缀中加入系统提示，明确任务要求，提升模型表现。
 
 ## 4.6 示例选择器（ExampleSelector）自动匹配上下文
 
@@ -406,7 +395,7 @@ LangChain的ExampleSelector（示例选择器）可解决这一问题——根�
 
 最常用的示例选择器是SemanticSimilarityExampleSelector（语义相似度示例选择器），核心逻辑：将用户输入和示例进行语义嵌入（Embedding），计算相似度，选择相似度最高的N个示例，适合大多数场景。
 
-```
+```python
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -447,11 +436,9 @@ print(prompt2)
 
 - 用户输入“手机续航很差”，自动选择“手机续航超给力”“手机发热严重”两个相关示例；
 
-用户输入“手机续航很差”，自动选择“手机续航超给力”“手机发热严重”两个相关示例；
 
 - 用户输入“拍照很模糊”，自动选择“拍照效果不错”“系统有点卡顿”两个相关示例。
 
-用户输入“拍照很模糊”，自动选择“拍照效果不错”“系统有点卡顿”两个相关示例。
 
 ### 4.6.2 其他常用示例选择器
 
@@ -459,15 +446,12 @@ print(prompt2)
 
 - LengthBasedExampleSelector：根据提示长度选择示例，避免提示过长（适合tokens有限的场景）；
 
-LengthBasedExampleSelector：根据提示长度选择示例，避免提示过长（适合tokens有限的场景）；
 
 - RandomExampleSelector：随机选择示例（适合示例数量多、场景均匀的场景）；
 
-RandomExampleSelector：随机选择示例（适合示例数量多、场景均匀的场景）；
 
 - NGramOverlapExampleSelector：根据文本重叠度选择示例（适合短文本场景）。
 
-NGramOverlapExampleSelector：根据文本重叠度选择示例（适合短文本场景）。
 
 ### 4.6.3 实战建议
 
@@ -483,7 +467,7 @@ LangChain支持多种序列化格式（JSON、YAML），操作简单，可直接
 
 LangChain的提示模板（PromptTemplate、ChatPromptTemplate、FewShotPromptTemplate）均支持save()方法，可将模板保存为JSON或YAML文件，示例如下：
 
-```
+```python
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
 # 1. 序列化PromptTemplate（保存为JSON）
@@ -505,7 +489,7 @@ chat_prompt_template.save("chat_prompt_template.yaml")
 
 通过load_prompt()方法，可从JSON/YAML文件中加载模板，无需重新定义，示例如下：
 
-```
+```python
 from langchain_core.prompts import load_prompt
 
 # 1. 加载JSON格式的PromptTemplate
@@ -528,19 +512,15 @@ print("\n加载的ChatPromptTemplate：")
 
 - 将序列化后的模板文件（JSON/YAML）纳入Git管理；
 
-将序列化后的模板文件（JSON/YAML）纳入Git管理；
 
 - 每次修改模板后，提交代码时添加清晰的备注（如“优化客服话术模板，增加示例”）；
 
-每次修改模板后，提交代码时添加清晰的备注（如“优化客服话术模板，增加示例”）；
 
 - 如需回滚到历史版本，直接从Git中拉取对应版本的模板文件，重新加载即可；
 
-如需回滚到历史版本，直接从Git中拉取对应版本的模板文件，重新加载即可；
 
 - 团队协作时，统一模板文件路径，避免重复创建，确保所有人使用相同版本的模板。
 
-团队协作时，统一模板文件路径，避免重复创建，确保所有人使用相同版本的模板。
 
 ## 4.8 【实战】构建可复用的客服话术模板库
 
@@ -550,23 +530,18 @@ print("\n加载的ChatPromptTemplate：")
 
 - 构建3个核心客服场景的话术模板：订单查询、售后投诉、产品咨询；
 
-构建3个核心客服场景的话术模板：订单查询、售后投诉、产品咨询；
 
 - 每个模板支持动态变量注入（如订单号、用户名、产品名称、问题描述）；
 
-每个模板支持动态变量注入（如订单号、用户名、产品名称、问题描述）；
 
 - 订单查询、售后投诉模板加入少样本提示，确保话术格式统一；
 
-订单查询、售后投诉模板加入少样本提示，确保话术格式统一；
 
 - 将所有模板序列化保存，支持加载复用；
 
-将所有模板序列化保存，支持加载复用；
 
 - 提供统一的模板调用接口，根据场景切换模板。
 
-提供统一的模板调用接口，根据场景切换模板。
 
 ### 4.8.2 实战准备
 
@@ -582,7 +557,7 @@ OPENAI_API_KEY=你的OpenAI API密钥
 
 ### 4.8.3 完整实战代码
 
-```
+```python
 实战：构建可复用的客服话术模板库
 代码来源：LangChain官方示例改编（https://python.langchain.com/docs/langchain-core/prompts）
 功能：支持订单查询、售后投诉、产品咨询3个场景，模板序列化、少样本提示、动态变量注入
@@ -715,37 +690,29 @@ if __name__ == "__main__":
 
 - 模板库封装：通过CustomerServicePromptLibrary类，统一管理所有客服模板，提供get_prompt()方法，根据场景快速获取话术；
 
-模板库封装：通过CustomerServicePromptLibrary类，统一管理所有客服模板，提供get_prompt()方法，根据场景快速获取话术；
 
 - 序列化与加载：首次运行时创建模板并保存到templates目录，后续运行直接加载，避免重复定义；
 
-序列化与加载：首次运行时创建模板并保存到templates目录，后续运行直接加载，避免重复定义；
 
 - 少样本与示例选择器：订单查询模板使用固定少样本，售后投诉模板使用语义相似度示例选择器，根据投诉内容自动匹配相关示例；
 
-少样本与示例选择器：订单查询模板使用固定少样本，售后投诉模板使用语义相似度示例选择器，根据投诉内容自动匹配相关示例；
 
 - 动态变量注入：支持传入不同场景所需的变量（如订单号、投诉内容、产品名称），灵活生成话术。
 
-动态变量注入：支持传入不同场景所需的变量（如订单号、投诉内容、产品名称），灵活生成话术。
 
 #### 2. 扩展方向
 
 - 新增场景：如“会员咨询”“物流查询”，只需在_load_or_create_templates()中添加对应模板；
 
-新增场景：如“会员咨询”“物流查询”，只需在_load_or_create_templates()中添加对应模板；
 
 - 优化示例：根据实际客服话术，补充更多示例，提升话术质量；
 
-优化示例：根据实际客服话术，补充更多示例，提升话术质量；
 
 - 对接ChatModel：将生成的话术提示传递给ChatModel，自动生成最终的客服回复；
 
-对接ChatModel：将生成的话术提示传递给ChatModel，自动生成最终的客服回复；
 
 - 模板版本管理：结合Git，对templates目录下的模板文件进行版本控制，便于迭代优化。
 
-模板版本管理：结合Git，对templates目录下的模板文件进行版本控制，便于迭代优化。
 
 ## 本章小结
 
@@ -755,26 +722,20 @@ if __name__ == "__main__":
 
 - PromptTemplate适用于静态纯文本提示，ChatPromptTemplate适用于多轮对话消息列表，按需选择；
 
-PromptTemplate适用于静态纯文本提示，ChatPromptTemplate适用于多轮对话消息列表，按需选择；
 
 - 模板格式化是f-string的完美替代方案，支持变量校验、条件格式化、特殊字符转义，更安全、更易维护；
 
-模板格式化是f-string的完美替代方案，支持变量校验、条件格式化、特殊字符转义，更安全、更易维护；
 
 - 少样本提示通过加入示例，让模型快速理解任务要求，FewShotPromptTemplate适合多示例场景；
 
-少样本提示通过加入示例，让模型快速理解任务要求，FewShotPromptTemplate适合多示例场景；
 
 - ExampleSelector可根据用户输入自动匹配相关示例，提升少样本提示的精准度；
 
-ExampleSelector可根据用户输入自动匹配相关示例，提升少样本提示的精准度；
 
 - 模板序列化（JSON/YAML）便于团队协作和版本管理，是项目开发的必备技巧；
 
-模板序列化（JSON/YAML）便于团队协作和版本管理，是项目开发的必备技巧；
 
 - 实战中，可通过封装模板库，实现多场景模板的统一管理和复用，提升开发效率。
 
-实战中，可通过封装模板库，实现多场景模板的统一管理和复用，提升开发效率。
 
 提示模板是提示工程的基础，下一章我们将学习LangChain的核心功能——Chains（链式调用），将Prompt Templates、Models、Messages结合起来，实现更复杂的大模型应用。

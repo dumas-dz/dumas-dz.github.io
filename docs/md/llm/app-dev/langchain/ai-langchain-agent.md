@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在 LangChain 中，Agent（智能体） 是一个集成了“认知能力”与“执行能力”的核心组件。"
+order: 20
+outline: [2, 3]
 ---
 
-
+# LangChain - Agent 智能体
 ## 13.1 Agent 是什么？LLM 作为“大脑”
 
 在 LangChain 中，Agent（智能体） 是一个集成了“认知能力”与“执行能力”的核心组件。它不仅仅是工具的调用者，更是任务的“规划者”和“决策者”。
@@ -46,7 +49,7 @@ Agent 的工作流程遵循 ReAct（Reason + Act） 框架，这是一种让 LLM
 
 #### 极简图例：Agent 工作流程
 
-```
+```text
 用户输入 → [思考] → [选择工具] → [执行工具] → [反思] → 满足条件？→ 生成回答/继续循环
 ```
 
@@ -159,7 +162,7 @@ LangChain 提供了 initialize_agent 函数，这是创建 Agent 最快捷、最
 
 本示例使用 Zero-shot ReAct 类型，结合「计算器工具」，实现一个简单的数学计算助理。
 
-```
+```python
 from langchain.chat_models import ChatOpenAI
 from langchain.tools import Calculator
 from langchain.agents import initialize_agent, AgentType
@@ -227,7 +230,7 @@ LangChain Agent 有两个核心的内置停止条件，满足其一即停止循�
 
 ### 13.5.3 代码示例：添加循环防护
 
-```
+```python
 # 在 initialize_agent 中添加防护参数
 agent = initialize_agent(
     tools=tools,
@@ -263,7 +266,7 @@ except Exception as e:
 
 日志示例：
 
-```
+```text
 > Entering new AgentExecutor chain...
 Thought: 我需要计算 123 的平方，应该使用计算器工具。
 Action:
@@ -288,13 +291,13 @@ Observation: 95459185
 
 #### 1. 安装与配置
 
-```
+```bash
 pip install langsmith
 ```
 
 在 .env 中添加：
 
-```
+```text
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=你的LangSmith密钥
 LANGCHAIN_PROJECT=agent-demo
@@ -370,7 +373,7 @@ LANGCHAIN_PROJECT=agent-demo
 
 #### 1. 安装依赖
 
-```
+```bash
 pip install langchain openai python-dotenv
 ```
 
@@ -378,13 +381,13 @@ pip install langchain openai python-dotenv
 
 创建 .env 文件：
 
-```
+```text
 OPENAI_API_KEY=你的OpenAI API密钥
 ```
 
 ### 13.8.2 完整实战代码
 
-```
+```python
 from langchain.chat_models import ChatOpenAI
 from langchain.tools import tool, Calculator
 from langchain.agents import initialize_agent, AgentType
@@ -474,7 +477,7 @@ except Exception as e:
 
 最终输出：
 
-```
+```text
 💡 助理回答：你持有1000股贵州茅台，当前每股价格为1800元，买入成本为每股1000元，每股盈利800元，总盈利为800000元。
 ```
 

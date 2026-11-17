@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "Embedding（嵌入）本质是一种语义编码技术，它能将文本（单词、句子、文档）映射到一个低维或高维的稠密数值向量空间中，让“语义相似”的文本，在向量空间中的距离更近。"
+order: 70
+outline: [2, 3]
 ---
 
-
+# LangChain - 向量嵌入
 ## 8.1 什么是 Embedding？为何用于检索？
 
 ### 8.1.1 核心定义：文本的“数值身份证”
@@ -18,15 +21,12 @@ Embedding（嵌入）本质是一种语义编码技术，它能将文本（单�
 
 - “猫”的嵌入向量：[0.82, -0.15, 0.33, ..., 0.21]（假设1536维）
 
-“猫”的嵌入向量：[0.82, -0.15, 0.33, ..., 0.21]（假设1536维）
 
 - “狗”的嵌入向量：[0.79, -0.18, 0.31, ..., 0.23]
 
-“狗”的嵌入向量：[0.79, -0.18, 0.31, ..., 0.23]
 
 - “苹果”的嵌入向量：[-0.22, 0.85, -0.17, ..., 0.09]
 
-“苹果”的嵌入向量：[-0.22, 0.85, -0.17, ..., 0.09]
 
 可以看到，“猫”和“狗”的向量距离很近（语义相似，都是动物），而它们与“苹果”的距离很远（语义无关）——这就是Embedding的核心价值：将文本的“语义信息”转化为可计算的数值。
 
@@ -38,15 +38,12 @@ Embedding用于检索的核心逻辑：
 
 - 提前将所有文档生成嵌入向量，存入向量数据库；
 
-提前将所有文档生成嵌入向量，存入向量数据库；
 
 - 用户查询时，先将查询语句生成嵌入向量；
 
-用户查询时，先将查询语句生成嵌入向量；
 
 - 计算查询向量与所有文档向量的“距离”，取距离最近的文档作为检索结果。
 
-计算查询向量与所有文档向量的“距离”，取距离最近的文档作为检索结果。
 
 这也是LangChain RAG的核心流程之一，Embedding就是连接“文本”和“机器检索”的桥梁。
 
@@ -62,7 +59,7 @@ LangChain本身不开发嵌入模型，而是提供了统一的Embedding接口�
 
 无论使用哪种模型，先安装基础依赖（LangChain核心包）：
 
-```
+```bash
 pip install langchain  # 核心框架
 pip install python-dotenv  # 管理环境变量（用于存储API密钥）
 ```
@@ -73,7 +70,7 @@ OpenAI的嵌入模型（如text-embedding-ada-002）性价比极高，是生产�
 
 #### 代码示例（简短可运行）
 
-```
+```python
 from langchain.embeddings.openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 import os
@@ -98,19 +95,15 @@ print(f"嵌入向量前5位：{embedding[:5]}")
 
 - embed_query：用于生成“用户查询”的嵌入（优化检索精度）；
 
-embed_query：用于生成“用户查询”的嵌入（优化检索精度）；
 
 - embed_documents：用于生成“文档”的嵌入；
 
-embed_documents：用于生成“文档”的嵌入；
 
 - 依赖：需额外安装 openai 包（pip install openai）；
 
-依赖：需额外安装 openai 包（pip install openai）；
 
 - 引用来源：LangChain官方OpenAI Embeddings文档。
 
-引用来源：LangChain官方OpenAI Embeddings文档。
 
 ### 8.2.3 Hugging Face Embeddings（开源免费）
 
@@ -118,7 +111,7 @@ Hugging Face提供大量开源嵌入模型（如all-MiniLM-L6-v2），可免费�
 
 #### 代码示例
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 
 # 初始化Hugging Face嵌入模型（自动下载模型）
@@ -141,15 +134,12 @@ print(f"批量生成{len(embeddings_list)}个嵌入，每个维度：{len(embedd
 
 - 依赖：需安装 sentence-transformers 包（pip install sentence-transformers）；
 
-依赖：需安装 sentence-transformers 包（pip install sentence-transformers）；
 
 - model_name：可替换为其他模型（如all-MiniLM-L12-v2，精度更高但速度稍慢）；
 
-model_name：可替换为其他模型（如all-MiniLM-L12-v2，精度更高但速度稍慢）；
 
 - 引用来源：LangChain官方Hugging Face Embeddings文档。
 
-引用来源：LangChain官方Hugging Face Embeddings文档。
 
 ### 8.2.4 Sentence-Transformers（专注句子嵌入）
 
@@ -157,7 +147,7 @@ Sentence-Transformers是专门用于句子/段落嵌入的库，LangChain提供�
 
 #### 代码示例
 
-```
+```python
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 
 # 初始化Sentence-Transformers嵌入模型
@@ -184,15 +174,12 @@ print(f"嵌入向量维度：{len(embedding)}")
 
 - 环境：Python 3.8+，建议安装PyTorch（支持CPU/GPU，GPU可大幅提升速度）；
 
-环境：Python 3.8+，建议安装PyTorch（支持CPU/GPU，GPU可大幅提升速度）；
 
 - 依赖：pip install sentence-transformers torch（两个模型通用）；
 
-依赖：pip install sentence-transformers torch（两个模型通用）；
 
 - 模型获取：首次运行会自动下载模型（约几百MB~几GB），也可手动从Hugging Face下载后本地加载。
 
-模型获取：首次运行会自动下载模型（约几百MB~几GB），也可手动从Hugging Face下载后本地加载。
 
 ### 8.3.2 BGE模型部署（中文首选）
 
@@ -200,7 +187,7 @@ BGE（BAAI General Embedding）是智源AI推出的开源嵌入模型，中文�
 
 #### 代码示例（本地加载）
 
-```
+```python
 
 # 本地部署BGE-M3（自动下载模型，首次较慢）
 # 手动下载地址：https://hf-mirror.com/FlagAI-Open/BGE-M3（国内镜像，速度更快）
@@ -223,19 +210,15 @@ print(f"BGE-M3嵌入维度：{len(embedding)}")  # 输出1024维
 
 - 模型版本：BGE-M3（最新版，推荐）、BGE-base-zh（轻量版，适合低算力设备）；
 
-模型版本：BGE-M3（最新版，推荐）、BGE-base-zh（轻量版，适合低算力设备）；
 
 - GPU加速：若安装了PyTorch-GPU，将device改为"cuda"，生成嵌入速度可提升5~10倍；
 
-GPU加速：若安装了PyTorch-GPU，将device改为"cuda"，生成嵌入速度可提升5~10倍；
 
 - 本地加载：手动下载模型后，将model_name改为本地模型路径（如"./BGE-M3"），避免重复下载；
 
-本地加载：手动下载模型后，将model_name改为本地模型路径（如"./BGE-M3"），避免重复下载；
 
 - 引用来源：LangChain Hugging Face集成文档、BGE本地部署实战。
 
-引用来源：LangChain Hugging Face集成文档、BGE本地部署实战。
 
 ### 8.3.3 text2vec模型部署（轻量高效）
 
@@ -243,7 +226,7 @@ text2vec是专为中文设计的轻量嵌入模型，体积小（约100MB），�
 
 #### 代码示例
 
-```
+```python
 
 # 本地部署text2vec模型（自动下载）
     model_name="shibing624/text2vec-base-chinese",
@@ -259,15 +242,12 @@ print(f"text2vec嵌入维度：{len(embeddings_list[0])}")  # 输出768维
 
 - 模型优势：体积小、速度快，CPU上也能快速生成嵌入；
 
-模型优势：体积小、速度快，CPU上也能快速生成嵌入；
 
 - 适用场景：中小规模中文文档检索、本地Demo开发；
 
-适用场景：中小规模中文文档检索、本地Demo开发；
 
 - 引用来源：text2vec官方仓库。
 
-引用来源：text2vec官方仓库。
 
 ## 8.4 嵌入维度、距离度量（余弦相似度）
 
@@ -285,15 +265,12 @@ print(f"text2vec嵌入维度：{len(embeddings_list[0])}")  # 输出768维
 
 - 生产环境（通用场景）：优先选1024~1536维（BGE-M3、ada-002），精度足够；
 
-生产环境（通用场景）：优先选1024~1536维（BGE-M3、ada-002），精度足够；
 
 - 本地Demo、低算力设备：选384~768维（all-MiniLM-L6-v2、text2vec）；
 
-本地Demo、低算力设备：选384~768维（all-MiniLM-L6-v2、text2vec）；
 
 - 无需追求“越高越好”：维度提升到一定程度后，精度提升不明显，反而增加成本。
 
-无需追求“越高越好”：维度提升到一定程度后，精度提升不明显，反而增加成本。
 
 ### 8.4.2 距离度量：判断语义相似的“标尺”
 
@@ -305,21 +282,18 @@ print(f"text2vec嵌入维度：{len(embeddings_list[0])}")  # 输出768维
 
 - 相似度=1：两个向量方向完全一致（语义完全相同）；
 
-相似度=1：两个向量方向完全一致（语义完全相同）；
 
 - 相似度=0：两个向量垂直（语义无关）；
 
-相似度=0：两个向量垂直（语义无关）；
 
 - 相似度=-1：两个向量方向完全相反（语义完全相反）。
 
-相似度=-1：两个向量方向完全相反（语义完全相反）。
 
 在文本检索中，我们只关注正数相似度，通常相似度≥0.7，就认为两个文本语义高度相关。
 
 #### LangChain中计算余弦相似度（代码示例）
 
-```
+```python
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
@@ -341,15 +315,12 @@ print(f"两个文本的余弦相似度：{similarity:.4f}")  # 输出约0.8+，�
 
 - 依赖：需安装 scikit-learn 包（pip install scikit-learn）；
 
-依赖：需安装 scikit-learn 包（pip install scikit-learn）；
 
 - LangChain集成：向量数据库（如Chroma、FAISS）会自动计算余弦相似度，无需手动编写；
 
-LangChain集成：向量数据库（如Chroma、FAISS）会自动计算余弦相似度，无需手动编写；
 
 - 为何首选余弦相似度？它不受向量“长度”影响，只关注方向，更适合文本语义匹配（比如长句和短句，只要语义相似，相似度就高）。
 
-为何首选余弦相似度？它不受向量“长度”影响，只关注方向，更适合文本语义匹配（比如长句和短句，只要语义相似，相似度就高）。
 
 ## 8.5 缓存嵌入结果避免重复计算
 
@@ -363,7 +334,7 @@ LangChain支持多种缓存方式，重点讲解2种最常用的：内存缓存�
 
 缓存存储在内存中，程序重启后缓存丢失，适合临时测试、短期开发。
 
-```
+```python
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.cache import InMemoryCache
 import langchain
@@ -391,7 +362,7 @@ print(f"两次嵌入是否相同：{emb1 == emb2}")  # 输出True
 
 缓存存储在本地SQLite数据库中，程序重启后缓存仍有效，适合长期开发、生产环境。
 
-```
+```python
 from langchain.cache import SQLiteCache
 
 # 启用SQLite缓存（缓存文件存储在./langchain_cache.db）
@@ -408,15 +379,12 @@ text = "LangChain SQLite缓存"
 
 - 缓存生效条件：文本完全一致（包括空格、大小写），否则会重新生成嵌入；
 
-缓存生效条件：文本完全一致（包括空格、大小写），否则会重新生成嵌入；
 
 - 其他缓存方式：LangChain还支持Redis缓存（适合分布式系统），用法类似；
 
-其他缓存方式：LangChain还支持Redis缓存（适合分布式系统），用法类似；
 
 - 引用来源：LangChain官方缓存文档、RAG系统性能优化技巧。
 
-引用来源：LangChain官方缓存文档、RAG系统性能优化技巧。
 
 ## 8.6 批量嵌入与性能优化
 
@@ -426,7 +394,7 @@ text = "LangChain SQLite缓存"
 
 所有LangChain嵌入模型都支持embed_documents方法，可传入文本列表，批量生成嵌入，比逐一生成快5~10倍。
 
-```
+```python
 
 # 初始化嵌入模型
 
@@ -447,17 +415,15 @@ print(f"批量生成{len(batch_embeddings)}个嵌入，每个维度：{len(batch
 
 - API模型（OpenAI）：批量大小建议10~100（避免触发API限流）；
 
-API模型（OpenAI）：批量大小建议10~100（避免触发API限流）；
 
 - 本地模型（BGE、text2vec）：批量大小建议3264（CPU）、64128（GPU），根据显存/内存调整。
 
-本地模型（BGE、text2vec）：批量大小建议3264（CPU）、64128（GPU），根据显存/内存调整。
 
 #### 技巧2：异步调用（提升并发效率）
 
 LangChain的嵌入模型支持异步调用（ainvoke），可在处理大量文本时，利用I/O等待时间处理其他任务，提升并发效率，尤其适合Web服务场景。
 
-```
+```python
 import asyncio
 
 # 初始化嵌入模型
@@ -479,7 +445,7 @@ if __name__ == "__main__":
 
 本地部署嵌入模型时，启用GPU加速可大幅提升生成速度（5~10倍），只需将model_kwargs中的device改为"cuda"（需安装PyTorch-GPU）：
 
-```
+```text
     model_kwargs={"device": "cuda"},  # GPU加速
 ```
 
@@ -487,7 +453,7 @@ if __name__ == "__main__":
 
 生成嵌入前，对文本进行预处理，删除空白、重复内容、无效字符，减少文本长度，可降低计算成本：
 
-```
+```python
 def preprocess_text(text):
     # 去除空白、换行、多余空格
     text = text.strip().replace("\n", "").replace("  ", " ")
@@ -507,7 +473,7 @@ texts = [preprocess_text(t) for t in texts if preprocess_text(t)]
 
 核心逻辑：挑选若干文本对，人工判断语义是否相似，再计算其嵌入的余弦相似度，看相似度是否与人工判断一致。
 
-```
+```python
 
 # 人工标注的文本对（相似/不相似）
 text_pairs = [
@@ -536,7 +502,7 @@ print(f"\n评估准确率：{accuracy:.2f}")  # 准确率≥0.8，说明嵌入�
 
 核心逻辑：将同类文本的嵌入向量进行聚类，看同类文本是否能聚在一起，异类文本是否能分开——聚类效果越好，嵌入质量越高。常用工具：K-Means聚类+可视化（UMAP/t-SNE降维）。
 
-```
+```python
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
@@ -575,7 +541,7 @@ plt.show()
 
 示例：用检索召回率评估（简化版）
 
-```
+```python
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import TextLoader
 
@@ -608,19 +574,15 @@ print(f"检索召回率：{recall / len(queries):.2f}")  # 召回率≥0.9，嵌
 
 - 小批量文本：用人工评估（简单高效）；
 
-小批量文本：用人工评估（简单高效）；
 
 - 大规模文本：用聚类评估（直观看到语义分布）；
 
-大规模文本：用聚类评估（直观看到语义分布）；
 
 - 生产环境：用下游任务评估（最贴合实际用途）；
 
-生产环境：用下游任务评估（最贴合实际用途）；
 
 - 引用来源：Embedding质量评估权威指南。
 
-引用来源：Embedding质量评估权威指南。
 
 ## 8.8 【实战】为技术文档生成高质量向量表示
 
@@ -630,27 +592,21 @@ print(f"检索召回率：{recall / len(queries):.2f}")  # 召回率≥0.9，嵌
 
 - 加载本地技术文档（txt格式）；
 
-加载本地技术文档（txt格式）；
 
 - 文本预处理、分割（适配嵌入模型的输入长度）；
 
-文本预处理、分割（适配嵌入模型的输入长度）；
 
 - 用BGE-M3模型（本地部署）生成高质量嵌入；
 
-用BGE-M3模型（本地部署）生成高质量嵌入；
 
 - 启用缓存，避免重复计算；
 
-启用缓存，避免重复计算；
 
 - 评估嵌入质量；
 
-评估嵌入质量；
 
 - 将嵌入向量存入Chroma向量数据库（持久化）。
 
-将嵌入向量存入Chroma向量数据库（持久化）。
 
 ### 8.8.2 实战步骤（完整代码，可直接运行）
 
@@ -658,13 +614,13 @@ print(f"检索召回率：{recall / len(queries):.2f}")  # 召回率≥0.9，嵌
 
 - 安装依赖：
 
-```
+```bash
 pip install langchain sentence-transformers torch chromadb scikit-learn matplotlib
 ```
 
 - 准备技术文档：创建langchain_docs.txt，写入LangChain相关技术内容（示例内容如下）：
 
-```
+```text
 LangChain是一个用于构建大语言模型应用的框架，它提供了一系列工具和组件，帮助开发者快速搭建RAG、聊天机器人等应用。
 
 LangChain的核心组件包括：文档加载器（Document Loaders）、文本分割器（Text Splitters）、嵌入模型（Embeddings）、向量数据库（Vector Stores）、大语言模型（LLMs）等。
@@ -678,7 +634,7 @@ Chroma是一个轻量级向量数据库，适合本地开发和小规模数据�
 
 #### 步骤2：完整实战代码
 
-```
+```python
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # ---------------------- 1. 启用缓存（避免重复计算） ----------------------
@@ -761,37 +717,29 @@ for i, doc in enumerate(similar_docs):
 
 - 文档分割：将原始文档分割为多个短文本块，避免长文本超出模型输入限制，同时保留上下文；
 
-文档分割：将原始文档分割为多个短文本块，避免长文本超出模型输入限制，同时保留上下文；
 
 - 嵌入生成：用BGE-M3本地模型生成嵌入，启用缓存后，重复文本不会重新计算；
 
-嵌入生成：用BGE-M3本地模型生成嵌入，启用缓存后，重复文本不会重新计算；
 
 - 质量评估：聚类可视化中，语义相关的文本块会聚在一起；人工评估中，“向量嵌入”与“BGE-M3”的相似度最高，符合预期；
 
-质量评估：聚类可视化中，语义相关的文本块会聚在一起；人工评估中，“向量嵌入”与“BGE-M3”的相似度最高，符合预期；
 
 - 向量存储：嵌入向量存入Chroma数据库，持久化后，下次可直接加载使用，无需重新生成嵌入。
 
-向量存储：嵌入向量存入Chroma数据库，持久化后，下次可直接加载使用，无需重新生成嵌入。
 
 ### 8.8.4 实战拓展
 
 - 更换模型：将BGE-M3替换为OpenAI Embeddings，只需修改embeddings的初始化代码；
 
-更换模型：将BGE-M3替换为OpenAI Embeddings，只需修改embeddings的初始化代码；
 
 - 处理多格式文档：用PyPDFLoader加载PDF技术文档，用WebBaseLoader加载网页技术文档；
 
-处理多格式文档：用PyPDFLoader加载PDF技术文档，用WebBaseLoader加载网页技术文档；
 
 - 大规模文档：结合批量嵌入、GPU加速，提升处理效率；
 
-大规模文档：结合批量嵌入、GPU加速，提升处理效率；
 
 - 引用来源：综合LangChain官方文档、BGE部署实战、Chroma使用指南。
 
-引用来源：综合LangChain官方文档、BGE部署实战、Chroma使用指南。
 
 ## 本章总结
 
@@ -799,22 +747,17 @@ for i, doc in enumerate(similar_docs):
 
 - Embedding的核心是“语义编码”，将文本转为可计算的向量，是语义检索的基础；
 
-Embedding的核心是“语义编码”，将文本转为可计算的向量，是语义检索的基础；
 
 - 优先选择适合场景的模型：OpenAI（通用高精度）、BGE（中文首选）、text2vec（轻量高效）；
 
-优先选择适合场景的模型：OpenAI（通用高精度）、BGE（中文首选）、text2vec（轻量高效）；
 
 - 性能优化：批量嵌入、缓存、GPU加速，可大幅提升处理效率；
 
-性能优化：批量嵌入、缓存、GPU加速，可大幅提升处理效率；
 
 - 质量评估：人工评估、聚类评估、下游任务评估，确保嵌入符合需求；
 
-质量评估：人工评估、聚类评估、下游任务评估，确保嵌入符合需求；
 
 - 实战核心：文本预处理→嵌入生成→质量评估→向量存储，形成完整闭环。
 
-实战核心：文本预处理→嵌入生成→质量评估→向量存储，形成完整闭环。
 
 下一章将讲解向量数据库的使用，结合本章生成的文档向量，实现完整的LangChain RAG检索功能。

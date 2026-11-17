@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 部署
+description: "本章讲解如何定制 LlamaIndex 的 RAG 组件（模型、嵌入等），使用 Streamlit 构建前端界面，并将应用部署到生产环境。"
+order: 21
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 定制与部署 LlamaIndex 项目
 本章讲解如何定制 LlamaIndex 的 RAG 组件（模型、嵌入等），使用 Streamlit 构建前端界面，并将应用部署到生产环境。
 
 ### 技术要求
@@ -122,13 +124,13 @@ Context Length：允许你定义要使用的最大上下文窗口。
 
 此时你只需要点击 `Status: Running` 开关，就可以开始了。
 
-```ini
+```text
 client = OpenAI(base_url="http://localhost:1234/v1")
 ```
 
 然而，在 LlamaIndex 中，我们通常不会直接与 OpenAI Python SDK 对话。相反，我们会配置 LlamaIndex 自己的 LLM 和 embedding 抽象。当后端是“兼容 OpenAI，但不是 OpenAI”时，最方便的选项是使用 `OpenAILike`。它是 LlamaIndex OpenAI 集成的一个薄包装，专门为那些实现了 OpenAI 兼容 API 的第三方提供商而设计。要启用这个集成，先安装所需包：
 
-```perl
+```bash
 pip install llama-index-llms-openai-like llama-index-embeddings-openai-like
 ```
 
@@ -136,7 +138,7 @@ pip install llama-index-llms-openai-like llama-index-embeddings-openai-like
 
 下面是当我们把 LLM 和 embedding 模型都指向 LM Studio 服务器时，`config/models.py` 配置文件的样子：
 
-```ini
+```python
 from llama_index.core import Settings
 from llama_index.llms.openai_like import OpenAILike
 from llama_index.embeddings.openai_like import OpenAILikeEmbedding
@@ -179,7 +181,7 @@ Neutrino 和 OpenRouter 这类服务是托管式路由层。这意味着你的 p
 
 以 Neutrino 的智能模型路由器为例，它允许你将查询智能路由到最适合该 prompt 的 LLM，同时优化响应质量和成本效率。这在 RAG 工作流中尤其有用，因为不同类型查询可能需要不同的 LLM 能力或专长。例如，一个模型可能更擅长理解和解析初始用户查询，而另一个模型可能更适合基于检索到的文档生成响应。通过使用 router，我们可以为每个任务动态选择最合适的模型，而无需在应用中硬编码模型选择，从而增强灵活性，并有可能提升整个 RAG 系统的整体性能。
 
-```perl
+```bash
 pip install llama-index-llms-neutrino
 ```
 
@@ -193,7 +195,7 @@ router 设置过程的最后一步要求你提供一个 router ID。这个 ID �
 
 下面是我们如何在 LlamaIndex 中使用 Neutrino router：
 
-```ini
+```python
 from llama_index.llms.neutrino import Neutrino
 llm = Neutrino(
     api_key="<your-Neutrino_API_key>",
@@ -218,7 +220,7 @@ while True:
 
 另一种更通用的使用这种 router 的方法，是使用 `Settings` 类，用这个 `llm` 对象创建全局配置：
 
-```ini
+```python
 from llama_index.core import Settings
 Settings.llm = llm
 ```
@@ -249,13 +251,13 @@ Llama Packs 充当模板，可以根据需要检查、定制和扩展。每个 p
 
 通过安装对应的集成包。在我们的例子中，可以用以下命令完成：
 
-```perl
+```bash
 pip install llama-index-packs-node-parser-semantic-chunking
 ```
 
 通过命令行界面（CLI）。下面是一个例子：
 
-```bash
+```text
 llamaindex-cli download-llamapack SemanticChunkingQueryEnginePack --download-dir ./semantic_chunk_pack
 ```
 
@@ -263,7 +265,7 @@ llamaindex-cli download-llamapack SemanticChunkingQueryEnginePack --download-dir
 
 直接在代码中，使用 `download_llama_pack()` 方法并指定下载位置，如下所示：
 
-```java
+```python
 from llama_index.core.llama_pack import download_llama_pack
 download_llama_pack(
     "SemanticChunkingQueryEnginePack", "./semantic_chunk_pack"
@@ -272,7 +274,7 @@ download_llama_pack(
 
 下面是下载后如何使用这个 pack 的简单示例：
 
-```ini
+```python
 from llama_index.core import SimpleDirectoryReader
 from semantic_chunk_pack.base import SemanticChunkingQueryEnginePack
 reader = SimpleDirectoryReader("files")
@@ -288,7 +290,7 @@ Llama Packs 自带默认 embedding 模型，通常是 OpenAI 模型。由于我�
 
 因此，更新后的代码如下：
 
-```ini
+```python
 import models_config
 from llama_index.core import SimpleDirectoryReader
 from semantic_chunk_pack.base import SemanticChunkingQueryEnginePack
@@ -309,19 +311,19 @@ semantic_qe = SemanticChunkingQueryEnginePack(documents)
 
 下载 Llama Packs，正如上一节所见。下载 Llama Pack 的语法如下：
 
-```xml
+```text
 llamaindex-cli download-llamapack <pack_name> --download-dir <target_location>
 ```
 
 升级早于 LlamaIndex v0.10 版本的源代码。由于 0.10 版本在代码结构以及如何使用框架中的某些模块方面带来了很多变化，LlamaIndex 作者为开发者提供了这个自动升级工具。基本上，它会自动修改旧版本中编写的代码，并将其更新到 v0.10 引入的新结构，以便更容易过渡。用于此功能的语法如下，可以同时处理某个给定文件夹中的所有源文件：
 
-```xml
+```text
 llamaindex-cli upgrade <target_directory>
 ```
 
 执行以下命令来升级单个文件：
 
-```xml
+```text
 llamaindex-cli upgrade-file <target_file>
 ```
 
@@ -331,7 +333,7 @@ llamaindex-cli upgrade-file <target_file>
 
 在可以从命令行使用 RAG 模式之前，我们必须先在本地环境中安装 ChromaDB 库：
 
-```code
+```bash
 pip install chromadb
 ```
 
@@ -353,13 +355,13 @@ pip install chromadb
 
 说到示例，让我们看看一种使用 CLI RAG 功能与文件对话的简单方式。我们将使用 GitHub 仓库中 `ch9\files` 文件夹的内容。因此，请确保你是在该文件夹内部运行这个脚本，该文件夹应包含一些示例文件：
 
-```css
+```text
 llamaindex-cli rag --files files -q "What can you tell me about ancient Rome?" --verbose
 ```
 
 或者，在文件被摄入之后，如果想与数据进行交互式聊天会话，可以使用以下命令：
 
-```css
+```text
 llamaindex-cli rag --chat
 ```
 
@@ -381,7 +383,7 @@ Streamlit in Snowflake：对于优先考虑安全性和基于角色的访问控�
 
 ## 将 Contract Review Expert 部署到 Streamlit Community Cloud
 
-```javascript
+```python
 import streamlit as st
 from policies import render_policies_section
 from contracts import render_contracts_section
@@ -392,7 +394,7 @@ from reports import render_reports_section
 
 接下来，我们配置 Streamlit 页面布局和一些基础 UI 细节：
 
-```ini
+```text
 st.set_page_config(
     page_title="Contract Advisor",
     layout="wide",
@@ -402,7 +404,7 @@ st.set_page_config(
 
 一开始使用 `st.set_page_config` 会建立我们 Web 应用的基础布局。在我们的例子中，由于 UI 被拆分成多个面板，因此使用 wide layout；同时，我们一开始折叠 sidebar，以便让界面聚焦于主要工作流。然后，我们渲染应用标题和一段给用户看的简短描述：
 
-```arduino
+```text
 st.title("Contract Review Expert")
 st.markdown("Upload policies and contracts to perform AI-powered risk analysis and compliance checks.")
 ```
@@ -411,14 +413,14 @@ Web 应用本质上是无状态的，这意味着客户端和服务器之间的�
 
 在 Contract Review Expert 中，我主要使用 session state 来追踪当前是否正在运行分析，以及正在分析哪个合同文件：
 
-```ini
+```text
 is_analyzing = st.session_state.get("is_analyzing", False)
 analyzing_file = st.session_state.get("is_analyzing_file", None)
 ```
 
 接下来，我们构建主 UI 布局。Streamlit 可以很容易地并排渲染多个 section，我们利用这一点在左侧显示 Policies，在右侧显示 Contracts，如图 11.5 所示：
 
-```ini
+```text
 col1, col2 = st.columns(2, gap="large")
 with col1:
     policies_modified = render_policies_section(is_analyzing)
@@ -432,12 +434,12 @@ with col2:
 
 由于 Streamlit 会在每次用户交互时重新运行脚本，我们在分析开始或完成时使用一个简单的 rerun 触发器：
 
-```css
+```text
 if analysis_started or analysis_completed:
     st.rerun()
 ```
 
-```scss
+```text
 st.markdown("---")
 report_displayed = render_reports_section()
 ```
@@ -448,13 +450,13 @@ report_displayed = render_reports_section()
 
 在 Windows 上：
 
-```less
+```text
 xcopy <project_folder_name> C:\CONTRACT_REVIEW_EXPERT /E /I
 ```
 
 在 macOS 或 Linux 上：
 
-```bash
+```text
 cp -r <project_folder_name> ~/CONTRACT_REVIEW_EXPERT
 ```
 
@@ -464,22 +466,22 @@ cp -r <project_folder_name> ~/CONTRACT_REVIEW_EXPERT
 
 创建完成后，记下仓库 URL，供后续步骤使用。接下来，我们将在目标文件夹中初始化一个新的本地仓库。打开 CLI，导航到你想转换成独立仓库的文件夹，也就是 `C:\CONTRACT_REVIEW_EXPERT`，然后执行以下命令：
 
-```csharp
+```bash
 git init
 ```
 
 接下来，通过运行以下命令添加并提交现有文件：
 
-```sql
+```bash
 git add .
 git commit -m "Initial commit for CONTRACT_REVIEW_EXPERT_ONLINE repository"
 ```
 
-```csharp
+```bash
 git remote add origin <your_repository_URL>.git
 ```
 
-```css
+```bash
 git branch -M main
 git push -u origin main
 ```

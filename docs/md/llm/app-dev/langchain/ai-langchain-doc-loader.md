@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "LangChain本身集成了大量开箱即用的文档加载器（Document Loader），覆盖主流文档格式，无需手动编写解析逻辑，只需调用对应加载器，即可将文档内容转换为LangChain统一的Document对象（包含文本内容和元数据..."
+order: 60
+outline: [2, 3]
 ---
 
-
+# LangChain - 文档加载与分割
 ## 7.1 支持的文档格式（PDF、Word、HTML、Markdown 等）
 
 LangChain本身集成了大量开箱即用的文档加载器（Document Loader），覆盖主流文档格式，无需手动编写解析逻辑，只需调用对应加载器，即可将文档内容转换为LangChain统一的Document对象（包含文本内容和元数据），便于后续统一处理。
@@ -22,15 +25,13 @@ LangChain本身集成了大量开箱即用的文档加载器（Document Loader�
 
 - page_content：文档的核心文本内容（字符串）；
 
-page_content：文档的核心文本内容（字符串）；
 
 - metadata：文档的元数据（字典），默认包含来源（source）、页码（page）等信息，可自定义扩展（如章节、作者）。
 
-metadata：文档的元数据（字典），默认包含来源（source）、页码（page）等信息，可自定义扩展（如章节、作者）。
 
 示例（查看Document对象结构）：
 
-```
+```python
 from langchain.document_loaders import TextLoader
 
 # 加载本地txt文件
@@ -45,7 +46,7 @@ print("元数据：", documents[0].metadata)
 
 运行结果：
 
-```
+```text
 文档数量： 1
 文本内容： LangChain是一个用于构建大语言模型应用的框架，支持文档加载、文本分割、提示工程、链式调用等功能。
 元数据： {'source': 'test.txt'}
@@ -61,7 +62,7 @@ print("元数据：", documents[0].metadata)
 
 PyPDFLoader是LangChain中最常用的PDF加载器，轻量、快速，支持读取PDF的每一页，自动生成页码元数据，适合大多数简单排版的PDF（纯文本、无复杂图片/表格）。
 
-```
+```python
 from langchain.document_loaders import PyPDFLoader
 
 # 1. 初始化加载器（本地PDF文件路径）
@@ -86,7 +87,7 @@ print(f"第1页元数据：{documents[0].metadata}")  # 包含页码（page）�
 
 Docx2txtLoader专门用于加载Word（.docx）文档，轻量无冗余，能快速提取文档文本内容，适合大多数简单样式的Word文档，不支持复杂表格和图片提取。
 
-```
+```python
 from langchain.document_loaders import Docx2txtLoader
 
 # 1. 初始化加载器（本地Word文件路径）
@@ -112,7 +113,7 @@ Unstructured是一个通用的文档解析库，LangChain集成了对应的加�
 
 实战示例（加载复杂PDF）：
 
-```
+```python
 from langchain.document_loaders import UnstructuredPDFLoader
 
 # 1. 初始化加载器（支持本地文件、远程URL）
@@ -136,7 +137,7 @@ print(f"第一个元素元数据：{documents[0].metadata}")  # 包含元素类�
 
 除了本地文档，开发中常需要加载网页内容（如爬取网页文档进行分析），LangChain的URLLoader可直接通过URL加载网页，自动提取文本内容，去除HTML标签冗余。
 
-```
+```python
 from langchain.document_loaders import URLLoader
 
 # 1. 初始化加载器（支持多个URL，传入列表）
@@ -167,17 +168,15 @@ LangChain的内置加载器覆盖了主流格式，但在实际开发中，可�
 
 - load(self) -> List[Document]：核心方法，实现文档加载逻辑，返回Document对象列表；
 
-load(self) -> List[Document]：核心方法，实现文档加载逻辑，返回Document对象列表；
 
 - load_and_split(self, text_splitter: Optional[TextSplitter] = None) -> List[Document]：可选方法，加载文档后直接进行文本分割，返回分割后的Document列表（可复用父类方法，无需重写）。
 
-load_and_split(self, text_splitter: Optional[TextSplitter] = None) -> List[Document]：可选方法，加载文档后直接进行文本分割，返回分割后的Document列表（可复用父类方法，无需重写）。
 
 ### 7.3.2 实战示例1：自定义加载器加载特殊格式文档（.custom）
 
 场景：加载自定义格式的.custom文件（文本内容用“###”分隔段落），提取每个段落作为一个Document对象，补充自定义元数据。
 
-```
+```python
 from langchain.document_loaders.base import BaseLoader
 from langchain.schema import Document
 from typing import List
@@ -227,7 +226,7 @@ for doc in documents[:2]:
 
 场景：内置URLLoader无法加载带反爬的网页，自定义加载器添加请求头（User-Agent、Cookie），模拟浏览器请求，实现网页加载。
 
-```
+```python
 import requests
 from bs4 import BeautifulSoup
 
@@ -271,15 +270,12 @@ if documents:
 
 - 封装通用逻辑：将重复的加载逻辑（如文件读取、请求发送）封装为私有方法，提升代码可维护性；
 
-封装通用逻辑：将重复的加载逻辑（如文件读取、请求发送）封装为私有方法，提升代码可维护性；
 
 - 参数化配置：将文件路径、URL、请求头、分割规则等设为参数，让加载器更灵活，适配不同场景；
 
-参数化配置：将文件路径、URL、请求头、分割规则等设为参数，让加载器更灵活，适配不同场景；
 
 - 集成到LangChain生态：自定义加载器可与后续的文本分割、向量存储等组件无缝衔接，无需额外适配。
 
-集成到LangChain生态：自定义加载器可与后续的文本分割、向量存储等组件无缝衔接，无需额外适配。
 
 ## 7.4 文本分割策略：CharacterTextSplitter vs RecursiveCharacterTextSplitter
 
@@ -293,15 +289,12 @@ LangChain提供了多种文本分割器，其中最常用的是CharacterTextSpli
 
 - chunk_size：每个文本块的最大长度（单位：token或字符，默认字符）；
 
-chunk_size：每个文本块的最大长度（单位：token或字符，默认字符）；
 
 - chunk_overlap：相邻文本块的重叠长度（单位：同chunk_size），用于保留上下文关联性（避免分割后语义断裂）；
 
-chunk_overlap：相邻文本块的重叠长度（单位：同chunk_size），用于保留上下文关联性（避免分割后语义断裂）；
 
 - length_function：长度计算函数（默认计算字符数，可替换为token计算函数，如tiktoken）。
 
-length_function：长度计算函数（默认计算字符数，可替换为token计算函数，如tiktoken）。
 
 提示：实际配置时，chunk_size建议设为模型上下文窗口的70%-80%（如GPT-3.5-turbo设为3000字符），chunk_overlap设为chunk_size的10%-20%（如300字符），确保文本块关联性。
 
@@ -311,7 +304,7 @@ CharacterTextSplitter是最基础的文本分割器，核心逻辑：按指定�
 
 适用场景：文本结构简单（如纯文本、无明显语义边界），或需要严格控制文本块长度的场景。
 
-```
+```python
 from langchain.text_splitter import CharacterTextSplitter
 
 # 1. 模拟加载的长文本
@@ -346,7 +339,7 @@ RecursiveCharacterTextSplitter是LangChain官方推荐的文本分割器，核�
 
 默认分隔符优先级（从高到低）："\n\n"（空行，段落）→ "\n"（换行，句子）→ " "（空格，单词）→ ""（字符），确保尽可能保留语义完整性。
 
-```
+```python
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # 1. 复用上面的长文本
@@ -378,7 +371,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 段落是最自然的语义边界之一，可通过自定义分隔符（如"\n\n"、"##"等），实现纯段落分割，确保每个文本块都是一个完整的段落。
 
-```
+```python
 
 # 模拟带段落的长文本
 text = """## 7.1 支持的文档格式
@@ -409,7 +402,7 @@ for chunk in chunks:
 
 示例（基于NLTK句子分割）：
 
-```
+```python
 from langchain.text_splitter import NLTKTextSplitter
 
 # 1. 安装依赖
@@ -434,7 +427,7 @@ print(f"句子分割结果（{len(chunks)}个句子）：")
 
 若文档有自定义的语义边界（如按“### 章节”分割、按“---”分割），可通过设置RecursiveCharacterTextSplitter的separators参数，自定义分割优先级，实现精准分割。
 
-```
+```python
 
 # 模拟带自定义章节的文本
 text = """### 章节1：文档加载
@@ -466,7 +459,7 @@ print(f"自定义语义分割结果（{len(chunks)}个块）：")
 
 代码文件（如.py、.java）的核心是“代码块、函数、类”，分割时需保留代码结构（如函数完整、语法正确），LangChain提供LanguageParser（语言解析器），可按代码语法分割。
 
-```
+```python
 from langchain.text_splitter import LanguageParser
 
 # 1. 加载Python代码文件
@@ -496,7 +489,7 @@ print(f"代码分割结果（{len(chunks)}个块）：")
 
 表格数据（如Excel、CSV）的核心是“行、列”，加载时需保留表格结构，分割时需避免破坏行数据的完整性，常用PandasExcelLoader加载，再按行或按表格分割。
 
-```
+```python
 from langchain.document_loaders import PandasExcelLoader
 
 # 1. 加载Excel表格（支持.xlsx、.xls格式）
@@ -530,7 +523,7 @@ LangChain默认会为Document对象添加基础元数据（如source、page）�
 
 在加载文档时，可直接为Document对象添加自定义元数据，适合批量加载多个文档时，区分不同文档的属性（如文档类型、所属部门）。
 
-```
+```python
 
 # 1. 加载PDF文档
 loader = PyPDFLoader("company_policy.pdf")
@@ -558,7 +551,7 @@ print(f"文本内容：{documents[0].page_content[:100]}...")
 
 文本分割后，每个文本块（chunk）会继承原始Document的元数据，但有时需要为分割后的文本块添加额外元数据（如文本块序号、分割时间）。
 
-```
+```python
 
 # 1. 加载文档
 loader = TextLoader("report.txt")
@@ -586,15 +579,12 @@ for chunk in chunks[:2]:
 
 - 检索追溯：问答或检索时，可通过元数据（如来源、页码）快速定位原文，提升结果可信度；
 
-检索追溯：问答或检索时，可通过元数据（如来源、页码）快速定位原文，提升结果可信度；
 
 - 分类管理：通过元数据（如文档类型、部门）对文档进行分类，便于后续筛选和管理；
 
-分类管理：通过元数据（如文档类型、部门）对文档进行分类，便于后续筛选和管理；
 
 - 上下文补充：元数据可作为上下文的一部分，输入模型，让模型了解文本的背景信息（如“这是人力资源部的公司制度文档”）。
 
-上下文补充：元数据可作为上下文的一部分，输入模型，让模型了解文本的背景信息（如“这是人力资源部的公司制度文档”）。
 
 ## 7.8 【实战】批量加载公司制度文档并切块
 
@@ -606,23 +596,19 @@ for chunk in chunks[:2]:
 
 - 批量加载3个不同格式的公司制度文档：policy.pdf（PDF）、policy.docx（Word）、policy.md（Markdown）；
 
-批量加载3个不同格式的公司制度文档：policy.pdf（PDF）、policy.docx（Word）、policy.md（Markdown）；
 
 - 为每个文档注入自定义元数据（文档名称、格式、部门、上传时间）；
 
-为每个文档注入自定义元数据（文档名称、格式、部门、上传时间）；
 
 - 使用RecursiveCharacterTextSplitter进行文本分割，配置合理的chunk_size和chunk_overlap；
 
-使用RecursiveCharacterTextSplitter进行文本分割，配置合理的chunk_size和chunk_overlap；
 
 - 输出分割后的文本块，查看元数据和文本内容，确保语义完整、元数据齐全。
 
-输出分割后的文本块，查看元数据和文本内容，确保语义完整、元数据齐全。
 
 #### 2. 环境准备
 
-```
+```bash
 # 安装所需依赖
 pip install langchain pypdf docx2txt unstructured python-markdown
 ```
@@ -633,19 +619,16 @@ pip install langchain pypdf docx2txt unstructured python-markdown
 
 - policy.pdf：公司考勤制度（PDF格式）；
 
-policy.pdf：公司考勤制度（PDF格式）；
 
 - policy.docx：公司薪酬制度（Word格式）；
 
-policy.docx：公司薪酬制度（Word格式）；
 
 - policy.md：公司请假制度（Markdown格式）。
 
-policy.md：公司请假制度（Markdown格式）。
 
 ### 7.8.2 实战代码实现
 
-```
+```python
 from langchain.document_loaders import (
     PyPDFLoader, Docx2txtLoader, UnstructuredMarkdownLoader
 
@@ -715,15 +698,12 @@ def main():
 
 - 文档加载失败：检查文件路径是否正确（建议使用绝对路径），依赖包是否安装完整（如PDF加载需确保pypdf已安装）；
 
-文档加载失败：检查文件路径是否正确（建议使用绝对路径），依赖包是否安装完整（如PDF加载需确保pypdf已安装）；
 
 - 文本分割语义断裂：调整chunk_size和chunk_overlap参数，确保chunk_size不小于单句长度，chunk_overlap保留足够上下文；
 
-文本分割语义断裂：调整chunk_size和chunk_overlap参数，确保chunk_size不小于单句长度，chunk_overlap保留足够上下文；
 
 - 元数据缺失：检查元数据注入逻辑，确保update方法正确调用，且元数字段名称无拼写错误。
 
-元数据缺失：检查元数据注入逻辑，确保update方法正确调用，且元数字段名称无拼写错误。
 
 #### 3. 实战延伸
 

@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在使用大模型时，默认情况下，模型返回的是自由文本（字符串），这种输出方式在实际开发中会遇到3个核心痛点，而OutputParser恰好能完美解决这些问题。"
+order: 120
+outline: [2, 3]
 ---
 
-
+# LangChain - 输出解析器
 ## 5.1 为什么需要 OutputParser？
 
 在使用大模型时，默认情况下，模型返回的是自由文本（字符串），这种输出方式在实际开发中会遇到3个核心痛点，而OutputParser恰好能完美解决这些问题。
@@ -16,15 +19,12 @@ tag:
 
 - 格式混乱，难以处理：模型返回的文本没有固定格式，比如提取订单信息时，有时返回“订单号：123，金额：99元”，有时返回“123号订单，花费99元”，后续需要手动用字符串截取、正则匹配处理，代码繁琐且易出错；
 
-格式混乱，难以处理：模型返回的文本没有固定格式，比如提取订单信息时，有时返回“订单号：123，金额：99元”，有时返回“123号订单，花费99元”，后续需要手动用字符串截取、正则匹配处理，代码繁琐且易出错；
 
 - 无法直接对接下游系统：数据库、前端接口、业务逻辑通常需要结构化数据（如JSON、列表、实体对象），自由文本无法直接传入，需额外转换；
 
-无法直接对接下游系统：数据库、前端接口、业务逻辑通常需要结构化数据（如JSON、列表、实体对象），自由文本无法直接传入，需额外转换；
 
 - 无数据校验，存在风险：模型可能返回不符合要求的数据（如订单号格式错误、金额为负数），自由文本无法自动校验，容易导致下游业务异常。
 
-无数据校验，存在风险：模型可能返回不符合要求的数据（如订单号格式错误、金额为负数），自由文本无法自动校验，容易导致下游业务异常。
 
 ### 5.1.2 OutputParser 的核心价值
 
@@ -32,15 +32,12 @@ OutputParser的核心作用是：将模型返回的自由文本，按照预设�
 
 - 标准化输出：强制模型返回固定格式（如JSON、列表），避免格式混乱，后续处理无需手动适配；
 
-标准化输出：强制模型返回固定格式（如JSON、列表），避免格式混乱，后续处理无需手动适配；
 
 - 降低开发成本：无需编写复杂的字符串处理、正则匹配代码，解析器自动完成格式转换；
 
-降低开发成本：无需编写复杂的字符串处理、正则匹配代码，解析器自动完成格式转换；
 
 - 数据校验：部分解析器（如PydanticOutputParser）支持强类型校验，确保解析后的数据符合业务要求，避免异常数据流入下游。
 
-数据校验：部分解析器（如PydanticOutputParser）支持强类型校验，确保解析后的数据符合业务要求，避免异常数据流入下游。
 
 ### 5.1.3 直观对比：无解析器 vs 有解析器
 
@@ -50,15 +47,12 @@ LangChain中所有OutputParser的工作流程都一致，分为3步，简单易�
 
 - 定义解析规则：指定需要解析的格式（如列表、JSON、实体对象）；
 
-定义解析规则：指定需要解析的格式（如列表、JSON、实体对象）；
 
 - 提示模型适配格式：在Prompt中加入解析器的“格式提示”，让模型按指定格式输出；
 
-提示模型适配格式：在Prompt中加入解析器的“格式提示”，让模型按指定格式输出；
 
 - 解析与校验：模型返回文本后，解析器自动解析为结构化数据，并进行格式校验，失败则抛出异常或自动修复。
 
-解析与校验：模型返回文本后，解析器自动解析为结构化数据，并进行格式校验，失败则抛出异常或自动修复。
 
 提示：所有OutputParser都提供get_format_instructions()方法，可自动生成“格式提示”，无需手动编写，极大降低使用成本。
 
@@ -68,17 +62,15 @@ LangChain中所有OutputParser的工作流程都一致，分为3步，简单易�
 
 - ListOutputParser：解析换行分隔的列表（如每行一个元素），适配多元素、长文本列表；
 
-ListOutputParser：解析换行分隔的列表（如每行一个元素），适配多元素、长文本列表；
 
 - CommaSeparatedListOutputParser：解析逗号分隔的列表（如“a,b,c”），适配短文本、简单列表。
 
-CommaSeparatedListOutputParser：解析逗号分隔的列表（如“a,b,c”），适配短文本、简单列表。
 
 ### 5.2.1 ListOutputParser（换行分隔列表）
 
 核心场景：提取多元素列表（如推荐书单、关键词列表），模型输出每行一个元素，解析器自动转换为Python列表。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import ListOutputParser
 from langchain_openai import ChatOpenAI
@@ -127,7 +119,7 @@ print("列表类型：", type(result))
 
 核心场景：提取短文本列表（如标签、简单选项），模型输出逗号分隔的字符串，解析器自动转换为Python列表。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import CommaSeparatedListOutputParser
 from langchain_openai import ChatOpenAI
@@ -176,7 +168,7 @@ print("解析后的关键词列表：", result)
 
 适用于解析无嵌套的简单JSON对象（如用户基本信息、单条订单信息），步骤简单，无需复杂配置。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JSONOutputParser
 from langchain_openai import ChatOpenAI
@@ -222,7 +214,7 @@ print("结果类型：", type(result))
 
 基础用法中，模型可能会返回多余字段或缺失字段，通过指定JSON Schema，可强制模型返回固定字段、指定字段类型，确保解析结果符合业务要求。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JSONOutputParser
 from langchain_openai import ChatOpenAI
@@ -276,19 +268,15 @@ print("解析后的订单信息：", result)
 
 - JSON Schema的描述要清晰：给每个字段添加description，让模型理解字段含义和格式要求（如订单号格式、时间格式）；
 
-JSON Schema的描述要清晰：给每个字段添加description，让模型理解字段含义和格式要求（如订单号格式、时间格式）；
 
 - 必选字段用required指定：避免模型遗漏核心字段；
 
-必选字段用required指定：避免模型遗漏核心字段；
 
 - 禁止多余字段：设置additionalProperties=False，防止模型返回无关字段，简化后续处理；
 
-禁止多余字段：设置additionalProperties=False，防止模型返回无关字段，简化后续处理；
 
 - 解析失败处理：若模型输出不符合JSON格式，解析器会抛出OutputParserException，可通过try-except捕获，后续章节会讲解自动修复方法。
 
-解析失败处理：若模型输出不符合JSON格式，解析器会抛出OutputParserException，可通过try-except捕获，后续章节会讲解自动修复方法。
 
 ## 5.4 PydanticOutputParser：强类型数据校验
 
@@ -300,7 +288,7 @@ JSONOutputParser能解析JSON对象，但无法进行复杂数据校验（如订
 
 步骤：先定义Pydantic模型（指定字段类型、约束），再初始化PydanticOutputParser，最后结合提示模板和模型调用。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
@@ -377,7 +365,7 @@ order_id
 
 当需要解析嵌套结构（如订单信息包含用户信息、商品信息）时，可定义嵌套Pydantic模型，解析器会自动处理嵌套结构，实现多层数据校验。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
@@ -444,19 +432,15 @@ for product in result.products:
 
 - 强类型校验：支持字段类型、范围、格式、自定义规则校验，比JSONOutputParser更严谨；
 
-强类型校验：支持字段类型、范围、格式、自定义规则校验，比JSONOutputParser更严谨；
 
 - 嵌套结构支持：轻松处理嵌套对象、列表，适配复杂业务数据；
 
-嵌套结构支持：轻松处理嵌套对象、列表，适配复杂业务数据；
 
 - 代码友好：解析结果是Pydantic模型实例，可通过“对象.字段”访问，比字典更直观、更安全；
 
-代码友好：解析结果是Pydantic模型实例，可通过“对象.字段”访问，比字典更直观、更安全；
 
 - 选型建议：生产环境优先使用PydanticOutputParser，尤其是需要数据校验、复杂对象解析的场景；简单JSON解析可使用JSONOutputParser，追求简洁高效。
 
-选型建议：生产环境优先使用PydanticOutputParser，尤其是需要数据校验、复杂对象解析的场景；简单JSON解析可使用JSONOutputParser，追求简洁高效。
 
 ## 5.5 自定义 OutputParser 实现特殊格式
 
@@ -468,7 +452,7 @@ LangChain提供的内置解析器（List、JSON、Pydantic）覆盖了大多数�
 
 场景：模型返回XML格式文本，解析为Python字典，适配需要XML输入的下游系统。
 
-```
+```python
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
@@ -532,7 +516,7 @@ print("XML解析结果：", result)
 
 场景：模型返回Markdown表格，解析为列表字典，便于后续批量处理（如批量导入数据库）。
 
-```
+```python
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
@@ -599,15 +583,12 @@ Markdown表格解析结果：
 
 - 格式提示要清晰：get_format_instructions()中，必须明确告知模型输出格式（如XML标签、表格结构），避免模型输出不符合要求；
 
-格式提示要清晰：get_format_instructions()中，必须明确告知模型输出格式（如XML标签、表格结构），避免模型输出不符合要求；
 
 - 异常处理要完善：parse()方法中，需捕获解析过程中的异常（如XML格式错误、表格格式错误），并抛出清晰的错误信息，便于调试；
 
-异常处理要完善：parse()方法中，需捕获解析过程中的异常（如XML格式错误、表格格式错误），并抛出清晰的错误信息，便于调试；
 
 - 复用性设计：可将自定义解析器封装为类，加入参数（如XML根节点、表格表头），提升复用性，适配不同场景。
 
-复用性设计：可将自定义解析器封装为类，加入参数（如XML根节点、表格表头），提升复用性，适配不同场景。
 
 ## 5.6 RetryOutputParser 自动修复格式错误
 
@@ -621,25 +602,21 @@ RetryOutputParser的工作流程分为4步：
 
 - 模型生成原始输出，传递给RetryOutputParser；
 
-模型生成原始输出，传递给RetryOutputParser；
 
 - RetryOutputParser调用底层解析器（如JSONOutputParser、PydanticOutputParser）进行解析；
 
-RetryOutputParser调用底层解析器（如JSONOutputParser、PydanticOutputParser）进行解析；
 
 - 若解析成功，直接返回结构化数据；
 
-若解析成功，直接返回结构化数据；
 
 - 若解析失败，RetryOutputParser自动生成“重试提示”（包含原始输出、错误信息、格式要求），让模型重新生成输出，直至解析成功或达到最大重试次数。
 
-若解析失败，RetryOutputParser自动生成“重试提示”（包含原始输出、错误信息、格式要求），让模型重新生成输出，直至解析成功或达到最大重试次数。
 
 ### 5.6.2 实战示例：自动修复JSON格式错误
 
 以JSONOutputParser为例，演示RetryOutputParser如何自动修复模型输出的JSON语法错误。
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JSONOutputParser, RetryOutputParser
 from langchain_openai import ChatOpenAI
@@ -695,7 +672,7 @@ print("解析结果（自动修复后）：", result)
 
 RetryOutputParser不仅能修复格式错误，还能修复Pydantic模型的校验错误（如订单号格式错误、金额为负数），示例如下：
 
-```
+```python
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser, RetryOutputParser
 from langchain_openai import ChatOpenAI
@@ -756,15 +733,12 @@ print("修复校验错误后的结果：", result)
 
 - 设置合理的重试次数：max_retries建议设为2~3次，过多重试会增加耗时和tokens消耗；
 
-设置合理的重试次数：max_retries建议设为2~3次，过多重试会增加耗时和tokens消耗；
 
 - 优先用于生产环境：开发环境可关闭重试，快速定位格式错误；生产环境开启重试，提升系统稳定性；
 
-优先用于生产环境：开发环境可关闭重试，快速定位格式错误；生产环境开启重试，提升系统稳定性；
 
 - 结合日志：重试过程中，可打印日志（如原始输出、错误信息、重试次数），便于后续调试。
 
-结合日志：重试过程中，可打印日志（如原始输出、错误信息、重试次数），便于后续调试。
 
 ## 5.7 结合 LLM 调用链自动解析
 
@@ -776,7 +750,7 @@ print("修复校验错误后的结果：", result)
 
 LLMChain是最基础的链式调用，将PromptTemplate、Model、OutputParser整合为一个链，调用链时，自动完成“提示生成→模型调用→输出解析”，适合简单场景。
 
-```
+```python
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
@@ -824,7 +798,7 @@ print("自动解析结果：", result)
 
 当解析任务需要多步骤完成（如“先提取文本关键词→再根据关键词生成商品信息→最后解析为结构化数据”），可使用SequentialChain（顺序链），将多个LLMChain按顺序串联，实现多步骤自动解析。
 
-```
+```python
 from langchain.chains import SequentialChain, LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import CommaSeparatedListOutputParser, PydanticOutputParser

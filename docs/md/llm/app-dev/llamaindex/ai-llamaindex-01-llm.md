@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - LLM基础
+description: "本章介绍生成式 AI（GenAI）和大型语言模型（LLM）的基础概念，包括它们的能力与局限，以及 RAG（检索增强生成）如何作为解决方案来增强 LLM。"
+order: 11
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 理解大型语言模型
 本章介绍生成式 AI（GenAI）和大型语言模型（LLM）的基础概念，包括它们的能力与局限，以及 RAG（检索增强生成）如何作为解决方案来增强 LLM。
 
 ## 介绍 GenAI 和 LLM

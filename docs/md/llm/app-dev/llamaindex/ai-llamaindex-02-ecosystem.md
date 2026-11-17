@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 生态系统
+description: "本章介绍 LlamaIndex 框架的定位、模块化架构、与其他 LLM 优化方法（微调、提示工程等）的对比，以及开发环境搭建和实战项目 Contract Review Expert。"
+order: 12
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - LlamaIndex 生态系统
 本章介绍 LlamaIndex 框架的定位、模块化架构、与其他 LLM 优化方法（微调、提示工程等）的对比，以及开发环境搭建和实战项目 Contract Review Expert。
 
 ## 技术要求
@@ -220,7 +222,7 @@ cd Building-Data-Driven-Applications-with-LlamaIndex-2nd-Edition
 
 ### 安装 LlamaIndex
 
-```perl
+```bash
 pip install llama-index
 ```
 
@@ -230,7 +232,7 @@ pip install llama-index
 
 因为我们将使用本地托管的 LLM 和嵌入模型，所以还需要安装所需的 Ollama 集成：
 
-```perl
+```bash
 pip install llama-index-llms-ollama
 pip install llama-index-embeddings-ollama
 ```
@@ -243,7 +245,7 @@ pip install llama-index-embeddings-ollama
 
 安装好 Ollama 后，你需要下载本书示例所使用的特定模型：
 
-```arduino
+```bash
 ollama pull gemma3:4b
 ollama pull nomic-embed-text
 ```
@@ -256,7 +258,7 @@ ollama pull nomic-embed-text
 
 要开始使用 Ollama，请运行以下命令启动服务：
 
-```code
+```bash
 ollama serve
 ```
 
@@ -278,7 +280,7 @@ Streamlit 拥有大量很酷的能力，例如数据框、图表和小部件，�
 
 要安装 Streamlit 库，请运行以下命令：
 
-```code
+```bash
 pip install streamlit
 ```
 
@@ -292,7 +294,7 @@ pip install streamlit
 
 为了验证所有内容是否正确安装，请打开一个新的命令提示符或终端窗口，并运行以下命令：
 
-```sql
+```bash
 python --version
 git --version
 pip show llama-index
@@ -302,7 +304,7 @@ ollama --version
 
 检查你的环境是否准备就绪的一个简单方式，是尝试进入本地 Git 文件夹中的 `ch2` 子文件夹，并运行名为 `sample1.py` 的文件：
 
-```code
+```bash
 python sample1.py
 ```
 
@@ -334,13 +336,13 @@ LlamaIndex 的 `llama-index-integrations` 文件夹由各种附加包组成，�
 
 按照这个例子，在你像下面这样在代码中导入并使用 `mistralai` 包之前：
 
-```javascript
+```python
 from llama_index.llms.mistralai import MistralAI
 ```
 
 你必须先运行下面的命令安装对应的 PyPI 包：
 
-```code
+```bash
 pip install llama-index.llms.mistralai
 ```
 

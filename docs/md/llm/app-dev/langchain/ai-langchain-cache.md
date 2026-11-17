@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "在LangChain应用中，缓存并非“可选优化”，而是“必做优化”——尤其是高频查询、重复请求场景，缺少缓存会导致系统性能瓶颈、成本飙升。"
+order: 30
+outline: [2, 3]
 ---
 
-
+# LangChain - 缓存与性能优化
 ## 17.1 为什么需要缓存？
 
 在LangChain应用中，缓存并非“可选优化”，而是“必做优化”——尤其是高频查询、重复请求场景，缺少缓存会导致系统性能瓶颈、成本飙升。我们先通过一个真实场景，理解缓存的核心价值。
@@ -18,15 +21,12 @@ tag:
 
 - 响应延迟高：每次查询都要调用LLM+向量检索，单次响应时间约500ms，用户等待感明显，高频并发时甚至会超时。
 
-响应延迟高：每次查询都要调用LLM+向量检索，单次响应时间约500ms，用户等待感明显，高频并发时甚至会超时。
 
 - API成本飙升：重复查询会重复调用LLM和向量模型API，日均额外产生6万次无效调用，每月成本增加数千元。
 
-API成本飙升：重复查询会重复调用LLM和向量模型API，日均额外产生6万次无效调用，每月成本增加数千元。
 
 - 系统吞吐量低：大量重复请求占用服务器资源和API调用配额，导致并发能力下降，高峰时段容易出现服务卡顿。
 
-系统吞吐量低：大量重复请求占用服务器资源和API调用配额，导致并发能力下降，高峰时段容易出现服务卡顿。
 
 而添加缓存后，重复查询可直接从缓存中获取结果，响应时间可降至10ms以内，API调用次数减少60%，系统吞吐量提升3-5倍[superscript:6]——这就是缓存的核心价值：以空间换时间，以缓存复用降低成本、提升性能。
 
@@ -36,19 +36,15 @@ LangChain中，缓存并非万能，需针对性应用于以下场景，才能�
 
 - 高频重复查询：如客服问答、产品文档查询、固定话术生成（如欢迎语、常见问题回复）。
 
-高频重复查询：如客服问答、产品文档查询、固定话术生成（如欢迎语、常见问题回复）。
 
 - 计算成本高的操作：如向量嵌入生成（尤其是调用API生成嵌入）、复杂链执行（多工具调用+LLM生成）。
 
-计算成本高的操作：如向量嵌入生成（尤其是调用API生成嵌入）、复杂链执行（多工具调用+LLM生成）。
 
 - 响应时间敏感场景：如用户交互类应用（聊天机器人、实时问答），要求响应时间在100ms以内。
 
-响应时间敏感场景：如用户交互类应用（聊天机器人、实时问答），要求响应时间在100ms以内。
 
 - API调用受限场景：如LLM/向量模型API有调用频率限制，需通过缓存减少调用次数，避免限流。
 
-API调用受限场景：如LLM/向量模型API有调用频率限制，需通过缓存减少调用次数，避免限流。
 
 ### 17.1.3 图例：缓存的工作流程
 
@@ -64,7 +60,7 @@ SQLiteCache将缓存数据存储在本地SQLite数据库文件中，优点是支
 
 代码示例（简短可直接运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain_community.cache import SQLiteCache
 from langchain_openai import ChatOpenAI
@@ -104,15 +100,12 @@ LangChain默认的缓存键生成逻辑的核心的是“全输入哈希”，�
 
 - 用户输入（如问答中的问题、生成任务中的文本）；
 
-用户输入（如问答中的问题、生成任务中的文本）；
 
 - Prompt模板（若使用PromptTemplate，会包含模板内容）；
 
-Prompt模板（若使用PromptTemplate，会包含模板内容）；
 
 - LLM/链的配置（如模型名称、温度值temperature、最大Token数）。
 
-LLM/链的配置（如模型名称、温度值temperature、最大Token数）。
 
 图例：默认缓存键生成流程
 
@@ -122,7 +115,7 @@ LLM/链的配置（如模型名称、温度值temperature、最大Token数）。
 
 代码示例（自定义缓存键，简短可运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
 from langchain_openai import ChatOpenAI
@@ -153,19 +146,15 @@ print("缓存键是否相同（同一用户）：", response1 == response2)  # T
 
 - 唯一性优先：缓存键必须能唯一标识一个请求，避免不同请求共用一个键（缓存误命中）。
 
-唯一性优先：缓存键必须能唯一标识一个请求，避免不同请求共用一个键（缓存误命中）。
 
 - 简洁高效：哈希算法优先选择SHA-256，生成的键长度固定、计算高效，避免复杂逻辑影响缓存读写速度。
 
-简洁高效：哈希算法优先选择SHA-256，生成的键长度固定、计算高效，避免复杂逻辑影响缓存读写速度。
 
 - 适配多场景：多用户场景加入用户ID，多模型场景加入模型名称，多模板场景加入模板ID[superscript:7]。
 
-适配多场景：多用户场景加入用户ID，多模型场景加入模型名称，多模板场景加入模板ID[superscript:7]。
 
 - 避免冗余：无需将无关信息（如请求时间、随机数）加入缓存键，否则会导致缓存命中率极低。
 
-避免冗余：无需将无关信息（如请求时间、随机数）加入缓存键，否则会导致缓存命中率极低。
 
 ## 17.4 缓存失效策略
 
@@ -179,7 +168,7 @@ LangChain默认不设置缓存过期时间（缓存永久有效），需手动�
 
 代码示例（设置TTL缓存，简短可运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
 from langchain_openai import ChatOpenAI
@@ -226,7 +215,7 @@ print("缓存过期后调用：", response2.content[:30])
 
 代码示例（手动删除缓存，简短可运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache, get_llm_cache
 from langchain.cache import InMemoryCache
 from langchain_openai import ChatOpenAI
@@ -259,7 +248,7 @@ print("删除缓存后调用：", response2.content[:30])
 
 代码示例（LRU缓存，简短可运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
 from langchain_openai import ChatOpenAI
@@ -309,19 +298,15 @@ print("缓存中是否有请求1：", "请求1" in get_llm_cache().cache)  # 输
 
 - 内容更新固定（如每日更新）：选择TTL策略，设置与更新频率匹配的存活时间（如1天）。
 
-内容更新固定（如每日更新）：选择TTL策略，设置与更新频率匹配的存活时间（如1天）。
 
 - 内容更新不确定（如随时更新）：选择主动失效策略，内容更新时手动删除对应缓存。
 
-内容更新不确定（如随时更新）：选择主动失效策略，内容更新时手动删除对应缓存。
 
 - 缓存空间有限（如服务器内存较小）：选择LRU策略，限制缓存容量，避免内存溢出[superscript:3]。
 
-缓存空间有限（如服务器内存较小）：选择LRU策略，限制缓存容量，避免内存溢出[superscript:3]。
 
 - 生产最佳实践：TTL策略+主动失效策略结合，既避免缓存长期过时，又能在内容更新时及时失效。
 
-生产最佳实践：TTL策略+主动失效策略结合，既避免缓存长期过时，又能在内容更新时及时失效。
 
 ## 17.5 向量检索结果缓存
 
@@ -335,7 +320,7 @@ LangChain提供了CacheBackedEmbeddings工具，专门用于缓存向量嵌入�
 
 代码示例（向量嵌入缓存，简短可运行）：
 
-```
+```python
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.cache import InMemoryCache
 from langchain.embeddings.cache import CacheBackedEmbeddings
@@ -373,7 +358,7 @@ print("两次嵌入是否一致：", emb1 == emb2)  # 输出True
 
 代码示例（向量检索结果缓存，简短可运行）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
 from langchain.embeddings import OpenAIEmbeddings
@@ -413,15 +398,12 @@ print("第二次检索（有缓存）：", [doc.page_content for doc in result2]
 
 - 嵌入模型一致性：缓存的嵌入结果与嵌入模型强绑定，更换嵌入模型后，需清空缓存，否则会导致检索结果不准确[superscript:7]。
 
-嵌入模型一致性：缓存的嵌入结果与嵌入模型强绑定，更换嵌入模型后，需清空缓存，否则会导致检索结果不准确[superscript:7]。
 
 - 文档更新处理：当向量数据库中的文档更新时，需删除对应文档的嵌入缓存和检索结果缓存，避免使用旧文档的嵌入[superscript:4]。
 
-文档更新处理：当向量数据库中的文档更新时，需删除对应文档的嵌入缓存和检索结果缓存，避免使用旧文档的嵌入[superscript:4]。
 
 - 缓存键设计：向量缓存的键建议使用“文本哈希+嵌入模型名称”，确保不同文本、不同模型的嵌入不冲突[superscript:7]。
 
-缓存键设计：向量缓存的键建议使用“文本哈希+嵌入模型名称”，确保不同文本、不同模型的嵌入不冲突[superscript:7]。
 
 ## 17.6 异步批处理提升吞吐量
 
@@ -435,7 +417,7 @@ LangChain支持异步调用（async/await），通过Python的asyncio库实现�
 
 代码示例（异步调用LLM，简短可运行）：
 
-```
+```python
 import asyncio
 from langchain_openai import ChatOpenAI
 
@@ -468,7 +450,7 @@ asyncio.run(main())
 
 代码示例（LLM批处理，简短可运行）：
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -496,7 +478,7 @@ for product, result in zip(products, results):
 
 代码示例（异步批处理+缓存，简短可运行）：
 
-```
+```python
 import asyncio
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
@@ -540,25 +522,21 @@ for prompt, result in zip(prompts, results):
 
 - 开发测试场景：优先选择InMemoryCache，无需关注持久化，读写速度快，方便调试。
 
-开发测试场景：优先选择InMemoryCache，无需关注持久化，读写速度快，方便调试。
 
 - 生产环境-高频热点请求：选择“内存缓存+磁盘缓存”结合——热点请求（高频重复）存在内存缓存，提升响应速度；所有请求同步到磁盘缓存，确保应用重启后缓存不丢失[superscript:8]。
 
-生产环境-高频热点请求：选择“内存缓存+磁盘缓存”结合——热点请求（高频重复）存在内存缓存，提升响应速度；所有请求同步到磁盘缓存，确保应用重启后缓存不丢失[superscript:8]。
 
 - 生产环境-低频请求：优先选择SQLiteCache，无需占用大量内存，同时保证缓存持久化，减少API调用成本。
 
-生产环境-低频请求：优先选择SQLiteCache，无需占用大量内存，同时保证缓存持久化，减少API调用成本。
 
 - 内存资源有限场景：选择SQLiteCache，以磁盘空间换内存，避免内存溢出。
 
-内存资源有限场景：选择SQLiteCache，以磁盘空间换内存，避免内存溢出。
 
 ### 17.7.3 内存+磁盘缓存结合（生产最佳实践）
 
 代码示例（双重缓存，热点存内存，持久化存磁盘）：
 
-```
+```python
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
 from langchain_community.cache import SQLiteCache
@@ -618,47 +596,38 @@ print("重启后调用：", response2.content[:30])
 
 - 接口功能：接收用户查询，返回基于产品文档的问答结果（RAG场景）。
 
-接口功能：接收用户查询，返回基于产品文档的问答结果（RAG场景）。
 
 - 性能要求：高频查询响应时间≤50ms，支持批量查询，吞吐量≥100QPS。
 
-性能要求：高频查询响应时间≤50ms，支持批量查询，吞吐量≥100QPS。
 
 - 缓存要求：支持双重缓存（内存+磁盘），TTL=1小时，产品文档更新时主动失效。
 
-缓存要求：支持双重缓存（内存+磁盘），TTL=1小时，产品文档更新时主动失效。
 
 - 成本要求：减少80%的LLM和向量API调用次数。
 
-成本要求：减少80%的LLM和向量API调用次数。
 
 #### 技术栈
 
 - 核心框架：LangChain、FastAPI（提供API服务）。
 
-核心框架：LangChain、FastAPI（提供API服务）。
 
 - 缓存方案：双重缓存（InMemoryCache+SQLiteCache）+ TTL失效。
 
-缓存方案：双重缓存（InMemoryCache+SQLiteCache）+ TTL失效。
 
 - 向量检索：Chroma（轻量级向量数据库）+ CacheBackedEmbeddings（嵌入缓存）。
 
-向量检索：Chroma（轻量级向量数据库）+ CacheBackedEmbeddings（嵌入缓存）。
 
 - LLM：ChatOpenAI（gpt-3.5-turbo），支持异步批处理。
 
-LLM：ChatOpenAI（gpt-3.5-turbo），支持异步批处理。
 
 - 依赖安装：pip install langchain langchain\-openai langchain\-community fastapi uvicorn chromadb tiktoken。
 
-依赖安装：pip install langchain langchain\-openai langchain\-community fastapi uvicorn chromadb tiktoken。
 
 ### 17.8.2 完整代码实现（可直接部署）
 
 代码分为6个模块：缓存初始化、向量检索初始化、LLM配置、核心业务逻辑、API接口、缓存失效接口，注释清晰，适配生产场景。
 
-```
+```python
 import time
 import asyncio
 from fastapi import FastAPI, HTTPException

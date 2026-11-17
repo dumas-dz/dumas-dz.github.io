@@ -1,11 +1,19 @@
 ---
-title: 布局与功能禁用
+title: 模板示例：布局与功能禁用
 icon: config
 order: 3
 category:
-  - 使用指南
+  - 模板示例
 tag:
   - 禁用
+article: false
+index: false
+sitemap:
+  exclude: true
+head:
+  - - meta
+    - name: robots
+      content: noindex,nofollow
 
 navbar: false
 sidebar: false
@@ -27,7 +35,7 @@ backtotop: false
 
 <!-- more -->
 
-本页面就是一个示例，禁用了如下功能:
+本页仅用于演示布局与功能禁用，不属于知识正文，也不进入公开文章列表或搜索索引。页面禁用了如下功能：
 
 - 导航栏
 - 侧边栏

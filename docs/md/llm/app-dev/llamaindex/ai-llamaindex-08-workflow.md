@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - Workflow
+description: "本章介绍 LlamaIndex Workflow 事件驱动架构——介于简单 RAG 和 Agent 之间的最佳平衡点，支持分支、重试、并行执行、人工审批等生产级特性。"
+order: 18
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - Workflow 构建智能应用
 本章介绍 LlamaIndex Workflow 事件驱动架构——介于简单 RAG 和 Agent 之间的最佳平衡点，支持分支、重试、并行执行、人工审批等生产级特性。
 
 ## 技术要求
@@ -64,7 +66,7 @@ Workflows 位于这两个极端之间。像简单 RAG chains 一样，它们结�
 
 ## 构建一个简单 workflow
 
-```perl
+```bash
 pip install llama-index-workflows
 ```
 
@@ -119,7 +121,7 @@ if __name__ == "__main__":
 
 `run()` 方法开始执行。我们首先提供 query，然后 workflow 会一步一步运行，直到到达 `StopEvent`。输出会类似如下：
 
-```css
+```text
 Albert Einstein was a revolutionary physicist who fundamentally changed our understanding of space, time, and the universe through groundbreaking theories like relativity and his iconic equation E=mc².
 ```
 
@@ -189,7 +191,7 @@ class Summarized(Event):
 
 在 imports 之后，我们定义了两个自定义事件：`Generated` 和 `Summarized`。二者都继承自基础 `Event` 类，但携带特定信息。`Generated` 事件保存 LLM 返回的完整答案，而 `Summarized` 事件保存这个答案的较短版本。下一步是定义 workflow：
 
-```ini
+```python
 class SimpleWorkflow(Workflow):
     @step(pass_context=True)
     async def generate(self, ctx: Context, ev: StartEvent) -> Generated:
@@ -219,7 +221,7 @@ class SimpleWorkflow(Workflow):
 
 `SimpleWorkflow` 类继承自 `Workflow`，这意味着它可以编排一系列通过 events 通信的 steps。在这个类中，我们定义了三个步骤：`generate`、`summarize` 和 `extract_keywords`。每个 step 都用 `@step` decorator 标记，告诉框架它是 workflow 的一部分，也让系统推断每个 step 消费和产生什么类型的 events。接下来，main 函数会把所有内容组合起来：
 
-```css
+```python
 async def main():
     workflow = SimpleWorkflow(timeout=30)
     result = await workflow.run(query="Who was Albert Einstein?")
@@ -239,7 +241,7 @@ if __name__ == "__main__":
 
 由于第三个步骤返回的内容，这一次输出会同时包含摘要和关键词：
 
-```css
+```json
 {'summary': 'Albert Einstein was a revolutionary physicist who developed groundbreaking theories like relativity and explained phenomena like Brownian motion, fundamentally changing our understanding of the universe and earning him global recognition.', 'keywords': ['Theory of Relativity', 'Space-Time', 'Physics', 'Genius', 'Innovation']}
 ```
 
@@ -303,7 +305,7 @@ Checkpoints 和 retries 彼此互补。Retries 帮你穿越短期故障，并真
 
 是时候看看 checkpointing 和 retries 在实践中的样子了，不是吗？让我们看一个如何在简单 workflow 中实现它们的示例：
 
-```javascript
+```python
 import asyncio
 import random
 import models_config
@@ -321,7 +323,7 @@ from workflows.retry_policy import ConstantDelayRetryPolicy
 
 我们从常规 imports 开始：Python 的 `asyncio`、我们的 `models_config`、用于 LLM 访问的 LlamaIndex `Settings`、核心 workflow 原语，最后是 `ConstantDelayRetryPolicy`，它给我们开箱即用的 retry 逻辑。我们还需要 `random` 来模拟 step 执行期间的失败。
 
-```vbnet
+```python
 class ServiceResult(Event):
     text: str
 
@@ -382,7 +384,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-```vbnet
+```text
 Running step unreliable_service
 Step unreliable_service produced an error, retry in 2 seconds
 Step unreliable_service produced event ServiceResult
@@ -436,7 +438,7 @@ Workflows 的美妙之处在于，你不必硬编码巨大的 if-else 语句，�
 
 我们先定义自定义 events。这些 events 是 steps 会发送和监听的信号：math queries、retrieval queries、drafts、fix requests 和 final answers。
 
-```vbnet
+```python
 import asyncio
 from llama_index.core.workflow import (
     Workflow, step, Event, StartEvent, StopEvent
@@ -472,7 +474,7 @@ class BranchLoopWorkflow(Workflow):
 
 接下来，我们有两个分支：calculator 和 retrieval 分支。二者都会产生一个 draft answer：
 
-```less
+```yaml
 @step
     async def calculator(self, ev: CalcQuery) -> DraftAnswer:
         try:
@@ -488,7 +490,7 @@ class BranchLoopWorkflow(Workflow):
 
 这里是 loop 出现的地方。validator 会检查 draft 是否足够长。如果不够，就发出 `NeedsFix` 事件。它会循环回 `fix` step，后者重写 draft，并将其重新送入 validator。循环持续到 validation 通过为止。
 
-```less
+```text
 @step
     async def validate(self, ev: DraftAnswer) -> FinalAnswer | NeedsFix:
         if len(ev.text) < 10:
@@ -502,7 +504,7 @@ class BranchLoopWorkflow(Workflow):
 
 最后，一旦答案通过验证，workflow 就以 `StopEvent` 结束：
 
-```less
+```text
 @step
     async def finalize(self, ev: FinalAnswer) -> StopEvent:
         return StopEvent(result=ev.text)
@@ -510,7 +512,7 @@ class BranchLoopWorkflow(Workflow):
 
 如果运行这段代码，数学查询会走 calculator 分支并返回 `4`。RAG 查询会走 retrieval 分支，生成短 draft，并可能循环一两次后通过验证：
 
-```ini
+```python
 async def main():
     wf = BranchLoopWorkflow(timeout=20, verbose=True)
     print(await wf.run(query="2+2"))
@@ -522,7 +524,7 @@ if __name__ == "__main__":
 
 实际输出如下：
 
-```vbnet
+```text
 Running step classify
 Step classify produced event CalcQuery
 Running step calculator
@@ -642,7 +644,7 @@ if __name__ == "__main__":
 
 另一个设计杠杆是**流式输出结果**。一个法律研究助手可能需要几分钟编译完整答案，但它仍然可以通过在准备好时立即流式输出部分发现来保持律师参与感：`Found 12 relevant cases…`，同时 synthesis step 继续运行。用户会感觉系统在与他们一起工作，而不是让他们蒙在黑暗中。在实践中构建 workflows 时，我们可以使用 `write_event_to_stream` 方法实现事件流。下面是一个快速代码示例：
 
-```ruby
+```python
 class ProgressEvent(Event):
     msg: str
 
@@ -717,7 +719,7 @@ from analysis import perform_risk_analysis, perform_compliance_check
 
 接下来，我们定义 events：
 
-```vbnet
+```python
 class RiskAnalyzed(Event):
     text: str
 
@@ -729,11 +731,11 @@ class ComplianceChecked(Event):
 
 让我们定义 workflow：
 
-```kotlin
+```python
 class ContractAnalysisWorkflow(Workflow):
 ```
 
-```ini
+```text
 @step
     async def risk(self, ev: StartEvent) -> RiskAnalyzed:
         contract_path = ev.get("contract_path")
@@ -752,7 +754,7 @@ LlamaIndex workflows 运行在 async event loop 上。如果某个 step 直接�
 
 让我们进入下一个 step：
 
-```ini
+```text
 @step
     async def compliance(self, ev: StartEvent) -> ComplianceChecked:
         contract_path = ev.get("contract_path")
@@ -765,7 +767,7 @@ LlamaIndex workflows 运行在 async event loop 上。如果某个 step 直接�
 
 第二个 step 与第一个模式相同，但用于 compliance。由于两个 steps 独立声明，workflow engine 可以并发运行它们，与顺序执行相比减少 wall-clock time。一旦两个分支都完成，它们的结果需要被组合。下面的 step 负责这种同步：
 
-```python
+```yaml
 @step(pass_context=True)
     async def merge(
         self, ctx: Context, ev: RiskAnalyzed | ComplianceChecked
@@ -792,7 +794,7 @@ LlamaIndex workflows 运行在 async event loop 上。如果某个 step 直接�
 
 好了，让我们覆盖代码：
 
-```javascript
+```python
 import streamlit as st
 import os
 import asyncio
@@ -817,7 +819,7 @@ Streamlit callbacks 是同步的，所以这个 helper 用 `asyncio.run` 包装�
 
 下一个函数负责 UI：
 
-```ini
+```python
 def render_contracts_section(is_analyzing, analyzing_file):
     st.header("📄 Contracts")
     contracts_modified = False
@@ -827,7 +829,7 @@ def render_contracts_section(is_analyzing, analyzing_file):
 
 这个函数渲染整个合同管理 UI，并返回三个标志，让调用方知道是否有内容变化、分析是否开始、分析是否完成。这对于协调更大的应用流程很有用。让我们看看合同上传如何处理：
 
-```python
+```yaml
 if "contract_uploaded_done" not in st.session_state:
         uploaded_contract = st.file_uploader("Add Contract (.pdf, .txt)", key="contract_uploader")
         if uploaded_contract and "contract_uploaded" not in st.session_state and not is_analyzing:
@@ -843,14 +845,14 @@ if "contract_uploaded_done" not in st.session_state:
                 del st.session_state["contract_uploaded"]
 ```
 
-```kotlin
+```text
 contract_files = list_files("data/contracts")
     if not contract_files:
         st.info("No contracts uploaded yet. Upload a contract to get started.")
         return contracts_modified, analysis_started, analysis_completed
 ```
 
-```python
+```yaml
 if not is_analyzing:
         for file in contract_files:
             contract_name = os.path.splitext(file)[0]
@@ -905,7 +907,7 @@ if not is_analyzing:
 - `See report` 按钮，将保存的文本加载到 session 中，以便在其他地方查看
 - `Delete` 按钮，移除合同及其报告，清除相关 chat cache，并强制 UI rerun
 
-```ini
+```yaml
 else:
         st.info(f" Analyzing: {analyzing_file}")
         with st.spinner("Analyzing contract."):
@@ -948,7 +950,7 @@ else:
 
 接下来，只剩最后一件事：更新 UI 并显示摘要：
 
-```python
+```text
 if contract_files:
         analyzed_count = sum(1 for file in contract_files
                            if os.path.exists(os.path.join("data/reports", f"analysis report for {os.path.splitext(file)[0]}.txt")))

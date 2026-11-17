@@ -1,109 +1,42 @@
 ---
-home: true
-icon: home
-title: 知识库
-heroImage: /logo.svg
-heroText: 个人知识库
-tagline: 「个人知识库知识总结」
-actions:
-  - text: 使用指南 💡
-    link: /guide/
-    type: primary
-
-  - text: 博客主页 🏠
-    link: /
-
-features:
-  - title: Markdown 增强
-    icon: markdown
-    details: 新增文字对齐、上下角标、脚注、标记、任务列表、数学公式、流程图、图表与幻灯片支持
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/markdown/
-
-  - title: 幻灯片页面
-    icon: slides
-    details: 添加幻灯片页面以显示你喜欢的内容
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/layout/slides
-
-  - title: 布局增强
-    icon: layout
-    details: 添加路径导航、页脚、改进的导航栏、改进的页面导航等。
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/layout/
-
-  - title: 浏览量与评论
-    icon: comment
-    details: 配合 Waline 来开启阅读量统计与评论支持
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/comment.html
-
-  - title: 文章信息
-    icon: info
-    details: 为你的文章添加作者、写作日期、预计阅读时间、字数统计等信息
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/page-info.html
-
-  - title: 博客支持
-    icon: blog
-    details: 使用一些很棒的布局提供博客功能，通过文章的日期、标签和分类，自动生成文章、分类、标签与时间轴列表
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/blog/intro.html
-
-  - title: 主题色切换
-    icon: palette
-    details: 支持自定义主题色并允许用户在预设的主题颜色之间切换
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/interface/theme-color.html
-
-  - title: 深色模式
-    icon: contrast
-    details: 可以自由切换浅色模式与深色模式
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/interface/darkmode.html
-
-  - title: 完整的无障碍支持
-    icon: support
-    details: 为你的网站带来完整的无障碍支持
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/interface/accessibility.html
-
-  - title: 文章加密
-    icon: lock
-    details: 你可以为你的特定页面或特定目录进行加密，以便陌生人不能随意访问它们
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/encrypt.html
-
-  - title: 复制按钮
-    icon: copy
-    details: 一键复制代码块中的代码
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/copy-code.html
-
-  - title: 图片预览
-    icon: pic
-    details: 像相册一样允许你浏览、缩放并分享你的页面图片
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/photo-swipe.html
-
-  - title: SEO 增强
-    icon: config
-    details: 将最终生成的网页针对搜索引擎进行优化。
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/advanced/seo.html
-
-  - title: Sitemap
-    icon: sitemap
-    details: 自动为你的网站生成 Sitemap
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/advanced/sitemap.html
-
-  - title: Feed 支持
-    icon: rss
-    details: 生成你的 Feed，并通知你的用户订阅它
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/advanced/feed.html
-
-  - title: PWA 支持
-    icon: mobile
-    details: 让你的网站更像一个 APP
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/advanced/pwa.html
-
-  - title: 更多新特性
-    icon: more
-    details: 包括图标支持、全屏按钮、返回顶部按钮等
-    link: https://vuepress-theme-hope.github.io/v2/zh/guide/feature/
-copyright: false
-footer: MIT Licensed | Copyright © 2022 Mr.Dumas
+title: 网站导航
+icon: guide
+order: 2
+category:
+  - 知识库
+tag:
+  - 导航
+outline: [2, 3]
 ---
 
-这是项目主页的案例。你可以在这里放置你的主体内容。
+# 网站导航
 
-想要使用此布局，你需要在页面 front matter 中设置 `home: true`。
+本站同时承担两个目标：作为个人学习知识库沉淀技术体系，也作为对外展示网站呈现开发能力和项目实践。
 
-配置项的相关说明详见 [项目主页配置](https://vuepress-theme-hope.github.io/v2/zh/guide/layout/home/)。
+## 快速入口
+
+| 目标 | 入口 | 适合人群 |
+| --- | --- | --- |
+| 查看完整技术体系 | [开发者 AI 应用知识地图](/md/) | 希望系统学习或评估能力 |
+| 学习 AI 应用开发 | [AI 基础](/md/llm/foundations/) | 后端开发者转向 AI 应用 |
+| 学习 Web3 开发 | [Web3 知识地图](/md/web3/) | 希望理解智能合约与 DApp |
+| 查看项目方法 | [项目案例](/md/llm/projects/) | 希望了解企业级落地 |
+| 查看个人介绍 | [关于我](/about.html) | 招聘、合作与技术交流 |
+| 了解写作结构 | [内容规范](/guide/content-standard.md) | 参与维护或撰写技术文档 |
+
+## 网站结构
+
+- `/md/`：知识地图和学习路线。
+- `/md/java/`、`/md/spring/`：Java 与 Spring 后端底座。
+- `/md/llm/`：AI 应用开发、框架、评测、安全、部署与项目案例。
+- `/md/web3/`：区块链、Solidity、智能合约、安全、DApp 与测试网部署。
+- `/md/db/`、`/md/framework/`、`/md/arch/`：数据、中间件和架构。
+- `/md/dev-spec/`：工程方法论、规范与设计模式。
+- `/about.html`：个人介绍与公开项目案例。
+
+## 阅读建议
+
+1. 先阅读领域的 `README.md`，了解主题边界和推荐顺序。
+2. 阅读文章时优先关注“适用场景、工程实现、常见问题”。
+3. 将文档中的检查表用于项目设计评审或面试复盘。
+4. 对过时版本或有疑问的内容，以文档中标注的版本范围为准。

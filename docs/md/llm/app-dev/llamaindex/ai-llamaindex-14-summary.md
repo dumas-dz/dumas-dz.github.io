@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 总结
+description: "本章提供进一步学习资源、行业趋势展望（MCP、多模态等），以及 AI 监管（EU AI Act）与伦理的工程原则总结。"
+order: 24
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 结语与额外资源
 本章提供进一步学习资源、行业趋势展望（MCP、多模态等），以及 AI 监管（EU AI Act）与伦理的工程原则总结。
 
 ### 技术要求

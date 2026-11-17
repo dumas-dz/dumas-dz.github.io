@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "LangChain中，与大模型交互的核心接口分为两类：LLM（大语言模型）和ChatModel（聊天模型）。"
+order: 110
+outline: [2, 3]
 ---
 
-
+# LangChain - 模型与消息
 ### 3.1 LLM 与 ChatModel 的区别与适用场景
 
 LangChain中，与大模型交互的核心接口分为两类：LLM（大语言模型）和ChatModel（聊天模型）。很多新手容易混淆两者，其实它们的核心区别在于“交互格式”和“适用场景”，选择对了模型类型，能大幅提升开发效率。
@@ -16,7 +19,7 @@ LangChain中，与大模型交互的核心接口分为两类：LLM（大语言�
 
 #### 3.1.2 代码示例（直观对比）
 
-```
+```python
 from langchain_openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -37,7 +40,7 @@ print("LLM输出（纯文本）：", response)
 
 依赖安装：pip install langchain-openai==0.1.6；代码来源：LangChain LLM官方示例（python.langchain.com/docs/langch…）。
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -63,15 +66,12 @@ print("ChatModel输出（消息对象）：", response.content)
 
 - 优先选 ChatModel 的场景：多轮对话（如聊天机器人）、需要系统提示（System Prompt）、需要明确区分用户/AI消息、使用主流聊天模型（GPT-3.5/4、Claude、Llama 3）；
 
-优先选 ChatModel 的场景：多轮对话（如聊天机器人）、需要系统提示（System Prompt）、需要明确区分用户/AI消息、使用主流聊天模型（GPT-3.5/4、Claude、Llama 3）；
 
 - 选 LLM 的场景：纯文本生成（如文案、摘要）、使用旧版文本模型（如text-davinci-003）、简单场景无需复杂消息结构；
 
-选 LLM 的场景：纯文本生成（如文案、摘要）、使用旧版文本模型（如text-davinci-003）、简单场景无需复杂消息结构；
 
 - 注意：LangChain 1.0+版本更推荐使用ChatModel，其功能更全面、更贴合当前大模型的交互逻辑，LLM更多用于兼容旧版模型。
 
-注意：LangChain 1.0+版本更推荐使用ChatModel，其功能更全面、更贴合当前大模型的交互逻辑，LLM更多用于兼容旧版模型。
 
 ### 3.2 使用 OpenAI、Anthropic、Hugging Face 模型
 
@@ -81,7 +81,7 @@ LangChain的核心优势之一是“统一模型接口”——无论使用OpenA
 
 OpenAI的ChatModel是LangChain开发中最常用的模型，支持GPT-3.5-turbo、GPT-4等，调用方式如下（延续上一节的ChatModel示例，补充多轮对话）：
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from dotenv import load_dotenv
@@ -115,7 +115,7 @@ print("OpenAI响应：", response.content)
 
 Anthropic的Claude模型以“长上下文窗口”著称（如Claude 3 Opus支持200k上下文），适合长文本处理，LangChain集成方式如下：
 
-```
+```python
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -141,7 +141,7 @@ print("Claude响应：", response.content)
 
 Hugging Face提供大量开源模型（如Llama 2、Mistral），可通过LangChain直接调用云端模型（Hugging Face Inference Endpoints）或本地模型，这里以云端调用为例：
 
-```
+```python
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -175,7 +175,7 @@ LangChain对主流模型的集成遵循“统一接口”原则——无论使�
 
 Ollama是最易用的本地模型部署工具，支持一键拉取、运行开源模型（Llama 3、Qwen、Mistral等），LangChain集成无需复杂配置，步骤如下（延续第2章内容，补充多轮对话）：
 
-```
+```python
 from langchain_community.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -204,17 +204,14 @@ Llama.cpp是一款轻量级开源模型部署工具，支持将Llama系列模型
 
 - 安装依赖：pip install langchain-community==0.1.13 llama-cpp-python==0.2.24；
 
-安装依赖：pip install langchain-community==0.1.13 llama-cpp-python==0.2.24；
 
 - 下载模型：从Hugging Face下载转换好的Llama 2模型（如llama-2-7b-chat.Q4_K_M.gguf）；
 
-下载模型：从Hugging Face下载转换好的Llama 2模型（如llama-2-7b-chat.Q4_K_M.gguf）；
 
 - LangChain调用示例：
 
-LangChain调用示例：
 
-```
+```python
 from langchain_community.llms import LlamaCpp
 from langchain_core.prompts import PromptTemplate
 
@@ -240,17 +237,14 @@ vLLM是一款高性能开源模型部署工具，支持高并发请求，适合�
 
 - 安装依赖：pip install langchain-community==0.1.13 vllm==0.4.0；
 
-安装依赖：pip install langchain-community==0.1.13 vllm==0.4.0；
 
 - 启动vLLM服务：终端执行vllm serve meta-llama/Llama-2-7b-chat-hf（需提前下载模型）；
 
-启动vLLM服务：终端执行vllm serve meta-llama/Llama-2-7b-chat-hf（需提前下载模型）；
 
 - LangChain调用示例：
 
-LangChain调用示例：
 
-```
+```python
 from langchain_community.chat_models import ChatVLLM
 from langchain_core.messages import HumanMessage
 
@@ -273,19 +267,15 @@ print("vLLM响应：", response.content)
 
 - 新手/快速验证：优先选 Ollama，一键部署，无需复杂配置；
 
-新手/快速验证：优先选 Ollama，一键部署，无需复杂配置；
 
 - 低配置设备（如笔记本）：选 Llama.cpp，轻量占用，支持CPU运行；
 
-低配置设备（如笔记本）：选 Llama.cpp，轻量占用，支持CPU运行；
 
 - 生产环境/高并发：选 vLLM，高性能，支持批量请求；
 
-生产环境/高并发：选 vLLM，高性能，支持批量请求；
 
 - 模型选择：优先选7B参数模型（如llama3:8b、Qwen-7B），平衡性能和资源占用。
 
-模型选择：优先选7B参数模型（如llama3:8b、Qwen-7B），平衡性能和资源占用。
 
 ### 3.4 消息类型详解：HumanMessage、AIMessage、SystemMessage
 
@@ -297,43 +287,34 @@ print("vLLM响应：", response.content)
 
 - 作用：定义AI的“角色、行为准则、回答要求”，相当于给AI设定“人设”，贯穿整个对话过程；
 
-作用：定义AI的“角色、行为准则、回答要求”，相当于给AI设定“人设”，贯穿整个对话过程；
 
 - 特点：通常放在消息列表的最前面，只需要设置一次（多轮对话中可重复设置，覆盖之前的准则）；
 
-特点：通常放在消息列表的最前面，只需要设置一次（多轮对话中可重复设置，覆盖之前的准则）；
 
 - 示例：SystemMessage(content="你是一名LangChain开发专家，回答需包含代码示例，简洁明了。")。
 
-示例：SystemMessage(content="你是一名LangChain开发专家，回答需包含代码示例，简洁明了。")。
 
 - 作用：用户输入的查询、问题或指令，是AI生成回答的核心依据；
 
-作用：用户输入的查询、问题或指令，是AI生成回答的核心依据；
 
 - 特点：多轮对话中，每次用户输入都是一条HumanMessage，与AI的AIMessage交替出现；
 
-特点：多轮对话中，每次用户输入都是一条HumanMessage，与AI的AIMessage交替出现；
 
 - 示例：HumanMessage(content="如何使用LangChain的SystemMessage？")。
 
-示例：HumanMessage(content="如何使用LangChain的SystemMessage？")。
 
 - 作用：AI生成的回答，通常是ChatModel的输出结果；
 
-作用：AI生成的回答，通常是ChatModel的输出结果；
 
 - 特点：多轮对话中，需将历史AIMessage加入消息列表，让AI“记住”之前的回答；
 
-特点：多轮对话中，需将历史AIMessage加入消息列表，让AI“记住”之前的回答；
 
 - 示例：AIMessage(content="使用SystemMessage需导入对应的类，放在消息列表最前面，示例如下：...")。
 
-示例：AIMessage(content="使用SystemMessage需导入对应的类，放在消息列表最前面，示例如下：...")。
 
 #### 3.4.2 代码示例（多轮对话，完整消息流程）
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from dotenv import load_dotenv
@@ -377,11 +358,9 @@ for msg in messages:
 
 - FunctionMessage：用于工具调用场景，存储工具调用的结果（后续Agent章节详细讲解）；
 
-FunctionMessage：用于工具调用场景，存储工具调用的结果（后续Agent章节详细讲解）；
 
 - ToolMessage：与FunctionMessage配套，传递工具调用的参数和结果。
 
-ToolMessage：与FunctionMessage配套，传递工具调用的参数和结果。
 
 ### 3.5 控制生成行为：temperature、max_tokens、stop sequences
 
@@ -391,7 +370,7 @@ ToolMessage：与FunctionMessage配套，传递工具调用的参数和结果。
 
 #### 3.5.2 代码示例（参数实战）
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -443,15 +422,12 @@ print(chat_stop_seq.invoke([HumanMessage(content=question + "，结尾加上### 
 
 - max_tokens 设定不宜过大，否则会增加成本（云端模型按tokens收费），且可能导致回答冗余；
 
-max_tokens 设定不宜过大，否则会增加成本（云端模型按tokens收费），且可能导致回答冗余；
 
 - stop sequences 需根据生成格式设定，避免出现“未生成完整内容就停止”的情况；
 
-stop sequences 需根据生成格式设定，避免出现“未生成完整内容就停止”的情况；
 
 - 不同模型对参数的支持略有差异（如部分本地模型不支持stop sequences），需参考对应模型的文档。
 
-不同模型对参数的支持略有差异（如部分本地模型不支持stop sequences），需参考对应模型的文档。
 
 ### 3.6 流式输出（Streaming）实现与前端对接
 
@@ -463,7 +439,7 @@ stop sequences 需根据生成格式设定，避免出现“未生成完整内�
 
 #### 3.6.2 LangChain 流式输出代码示例（后端）
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -492,7 +468,7 @@ for chunk in chat_stream.stream([HumanMessage(content="详细介绍LangChain的�
 
 实际开发中，流式输出需要与前端对接，通过WebSocket或SSE（服务器推送事件）将分块内容推送到前端，实现实时显示。下面给出Flask后端+简单前端的示例（后端部分）：
 
-```
+```python
 from flask import Flask, request, Response
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
@@ -530,7 +506,7 @@ if __name__ == "__main__":
 
 依赖安装：pip install flask==2.3.3；前端对接说明：前端通过EventSource监听/stream_chat接口，接收后端推送的分块内容，逐字渲染到页面（前端代码简单示例，可直接复制使用）：
 
-```
+```text
 <!DOCTYPE html>
 <html>
   <body>
@@ -576,7 +552,7 @@ LangChain的所有模型接口均支持异步调用，只需将invoke()替换为
 
 #### 3.7.1 异步调用基础示例
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -611,7 +587,7 @@ if __name__ == "__main__":
 
 异步调用的核心优势是“并发处理多个请求”，下面示例实现“同时处理3个请求”，对比同步调用和异步调用的效率差异：
 
-```
+```python
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -674,15 +650,12 @@ if __name__ == "__main__":
 
 - 异步调用需配合支持异步的框架（如FastAPI、Starlette），Flask默认不支持异步，需使用Flask-AsyncExt扩展；
 
-异步调用需配合支持异步的框架（如FastAPI、Starlette），Flask默认不支持异步，需使用Flask-AsyncExt扩展；
 
 - 云端模型有API调用频率限制，并发请求数量不宜过多，避免触发限流；
 
-云端模型有API调用频率限制，并发请求数量不宜过多，避免触发限流；
 
 - 本地模型的异步调用效果取决于模型部署工具（如vLLM支持异步，Ollama异步支持有限）。
 
-本地模型的异步调用效果取决于模型部署工具（如vLLM支持异步，Ollama异步支持有限）。
 
 ### 3.8 【实战】构建多模型切换的问答接口
 
@@ -692,47 +665,38 @@ if __name__ == "__main__":
 
 - 支持3种模型切换：OpenAI（云端）、DeepSeek（云端）、Ollama（本地）；
 
-支持3种模型切换：OpenAI（云端）、DeepSeek（云端）、Ollama（本地）；
 
 - 支持两种输出模式：同步输出、流式输出；
 
-支持两种输出模式：同步输出、流式输出；
 
 - 支持异步调用，提升并发性能；
 
-支持异步调用，提升并发性能；
 
 - 统一接口，模型切换时无需修改核心代码；
 
-统一接口，模型切换时无需修改核心代码；
 
 - 使用.env管理API密钥，确保敏感信息安全。
 
-使用.env管理API密钥，确保敏感信息安全。
 
 #### 3.8.2 实战准备
 
-- 激活虚拟环境，安装所需依赖：
-pip install langchain-core==0.1.33 langchain-community==0.1.13 langchain-openai==0.1.6 python-dotenv==1.0.1 flask==2.3.3
+```bash
+python -m pip install langchain-core langchain-community langchain-openai python-dotenv flask
+```
 
-激活虚拟环境，安装所需依赖：
-pip install langchain-core==0.1.33 langchain-community==0.1.13 langchain-openai==0.1.6 python-dotenv==1.0.1 flask==2.3.3
+`.env` 只保存本机或密钥管理器注入的变量名和值，且必须加入 `.gitignore`：
 
-- 配置.env文件（添加所需API密钥）：
-`OPENAI_API_KEY=你的OpenAI API密钥
-DEEPSEEK_API_KEY=你的DeepSeek API密钥
+```dotenv
+OPENAI_API_KEY=<OPENAI_API_KEY>
+DEEPSEEK_API_KEY=<DEEPSEEK_API_KEY>
+# Ollama 本地调用无需云 API Key
+```
 
-配置.env文件（添加所需API密钥）：
-`OPENAI_API_KEY=你的OpenAI API密钥
-DEEPSEEK_API_KEY=你的DeepSeek API密钥
-
-## Ollama无需配置API密钥`
-
-- 安装Ollama并拉取llama3:8b模型（ollama pull llama3:8b）。
+安装 Ollama 并拉取示例模型：`ollama pull llama3:8b`。示例中的占位符不是可用密钥。
 
 #### 3.8.3 完整实战代码
 
-```
+```python
 """
 实战：构建多模型切换的问答接口
 代码来源：LangChain官方示例改编（https://python.langchain.com/docs/get_started/quickstart）
@@ -875,7 +839,7 @@ if __name__ == "__main__":
 
 请求方式：POST，请求体（JSON）：
 
-```
+```json
 {
   "model_type": "openai",
   "question": "多模型切换接口的核心优势是什么？"
@@ -884,7 +848,7 @@ if __name__ == "__main__":
 
 响应结果：
 
-```
+```json
 {
   "code": 200,
   "model_type": "openai",
@@ -896,7 +860,7 @@ if __name__ == "__main__":
 
 请求方式：POST，请求体（JSON）：
 
-```
+```json
 {
   "tasks": [
     {

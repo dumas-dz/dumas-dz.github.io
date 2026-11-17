@@ -5,8 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "原文链接：掘金"
+order: 90
+outline: [2, 3]
 ---
 
+# LangChain - LangGraph 与状态机
 > 原文链接：[掘金](https://juejin.cn/post/7628893548473270308)
 
 ## 14.1 为什么需要 LangGraph？
@@ -120,7 +124,7 @@ def review_node(state: WritingState) -> WritingState:
 
 ### 14.2.3 状态与节点的关系（极简图例）
 
-```
+```text
 初始状态 → 节点1（读取状态→执行逻辑→修改状态）→ 节点2（读取更新后状态→执行逻辑→再次修改）→ ... → 最终状态
 ```
 
@@ -344,7 +348,7 @@ print(f"\n校对是否通过：{final_state['is_approved']}")
 
 如果条件判断逻辑简单（如布尔值分支），可以使用 `mapping` 参数简化：
 
-```python
+```text
 # 简化条件边：用 mapping 映射条件结果
 graph.add_conditional_edges(
     start_node="review",
@@ -361,7 +365,7 @@ graph.add_conditional_edges(
 
 每个 Agent 负责一个环节，按顺序执行：
 
-```
+```text
 调研 Agent → 写作 Agent → 校对 Agent → END
 ```
 
@@ -371,7 +375,7 @@ graph.add_conditional_edges(
 
 设置一个"决策 Agent"作为核心节点，负责分配任务；其他"执行 Agent"负责具体任务：
 
-```
+```text
 决策 Agent → 调研 Agent → 决策 Agent → 写作 Agent → 决策 Agent → 校对 Agent → END
 ```
 
@@ -629,7 +633,7 @@ LangSmith 是 LangChain 官方的调试和可视化平台，支持 LangGraph 的
 
 1. 安装依赖：`pip install langsmith`
 2. 配置环境变量：
-```
+```text
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=你的LangSmith密钥
 LANGCHAIN_PROJECT=langgraph-demo
@@ -674,7 +678,7 @@ pip install langgraph langchain openai python-dotenv duckduckgo-search graphviz
 ```
 
 环境变量配置（`.env` 文件）：
-```
+```text
 OPENAI_API_KEY=你的OpenAI API密钥
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=你的LangSmith密钥

@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "LangChain支持几乎所有主流向量数据库，但不同数据库的定位、优势、适用场景差异极大，选错数据库会导致性能瓶颈或开发成本飙升。"
+order: 180
+outline: [2, 3]
 ---
 
-
+# LangChain - 向量数据库
 ## 9.1 向量数据库选型指南（Chroma、FAISS、Pinecone、Milvus）
 
 LangChain支持几乎所有主流向量数据库，但不同数据库的定位、优势、适用场景差异极大，选错数据库会导致性能瓶颈或开发成本飙升。本节对比4个最常用的向量数据库，帮你快速选对适合自己的工具。
@@ -18,15 +21,12 @@ LangChain支持几乎所有主流向量数据库，但不同数据库的定位�
 
 - 部署方式：本地部署（适合数据敏感、离线场景）vs 云服务（适合快速开发、规模化场景）；
 
-部署方式：本地部署（适合数据敏感、离线场景）vs 云服务（适合快速开发、规模化场景）；
 
 - 数据规模：小规模（千/万级向量，如个人知识库）vs 大规模（百万/亿级向量，如企业级检索）；
 
-数据规模：小规模（千/万级向量，如个人知识库）vs 大规模（百万/亿级向量，如企业级检索）；
 
 - 开发成本：是否需要复杂配置、是否支持LangChain无缝集成、学习成本高低。
 
-开发成本：是否需要复杂配置、是否支持LangChain无缝集成、学习成本高低。
 
 ### 9.1.2 四大主流向量数据库对比（实战重点记）
 
@@ -34,19 +34,15 @@ LangChain支持几乎所有主流向量数据库，但不同数据库的定位�
 
 - 新手入门/本地Demo：优先选 Chroma（零配置，开箱即用）；
 
-新手入门/本地Demo：优先选 Chroma（零配置，开箱即用）；
 
 - 本地高性能检索/离线场景：选 FAISS（速度最快，无服务端依赖）；
 
-本地高性能检索/离线场景：选 FAISS（速度最快，无服务端依赖）；
 
 - 生产环境/规模化应用：选 Pinecone（托管式，无需维护）；
 
-生产环境/规模化应用：选 Pinecone（托管式，无需维护）；
 
 - 企业级大规模数据/定制化需求：选 Milvus（开源可控，功能强大）。
 
-企业级大规模数据/定制化需求：选 Milvus（开源可控，功能强大）。
 
 后续章节将重点讲解前4个数据库的LangChain集成，重点聚焦Chroma、FAISS、Pinecone（最常用）。
 
@@ -56,7 +52,7 @@ Chroma是LangChain生态中最受欢迎的向量数据库，主打“轻量、�
 
 ### 9.2.1 准备工作：安装依赖
 
-```
+```bash
 pip install langchain chromadb  # chromadb核心包
 pip install sentence-transformers  # 用于生成嵌入（复用前一章知识）
 ```
@@ -67,7 +63,7 @@ pip install sentence-transformers  # 用于生成嵌入（复用前一章知识�
 
 #### 代码示例（简短可运行）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -105,7 +101,7 @@ for i, doc in enumerate(similar_docs):
 
 #### 代码示例
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -146,15 +142,12 @@ print(similar_docs[0].page_content)
 
 - 关键提醒1：持久化模式必须调用 db.persist() 才能将数据写入本地；
 
-关键提醒1：持久化模式必须调用 db.persist() 才能将数据写入本地；
 
 - 关键提醒2：重新加载时，集合名称（collection_name）必须与创建时一致；
 
-关键提醒2：重新加载时，集合名称（collection_name）必须与创建时一致；
 
 - 引用来源：Chroma官方快速上手文档。
 
-引用来源：Chroma官方快速上手文档。
 
 ## 9.3 FAISS 本地高效检索
 
@@ -164,7 +157,7 @@ FAISS（Facebook AI Similarity Search）是Facebook开源的向量检索库，�
 
 ### 9.3.1 准备工作：安装依赖
 
-```
+```bash
 pip install langchain faiss-cpu  # faiss-cpu（CPU版），GPU版用faiss-gpu
 pip install sentence-transformers
 ```
@@ -175,7 +168,7 @@ pip install sentence-transformers
 
 #### 代码示例
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
@@ -217,33 +210,26 @@ print(db_reloaded.similarity_search(query2, k=1)[0].page_content)
 
 - 速度快：比Chroma快5~10倍，尤其适合大规模向量（百万级以上）；
 
-速度快：比Chroma快5~10倍，尤其适合大规模向量（百万级以上）；
 
 - 无服务端：无需部署数据库服务，直接嵌入代码，轻量化；
 
-无服务端：无需部署数据库服务，直接嵌入代码，轻量化；
 
 - 支持自定义索引：可根据数据规模选择不同索引类型（如IVF_FLAT、HNSW），优化检索速度。
 
-支持自定义索引：可根据数据规模选择不同索引类型（如IVF_FLAT、HNSW），优化检索速度。
 
 #### 注意事项
 
 - 持久化：需手动调用 save_local() 和 load_local()，否则数据丢失；
 
-持久化：需手动调用 save_local() 和 load_local()，否则数据丢失；
 
 - GPU加速：安装 faiss-gpu 并配置GPU，可进一步提升检索速度；
 
-GPU加速：安装 faiss-gpu 并配置GPU，可进一步提升检索速度；
 
 - 适用场景：仅适合本地部署，不支持云服务，不适合分布式场景；
 
-适用场景：仅适合本地部署，不支持云服务，不适合分布式场景；
 
 - 引用来源：FAISS官方仓库、LangChain FAISS集成文档。
 
-引用来源：FAISS官方仓库、LangChain FAISS集成文档。
 
 ## 9.4 Pinecone 云服务配置与使用
 
@@ -255,7 +241,6 @@ Pinecone是一款托管式向量数据库云服务，主打“零部署、高可
 
 - 注册Pinecone账号：Pinecone官网（免费额度足够开发测试）；
 
-注册Pinecone账号：Pinecone官网（免费额度足够开发测试）；
 
 - 创建索引（Index）：登录后，在控制台创建索引，设置参数：
 
@@ -269,23 +254,19 @@ Dimension：嵌入向量维度（如all-MiniLM-L6-v2是384维，BGE-M3是1024维
 
 - Index name：自定义（如langchain-pinecone）；
 
-Index name：自定义（如langchain-pinecone）；
 
 - Dimension：嵌入向量维度（如all-MiniLM-L6-v2是384维，BGE-M3是1024维）；
 
-Dimension：嵌入向量维度（如all-MiniLM-L6-v2是384维，BGE-M3是1024维）；
 
 - 其他参数默认即可。
 
-其他参数默认即可。
 
 - 获取API密钥和环境：控制台→API Keys，复制API Key和Environment（如us-west1-gcp）。
 
-获取API密钥和环境：控制台→API Keys，复制API Key和Environment（如us-west1-gcp）。
 
 ### 9.4.2 安装依赖
 
-```
+```bash
 pip install langchain pinecone-client sentence-transformers python-dotenv
 ```
 
@@ -293,7 +274,7 @@ pip install langchain pinecone-client sentence-transformers python-dotenv
 
 #### 代码示例（含配置、添加、检索、删除）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Pinecone
 import pinecone
@@ -343,23 +324,18 @@ db.delete(ids=[doc.metadata["id"] for doc in similar_docs])
 
 - 维度匹配：嵌入模型的维度必须与Pinecone索引的维度一致，否则会报错；
 
-维度匹配：嵌入模型的维度必须与Pinecone索引的维度一致，否则会报错；
 
 - 免费额度：Pinecone免费额度足够开发测试，生产环境需付费；
 
-免费额度：Pinecone免费额度足够开发测试，生产环境需付费；
 
 - 数据安全：云服务需注意数据隐私，敏感数据建议加密后存储；
 
-数据安全：云服务需注意数据隐私，敏感数据建议加密后存储；
 
 - 索引管理：可在Pinecone控制台查看索引状态、向量数量、使用情况；
 
-索引管理：可在Pinecone控制台查看索引状态、向量数量、使用情况；
 
 - 引用来源：Pinecone官方快速上手、LangChain Pinecone集成文档。
 
-引用来源：Pinecone官方快速上手、LangChain Pinecone集成文档。
 
 ## 9.5 向量存储的元数据过滤（metadata filtering）
 
@@ -373,7 +349,7 @@ db.delete(ids=[doc.metadata["id"] for doc in similar_docs])
 
 #### 代码示例（添加元数据）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -406,7 +382,7 @@ LangChain支持两种过滤方式：基础过滤（按单个/多个条件筛选�
 
 #### 代码示例（基础过滤+复杂过滤）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -447,27 +423,21 @@ LangChain向量数据库的元数据过滤，支持常见的逻辑运算符，�
 
 - $eq：等于（默认，可省略）；
 
-$eq：等于（默认，可省略）；
 
 - $ne：不等于；
 
-$ne：不等于；
 
 - $gt：大于，$gte：大于等于；
 
-$gt：大于，$gte：大于等于；
 
 - $lt：小于，$lte：小于等于；
 
-$lt：小于，$lte：小于等于；
 
 - $and：逻辑与，$or：逻辑或；
 
-$and：逻辑与，$or：逻辑或；
 
 - $in：在指定列表中（如{"category": {"$in": ["LangChain", "Pinecone"]}}）。
 
-$in：在指定列表中（如{"category": {"$in": ["LangChain", "Pinecone"]}}）。
 
 引用来源：LangChain元数据过滤官方文档。
 
@@ -483,7 +453,7 @@ $in：在指定列表中（如{"category": {"$in": ["LangChain", "Pinecone"]}}�
 
 #### 代码示例（回顾）
 
-```
+```text
 # 相似性搜索（默认）
 similar_docs = db.similarity_search(query=query, k=3)
 # 输出结果（相似度从高到低）
@@ -497,19 +467,16 @@ similar_docs = db.similarity_search(query=query, k=3)
 
 - k：返回的结果数量；
 
-k：返回的结果数量；
 
 - fetch_k：先检索出前fetch_k个最相似的结果（默认20）；
 
-fetch_k：先检索出前fetch_k个最相似的结果（默认20）；
 
 - lambda_mult：平衡“相似性”和“多样性”（0=只追求多样性，1=只追求相似性，默认0.5）。
 
-lambda_mult：平衡“相似性”和“多样性”（0=只追求多样性，1=只追求相似性，默认0.5）。
 
 #### 代码示例（MMR检索）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -560,7 +527,7 @@ for i, doc in enumerate(mmr_docs):
 
 #### 代码示例（Chroma增量添加）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -587,7 +554,7 @@ LangChain向量数据库的“更新”操作，本质是“删除旧文档 + �
 
 #### 代码示例（更新文档内容和元数据）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -624,7 +591,7 @@ print(f"元数据：{updated_docs[0].metadata}")
 
 #### 代码示例
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -656,19 +623,15 @@ print(f"按条件删除后数量：{db._collection.count()}")  # 输出0
 
 - 自定义ID：添加文档时建议指定自定义ID（ids参数），便于后续更新、删除；
 
-自定义ID：添加文档时建议指定自定义ID（ids参数），便于后续更新、删除；
 
 - 持久化：更新/删除后必须调用 db.persist()（Chroma），否则修改不生效；
 
-持久化：更新/删除后必须调用 db.persist()（Chroma），否则修改不生效；
 
 - Pinecone差异：Pinecone支持更灵活的更新操作（如直接更新元数据），用法类似，只需替换向量数据库初始化代码；
 
-Pinecone差异：Pinecone支持更灵活的更新操作（如直接更新元数据），用法类似，只需替换向量数据库初始化代码；
 
 - 引用来源：LangChain Chroma更新删除文档。
 
-引用来源：LangChain Chroma更新删除文档。
 
 ## 9.8 【实战】构建可搜索的个人知识库
 
@@ -678,33 +641,27 @@ Pinecone差异：Pinecone支持更灵活的更新操作（如直接更新元数�
 
 - 加载本地个人文档（PDF、Markdown格式）；
 
-加载本地个人文档（PDF、Markdown格式）；
 
 - 文本预处理、分割（适配嵌入模型）；
 
-文本预处理、分割（适配嵌入模型）；
 
 - 添加元数据（文档类型、创建时间）；
 
-添加元数据（文档类型、创建时间）；
 
 - 生成嵌入并存入Chroma（持久化）；
 
-生成嵌入并存入Chroma（持久化）；
 
 - 实现三种检索方式：相似性检索、元数据过滤检索、MMR检索；
 
-实现三种检索方式：相似性检索、元数据过滤检索、MMR检索；
 
 - 支持增量添加文档、删除无效文档。
 
-支持增量添加文档、删除无效文档。
 
 ### 9.8.2 实战准备
 
 #### 1. 安装依赖
 
-```
+```bash
 pip install langchain chromadb sentence-transformers pypdf python-dotenv markdown
 ```
 
@@ -714,19 +671,16 @@ pip install langchain chromadb sentence-transformers pypdf python-dotenv markdow
 
 - LangChain教程.pdf（LangChain相关知识）；
 
-LangChain教程.pdf（LangChain相关知识）；
 
 - Python基础.md（Python编程知识）；
 
-Python基础.md（Python编程知识）；
 
 - 向量数据库笔记.txt（Chroma、FAISS相关笔记）。
 
-向量数据库笔记.txt（Chroma、FAISS相关笔记）。
 
 ### 9.8.3 完整实战代码（可直接运行）
 
-```
+```python
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import PyPDFLoader, TextLoader, UnstructuredMarkdownLoader
@@ -867,37 +821,29 @@ print(f"删除后，文档总数：{db._collection.count()}")
 
 - 文档加载：支持PDF、TXT、Markdown三种格式，自动预处理、分割文本，添加元数据；
 
-文档加载：支持PDF、TXT、Markdown三种格式，自动预处理、分割文本，添加元数据；
 
 - 向量存储：使用Chroma持久化存储，可多次运行代码，增量添加文档，无需重新生成所有嵌入；
 
-向量存储：使用Chroma持久化存储，可多次运行代码，增量添加文档，无需重新生成所有嵌入；
 
 - 检索功能：支持三种检索方式，可根据需求选择（精准检索用相似性搜索，探索性检索用MMR）；
 
-检索功能：支持三种检索方式，可根据需求选择（精准检索用相似性搜索，探索性检索用MMR）；
 
 - 维护功能：支持按元数据条件删除文档，增量添加新文档，适合长期维护个人知识库。
 
-维护功能：支持按元数据条件删除文档，增量添加新文档，适合长期维护个人知识库。
 
 ### 9.8.5 实战拓展
 
 - 支持更多文档格式：添加Docx2txtLoader加载Word文档，WebBaseLoader加载网页内容；
 
-支持更多文档格式：添加Docx2txtLoader加载Word文档，WebBaseLoader加载网页内容；
 
 - 优化检索精度：替换为BGE-M3嵌入模型，提升中文语义理解能力；
 
-优化检索精度：替换为BGE-M3嵌入模型，提升中文语义理解能力；
 
 - 搭建Web界面：结合Streamlit，搭建简单的Web检索界面，方便日常使用；
 
-搭建Web界面：结合Streamlit，搭建简单的Web检索界面，方便日常使用；
 
 - 替换向量数据库：将Chroma替换为Pinecone，实现云端个人知识库，可多设备访问。
 
-替换向量数据库：将Chroma替换为Pinecone，实现云端个人知识库，可多设备访问。
 
 ## 本章总结
 
@@ -905,18 +851,14 @@ print(f"删除后，文档总数：{db._collection.count()}")
 
 - 选型核心：根据部署方式、数据规模、开发成本选择数据库（新手优先Chroma，生产优先Pinecone）；
 
-选型核心：根据部署方式、数据规模、开发成本选择数据库（新手优先Chroma，生产优先Pinecone）；
 
 - 核心操作：添加文档、相似性检索是基础，元数据过滤、MMR检索可提升检索精度和多样性；
 
-核心操作：添加文档、相似性检索是基础，元数据过滤、MMR检索可提升检索精度和多样性；
 
 - 实战重点：文本预处理+增量索引+持久化，是构建可维护知识库的关键；
 
-实战重点：文本预处理+增量索引+持久化，是构建可维护知识库的关键；
 
 - 拓展方向：结合Web界面、多格式文档加载、云端部署，可将个人知识库升级为实用工具。
 
-拓展方向：结合Web界面、多格式文档加载、云端部署，可将个人知识库升级为实用工具。
 
 下一章将讲解LangChain检索增强生成（RAG）的完整流程，结合本章的向量数据库，实现“检索+生成”的智能问答功能。

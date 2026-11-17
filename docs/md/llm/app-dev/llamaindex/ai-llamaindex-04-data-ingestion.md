@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 数据摄取
+description: "本章详解数据如何进入 RAG 工作流，包括 LlamaHub 数据加载器、文档分块策略（SentenceSplitter 等）、元数据管理、隐私保护和 IngestionPipeline 自动化流水线。"
+order: 14
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 数据摄取与 RAG 工作流
 本章详解数据如何进入 RAG 工作流，包括 LlamaHub 数据加载器、文档分块策略（SentenceSplitter 等）、元数据管理、隐私保护和 IngestionPipeline 自动化流水线。
 
 ## 技术要求
@@ -59,13 +61,13 @@ LlamaHub 为每个数据 reader 提供的文档都会列出安装要求和使用
 
 要使用它，我们必须先安装对应集成：
 
-```perl
+```bash
 pip install llama-index-readers-web
 ```
 
 安装之后，它真的很容易使用，如下面的示例所示：
 
-```scss
+```python
 from llama_index.readers.web import SimpleWebPageReader
 
 urls = ["https://docs.llamaindex.ai"]
@@ -95,13 +97,13 @@ for doc in documents:
 
 `DatabaseReader` 连接器允许我们查询许多数据库系统。首先，我们需要安装必要的集成包：
 
-```perl
+```bash
 pip install llama-index-readers-database
 ```
 
 下面是一个示例，展示如何轻松获取 SQLite 数据库的内容：
 
-```ini
+```python
 from llama_index.readers.database import DatabaseReader
 
 reader = DatabaseReader(
@@ -117,7 +119,7 @@ for doc in documents:
 
 在底层，`DatabaseReader` 会连接到各种数据库以获取数据，并将其转换成 RAG 流水线可用的格式。它支持通过 `SQLDatabase` 实例、SQLAlchemy `Engine`、连接 URI，或一组数据库凭据进行连接，这些凭据通过 `scheme`、`host`、`port`、`user`、`password` 和 `dbname` 参数提供。设置完成后，`DatabaseReader` 会连接到数据库，并执行提供的 SQL 查询来检索数据。结果行随后会被转换成 `Document` 对象，查询结果中的每一行都会形成一个单独文档。转换过程会将每个列值对拼接成一个字符串，然后将其作为文档文本。
 
-我提供的示例会针对存储在 `ch4/files/db` 文件夹中的 SQLite 数据库执行 SQL 查询，将每一行返回结果作为文档加载，并显示结果。你可以在官方项目文档网站上找到一个更通用的示例：
+我提供的示例会针对存储在 `ch4/files/db` 文件夹中的 SQLite 数据库执行 SQL 查询，将每一行返回结果作为文档加载，并显示结果。你可以在 [LlamaIndex 官方文档](https://docs.llamaindex.ai/en/stable/) 中找到一个更通用的示例：
 
 好了，我相信你现在已经对这个工作流有了扎实理解。正如你可能已经注意到的，使用 LlamaHub reader 的方式非常直接。在本书到目前为止展示的所有示例中，我们都是先按照 LlamaHub 上的说明安装所需集成包，然后导入并使用 reader 加载数据。除了我提供的示例之外，你还会在 LlamaHub 上找到大量可用的数据 reader，从 Office 文档、Gmail 账户、视频和图像、YouTube 视频、RSS feed，到 GitHub 仓库和 Discord 聊天，几乎所有流行数据格式都得到了支持。
 
@@ -131,7 +133,7 @@ for doc in documents:
 
 ### 使用 `SimpleDirectoryReader` 摄取多种数据格式
 
-```ini
+```python
 from llama_index.core import SimpleDirectoryReader
 
 reader = SimpleDirectoryReader(
@@ -151,7 +153,7 @@ for doc in documents:
 
 你也可以传入一个具体文件列表来加载，像这样：
 
-```ini
+```text
 files = ["file1.pdf", "file2.docx", "file3.txt"]
 reader = SimpleDirectoryReader(files)
 documents = reader.load_data()
@@ -169,7 +171,7 @@ LlamaParse 的一个突出特性是，它允许你使用 `parsing_instruction` �
 
 LlamaParse 支持的文件类型非常广泛且还在扩展，并不只是 PDF，还包括 Word 文档、PowerPoint、RTF、ePub 等等。它提供了慷慨的免费层，便于你开始使用。
 
-```code
+```bash
 pip install llama-cloud-services llama-cloud
 ```
 
@@ -181,7 +183,7 @@ pip install llama-cloud-services llama-cloud
 
 首先，我们导入必要模块：
 
-```javascript
+```python
 import models_config
 from llama_cloud_services import LlamaParse
 from llama_index.core import SimpleDirectoryReader
@@ -190,7 +192,7 @@ from llama_index.core import VectorStoreIndex
 
 接下来，我们配置 LlamaParse，并将其作为 `file_extractor` 参数传给 `SimpleDirectoryReader`：
 
-```ini
+```text
 parser = LlamaParse(result_type="text")
 file_extractor = {".pdf": parser}
 
@@ -202,7 +204,7 @@ reader = SimpleDirectoryReader(
 docs = reader.load_data()
 ```
 
-```ini
+```python
 index = VectorStoreIndex.from_documents(docs)
 qe = index.as_query_engine()
 
@@ -215,7 +217,7 @@ print(response)
 
 这个脚本的输出应该类似如下：
 
-```code
+```text
 Started parsing the file under job_id <…>
 German Shepherd, Golden Retriever, Labrador Retriever
 ```
@@ -244,7 +246,7 @@ German Shepherd, Golden Retriever, Labrador Retriever
 
 要运行我即将展示的示例，请确保在所有示例代码开头，添加以下必要导入和使用 `FlatReader` 的文档读取逻辑：
 
-```javascript
+```python
 from llama_index.core.node_parser import <Splitter_Module>
 from llama_index.readers.file import FlatReader
 from pathlib import Path
@@ -300,7 +302,7 @@ for node in nodes:
 
 这使它在创建受控 token 长度的 chunk 时非常灵活，同时也允许你对拆分位置有一定控制。`TokenTextSplitter` 的典型代码用法如下：
 
-```ini
+```text
 splitter = TokenTextSplitter(
     chunk_size = 70,
     chunk_overlap = 2,
@@ -329,12 +331,12 @@ nodes = splitter.get_nodes_from_documents(document)
 
 这个智能 splitter 被设计用于解释源代码。它会基于特定编程语言的语法拆分文本，非常适合处理技术文档或源代码。在运行所示示例之前，请确保安装必要依赖：
 
-```perl
+```bash
 pip install tree_sitter
 pip install tree-sitter-language-pack
 ```
 
-```ini
+```text
 code_splitter = CodeSplitter.from_defaults(
     language = 'python',
     chunk_lines = 5,
@@ -383,7 +385,7 @@ nodes = code_splitter.get_nodes_from_documents(document)
 
 这个解析器建立在 `SentenceSplitter` 的基础之上，在句子级拆分概念上扩展出一层额外上下文。它将文本拆分成单独句子，并且针对每个句子，在节点元数据中包含其周围句子的窗口。这种附加上下文在检索过程中可能很有用，因为它允许 LLM 访问每个句子周围的文本环境，从而提高响应质量。我们可以像这样使用 `SentenceWindowNodeParser`：
 
-```ini
+```text
 parser = SentenceWindowNodeParser.from_defaults(
     window_size=2,
     window_metadata_key="text_window",
@@ -407,7 +409,7 @@ nodes = parser.get_nodes_from_documents(document)
 
 作为下一个示例的前置条件，你需要安装 LangChain Text Splitters 库：
 
-```arduino
+```bash
 pip install langchain-text-splitters
 ```
 
@@ -437,7 +439,7 @@ LangChain 框架与 LlamaIndex 的目标类似，提供了一套通用工具集�
 
 这个解析器会根据文件类型自动决定应该使用哪个节点解析器。它能够自动处理 `.html`、`.md` 和 `.json` 文件格式，并将它们转换为节点，从而简化与各种内容类型交互的过程：
 
-```ini
+```python
 from llama_index.readers.file import FlatReader
 from llama_index.core.node_parser import SimpleFileNodeParser
 from pathlib import Path
@@ -456,7 +458,7 @@ nodes = parser.get_nodes_from_documents(documents)
 
 这个解析器使用 Beautiful Soup——一个流行的 Python 库，用于从 HTML 中提取和清理信息——来解析 HTML 文件，并基于选定 HTML 标签将其转换成节点。它通过从特定标签中提取文本来简化 HTML 内容，并智能地将连续的同类型元素合并成一个节点。这有助于减少碎片化，生成更干净、更连贯的节点。解析器可以像这样使用：
 
-```scss
+```python
 my_tags = ["p", "span"]
 html_parser = HTMLNodeParser(tags=my_tags)
 
@@ -479,7 +481,7 @@ for node in nodes:
 
 这个解析器处理原始 Markdown 文本，并根据文档标题结构将其拆分成节点。每遇到一个标题，它就生成一个包含对应内容章节的节点，并自动在节点元数据中追踪标题层级。这种方法对于在摄取和检索过程中保留 Markdown 文档的结构化上下文非常有用。下面是 `MarkdownNodeParser` 的使用方式：
 
-```ini
+```text
 parser = MarkdownNodeParser.from_defaults()
 nodes = parser.get_nodes_from_documents(document)
 ```
@@ -489,7 +491,7 @@ nodes = parser.get_nodes_from_documents(document)
 - 它根据 Markdown 标题拆分内容，例如 `#`、`##` 等
 - 它追踪标题层级，例如 `# Introduction → ## Subsection`，并将这个路径存储在节点元数据的 `header_path` 字段中
 - 标题路径的分隔符可以自定义，默认是 `/`
-- 解析器会智能地忽略代码块中的标题，也就是被三个反引号 ``` 包围的内容，确保代码部分不会被错误拆分
+- 解析器会智能地忽略代码块中的标题，也就是由三个反引号组成的代码围栏，确保代码部分不会被错误拆分
 - 如果没有标题，整个文档会被视为一个单独节点
 
 这个解析器简化了结构化 Markdown 文件的处理，确保节点保留后续查询和检索所需的上下文信息。
@@ -502,7 +504,7 @@ nodes = parser.get_nodes_from_documents(document)
 
 JSON 解析器的使用方式与 Markdown 解析器类似：
 
-```ini
+```text
 json_parser = JSONNodeParser.from_defaults()
 nodes = json_parser.get_nodes_from_documents(document)
 ```
@@ -517,7 +519,7 @@ nodes = json_parser.get_nodes_from_documents(document)
 
 例如，假设我们有下面这段短文本：
 
-```sql
+```text
 Cats are popular pets around the world.
 They are known for being independent and curious.
 In many cultures, cats are symbols of luck.
@@ -535,7 +537,7 @@ They can carry hundreds of passengers at once.
 
 下面是使用 `SemanticSplitterNodeParser` 的一种简单方式：
 
-```ini
+```python
 import models_config
 from llama_index.core import Settings
 from llama_index.core.node_parser import SemanticSplitterNodeParser
@@ -597,7 +599,7 @@ for node in nodes:
 
 下面是如何在代码中使用这个解析器的示例：
 
-```ini
+```text
 hierarchical_parser = HierarchicalNodeParser.from_defaults(
     chunk_sizes=[128, 64, 32],
     chunk_overlap=0,
@@ -636,7 +638,7 @@ LlamaIndex 团队曾进行实验，以确定合理的 chunk size 默认值，你
 
 **图 4.4 —— chunk_size 和 chunk_overlap 说明**
 
-```less
+```text
 Gardening is not only a relaxing hobby but also an art form. Cultivating plants, designing landscapes, and nurturing nature bring a sense of accomplishment. Many find it therapeutic and rewarding, especially when they see their garden flourish.
 ```
 
@@ -644,31 +646,31 @@ Gardening is not only a relaxing hobby but also an art form. Cultivating plants,
 
 **Node 1**，前 100 个字符：
 
-```css
+```text
 " Gardening is not only a relaxing hobby but also an art form. Cultivating plants, designing landscapes, an "
 ```
 
 **Node 2**，从第 75 个字符开始，接下来 100 个字符：
 
-```arduino
+```text
 " designing landscapes, and nurturing nature bring a sense of accomplishment. Many find it therapeutic and re "
 ```
 
 **Node 3**，从第 150 个字符开始到文本结束：
 
-```arduino
+```text
 " Many find it therapeutic and rewarding, especially when they see their garden flourish "
 ```
 
 在这个设置中，Node 1 与 Node 2 之间的重叠是：
 
-```arduino
+```text
 " designing landscapes, an "
 ```
 
 而 Node 2 与 Node 3 之间的重叠是：
 
-```arduino
+```text
 " Many find it therapeutic and re "
 ```
 
@@ -676,7 +678,7 @@ Gardening is not only a relaxing hobby but also an art form. Cultivating plants,
 
 下面是另一个可以决定解析器行为的重要参数：`include_prev_next_rel` 选项。当设置为 `True` 时，这个参数会让解析器自动在连续节点之间添加 `NEXT` 和 `PREVIOUS` 关系。下面是一个示例：
 
-```ini
+```text
 node_parser = SentenceWindowNodeParser.from_defaults(
   include_prev_next_rel=True
 )
@@ -686,20 +688,20 @@ node_parser = SentenceWindowNodeParser.from_defaults(
 
 **Node 0**：链条中的第一个节点；只会有一个 `NEXT` 关系：
 
-```ini
+```text
 node0.relationships[NEXT] = RelatedNodeInfo(node_id=node1.node_id)
 ```
 
 **Node1**：中间节点；会同时有 `PREVIOUS` 和 `NEXT`：
 
-```ini
+```text
 node1.relationships[PREVIOUS] = RelatedNodeInfo(node_id=node0.node_id)
 node1.relationships[NEXT] = RelatedNodeInfo(node_id=node2.node_id)
 ```
 
 **Node2**：链条中的最后一个节点；只会有一个 `PREVIOUS` 链接：
 
-```ini
+```text
 node2.relationships[PREVIOUS] = RelatedNodeInfo(node_id=node1.node_id)
 ```
 
@@ -732,7 +734,7 @@ node2.relationships[PREVIOUS] = RelatedNodeInfo(node_id=node1.node_id)
 
 ### 选项 1：独立使用
 
-```ini
+```python
 from llama_index.core import Document
 from llama_index.core.node_parser import SentenceWindowNodeParser
 
@@ -758,15 +760,15 @@ Text: Sentence 2.
 
 正如你所看到的，解析器提取了第二个句子，并为这个节点分配了一个随机 ID。但如果我们查看节点的元数据，例如运行 `print(nodes[1].metadata)`，还会看到它收集到的上下文，使用的是我们指定的 key，在这个例子中是 `ContextWindow` 和 `node_text`：
 
-```arduino
+```json
 {'ContextWindow': 'Sentence 1.  Sentence 2.  Sentence 3.', 'node_text': 'Sentence 2. '}
-```。
+```
 
 ### 选项 2：在 Settings 中配置
 
 第二个选项更通用，也更方便，适用于你需要在应用中为多个用途自动使用同一个 parser 的情况。下面是一个示例：
 
-```ini
+```python
 import models_config
 from llama_index.core import Settings, Document, VectorStoreIndex
 from llama_index.core.node_parser import SentenceWindowNodeParser
@@ -798,7 +800,7 @@ index = VectorStoreIndex.from_documents([doc])
 
 例如，假设你已经将一些 PDF 报告摄取为文档。然后，你可以简单地添加一些类似这样的元数据：
 
-```javascript
+```text
 document.metadata = {
     "report_name": "Sales Report April 2022",
     "department": "Sales",
@@ -812,7 +814,7 @@ document.metadata = {
 
 直接在 `Document` 构造函数中设置元数据值，如下所示：
 
-```ini
+```text
 document = Document(
     text=".",
     metadata={"author": "John Doe"}
@@ -821,7 +823,7 @@ document = Document(
 
 在文档创建之后添加元数据：
 
-```ini
+```text
 document.metadata = {"category": "finance"}
 ```
 
@@ -841,7 +843,7 @@ documents = SimpleDirectoryReader(
 
 将 extractor 定义为摄取流水线中的一个转换步骤。就像节点解析器一样，extractor 也可以成为流水线的一部分。我们将在本章稍后的“使用摄取流水线提高效率”一节中介绍这种方法。
 
-```ini
+```python
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
 
@@ -858,7 +860,7 @@ nodes = parser.get_nodes_from_documents(documents)
 
 `SummaryExtractor` 使用 LLM 为每个 `TextNode` 生成简洁摘要，从而在检索过程中提供额外上下文。可选情况下，它还可以为前一个和后一个相邻 `TextNode` 对象生成摘要，以进一步丰富可用上下文。下面是一个示例：
 
-```ini
+```python
 import models_config
 from llama_index.core.extractors import SummaryExtractor
 
@@ -888,7 +890,7 @@ print(metadata_list)
 
 `QuestionsAnsweredExtractor` 会基于每个 `TextNode` 的内容，生成一组该节点非常适合回答的问题。这些问题会存储在节点元数据中，并且可以显著提高检索精度，尤其是在问答系统中。下面的示例可以让你了解它的用法：
 
-```scss
+```python
 import models_config
 from llama_index.core.extractors import QuestionsAnsweredExtractor
 
@@ -910,7 +912,7 @@ print(metadata_list)
 
 `TitleExtractor` 会基于每个文档中前几个节点的内容，生成一个文档级标题。不同于一些只支持 `TextNode` 的 extractor，`TitleExtractor` 被设计为同时支持文本和非文本节点，例如 `ImageNode`。当处理可能缺少明确标题的长文档或非结构化文档时，这尤其有用。下面是一个简单示例：
 
-```scss
+```python
 from llama_index.core.extractors import TitleExtractor
 
 title_extractor = TitleExtractor()
@@ -935,7 +937,7 @@ print(metadata_list)
 
 ### `EntityExtractor`
 
-```perl
+```bash
 pip install llama-index-extractors-entity
 ```
 
@@ -943,7 +945,7 @@ NER 是计算机用于识别并标注文本中特定实体的一种技术，例�
 
 下面是使用这个 extractor 的代码示例：
 
-```ini
+```python
 from llama_index.core.extractors import EntityExtractor
 
 entity_extractor = EntityExtractor(
@@ -986,7 +988,7 @@ print(metadata_list)
 
 `KeywordExtractor` 会为每个 `TextNode` 生成一个重要关键词列表，帮助丰富节点元数据，以便进行更有效的检索或推荐任务。让我们看一个示例：
 
-```scss
+```python
 import models_config
 from llama_index.core.extractors import KeywordExtractor
 
@@ -1043,7 +1045,7 @@ class EntityMetadata(BaseModel):
 
 ### `MarvinMetadataExtractor`
 
-这个 extractor 使用 Marvin AI 工程框架提取元数据：[www.askmarvin.ai/。`MarvinMet…](https://www.askmarvin.ai/%E3%80%82%60MarvinMetadataExtractor%60) 能够可靠且可扩展地提取和增强元数据。它的高级之处在于，提供了类似 Pydantic 模型的类型安全文本 schema，并支持业务逻辑转换。
+这个 extractor 使用 [Marvin](https://www.askmarvin.ai/) 的 `MarvinMetadataExtractor` 提取元数据，能够可靠且可扩展地增强元数据。它的高级之处在于，提供了类似 Pydantic 模型的类型安全文本 schema，并支持业务逻辑转换。
 
 想象你正在构建一个金融文档索引系统。你可以使用 Marvin 提取 `company_name`、`stock_ticker` 和 `revenue` 等实体，同时应用 schema 验证，以及将 revenue 字符串转换为浮点数这类逻辑。
 
@@ -1078,19 +1080,19 @@ class CustomExtractor(BaseExtractor):
 
 你可以使用以下命令选择性隐藏元数据：
 
-```ini
+```text
 document.excluded_llm_metadata_keys = ["file_name"]
 ```
 
 这会对 LLM 隐藏 `file_name`。如果你愿意，也可以对 embeddings 隐藏元数据：
 
-```ini
+```text
 document.excluded_embed_metadata_keys = ["file_name"]
 ```
 
 此外，你还可以像这样定制元数据格式：
 
-```ini
+```text
 document.metadata_template = "{key}::{value}"
 ```
 
@@ -1104,7 +1106,7 @@ document.metadata_template = "{key}::{value}"
 
 你可以使用以下命令测试元数据可见性：
 
-```ini
+```python
 print(document.get_content(metadata_mode=MetadataMode.LLM))
 ```
 
@@ -1221,7 +1223,7 @@ tokenizer 负责文本的 tokenization，也就是将文本转换成 token，因
 
 请先确保安装对应集成包：
 
-```perl
+```bash
 pip install llama-index-llms-huggingface
 ```
 
@@ -1229,7 +1231,7 @@ pip install llama-index-llms-huggingface
 
 下面是代码：
 
-```ini
+```python
 from llama_index.core.postprocessor import NERPIINodePostprocessor
 from llama_index.llms.huggingface import HuggingFaceLLM
 from llama_index.core.schema import NodeWithScore, TextNode
@@ -1253,7 +1255,7 @@ print(clean_nodes[0].node.get_text())
 
 输出应该类似如下：
 
-```ini
+```text
 Dear [PER_5]. Your address has been recorded in our database. Please confirm it is valid: 8804 [LOC_95] Dr. [LOC_111], [LOC_124]([LOC_135]).
 ```
 
@@ -1267,13 +1269,13 @@ Dear [PER_5]. Your address has been recorded in our database. Please confirm it 
 
 Presidio 会在本地运行一个快速的基于规则检测器，并将检测到的 PII 替换为占位符，同时保留映射，以便你之后恢复原始内容。下面是一个可以实验的快速示例。在此之前，请确保你至少有 1 GB 可用空间，并在运行代码前安装所需依赖：
 
-```perl
+```bash
 pip install llama-index-postprocessor-presidio
 ```
 
 现在所需组件已经安装，可以尝试下面的示例：
 
-```ini
+```python
 from llama_index.core.schema import TextNode, NodeWithScore
 from llama_index.postprocessor.presidio import PresidioPIINodePostprocessor
 
@@ -1345,7 +1347,7 @@ class CustomTransformation(TransformComponent):
 
 继续看第二部分：
 
-```scss
+```python
 reader = SimpleDirectoryReader('files')
 documents = reader.load_data()
 
@@ -1361,7 +1363,7 @@ except:
 
 让我们继续第三部分：
 
-```scss
+```text
 pipeline = IngestionPipeline(
     transformations = [
         CustomTransformation(),
@@ -1380,7 +1382,7 @@ pipeline = IngestionPipeline(
 
 最后一部分如下：
 
-```ini
+```python
 nodes = pipeline.run(
     documents=documents,
     show_progress=True,
@@ -1396,7 +1398,7 @@ print("All documents loaded")
 
 你还应该知道，还有一种替代方式，不必每次想摄取更多数据时都手动定义和运行流水线。就像节点解析器一样，我们可以在 `Settings` 中定义 transformations：
 
-```css
+```python
 from llama_index.core import Settings
 
 Settings.transformations = [    CustomTransformation(),    TokenTextSplitter(        separator=" ",        chunk_size=512,        chunk_overlap=128    ),    SummaryExtractor(),    QuestionsAnsweredExtractor(        questions=3,        num_workers=1    )]
@@ -1430,7 +1432,7 @@ Settings.transformations = [    CustomTransformation(),    TokenTextSplitter(   
 
 正如我们将在下一章进一步讨论的，创建向量索引在计算上成本很高。当 LlamaIndex 处理文档时，它必须解析内容、生成 embeddings，并构建可搜索结构。如果没有持久化，每次启动应用时，用户都要等待几分钟来重新加载相同政策文档。为了避免损害用户体验，`load_policies_index()` 函数实现了一种条件加载策略，可以显著提高应用启动性能：
 
-```ini
+```python
 def load_policies_index():
     index_file = os.path.join(config.POLICIES_INDEX_PATH, "docstore.json")
     if os.path.exists(index_file):

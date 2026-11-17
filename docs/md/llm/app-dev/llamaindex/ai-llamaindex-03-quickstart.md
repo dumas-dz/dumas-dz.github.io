@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 快速开始
+description: "本章深入 LlamaIndex 的核心构建块：Document（文档）、Node（节点）、Index（索引）和 QueryEngine（查询引擎），并通过代码示例构建第一个 RAG 应用。"
+order: 13
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 开启 LlamaIndex 之旅
 本章深入 LlamaIndex 的核心构建块：Document（文档）、Node（节点）、Index（索引）和 QueryEngine（查询引擎），并通过代码示例构建第一个 RAG 应用。
 
 ## 技术要求
@@ -44,7 +46,7 @@ Wikipedia reader 需要它。
 
 下面是一个手动创建文档的基础示例：
 
-```ini
+```python
 from llama_index.core import Document
 
 text = "The quick brown fox jumps over the lazy dog."
@@ -76,7 +78,7 @@ LlamaIndex 文档以未经处理的原始形式包含数据。虽然前面的示
 
 下面是一个使用预定义 LlamaHub 数据加载器进行自动化数据摄取的基础示例。在运行示例之前，请确保你已经安装“技术要求”部分提到的库，并且如果你还没有完成第 2 章《LlamaIndex：隐藏的宝石——LlamaIndex 生态系统简介》中提到的所有必要环境准备，请先完成它们：
 
-```perl
+```bash
 pip install wikipedia
 pip install llama-index-readers-wikipedia
 ```
@@ -85,7 +87,7 @@ pip install llama-index-readers-wikipedia
 
 安装这两个库之后，你就可以运行下面的示例：
 
-```ini
+```python
 from llama_index.readers.wikipedia import WikipediaReader
 
 loader = WikipediaReader()
@@ -175,7 +177,7 @@ print(f"loaded {len(documents)} documents")
 
 下面是一个简单示例，展示如何手动创建 `TextNode` 对象：
 
-```ini
+```python
 from llama_index.core import Document
 from llama_index.core.schema import TextNode
 
@@ -201,7 +203,7 @@ print(n2.get_content())
 
 为了理解幕后发生了什么，我们来看一下这段代码的输出：
 
-```vbnet
+```yaml
 Node ID: 102b570f-5b22-48b5-b9b6-6378597e920d
 Text: This is a sample
 Node ID: 0ad81b09-bf12-4063-bfe4-6c5fd3c36cd4
@@ -220,7 +222,7 @@ Splitters 是将长文档拆分成更小节点的工具。其中一种工具就�
 
 作为自动节点生成的例子，`SentenceSplitter` 会将文档文本拆分成保留完整句子的节点。每个节点包含一个或多个句子，并且节点之间默认会有一定重叠，以帮助保持上下文连续性。
 
-```ini
+```python
 from llama_index.core import Document
 from llama_index.core.node_parser import SentenceSplitter
 
@@ -246,7 +248,7 @@ for node in nodes:
 
 下面是这段代码的输出：
 
-```arduino
+```text
 Metadata length (4) is close to chunk size (12). Resulting chunks are less than 50 tokens. Consider increasing the chunk size or decreasing the size of your metadata to avoid this.
 This is sentence 1.
 {'author': 'John Smith'}
@@ -278,7 +280,7 @@ Sentence 3 here.
 
 总之，关系为节点增加了额外的上下文连接。这支持更具表达力的查询、来源追踪、知识图谱构建，以及复杂索引结构。
 
-```scss
+```python
 from llama_index.core import Document
 from llama_index.core.schema import (
     TextNode,
@@ -352,7 +354,7 @@ LlamaIndex 中所有索引类型都共享一些共同核心特性：
 
 现在，我们先看一个简单示例，说明如何创建 `SummaryIndex`：
 
-```javascript
+```python
 import models_config
 from llama_index.core import SummaryIndex, Document
 from llama_index.core.node_parser import SentenceSplitter
@@ -374,7 +376,7 @@ index = SummaryIndex(nodes)
 
 你可以把 `SummaryIndex` 想象成一个小记事本，用来记下许多故事中的要点。在设置它时，它会接收一大组故事，将它们拆成更小的片段，并把这些片段排成一个列表。最棒的是？LlamaIndex 在构建这种索引时甚至不需要使用 LLM。
 
-```ini
+```python
 query_engine = index.as_query_engine()
 response = query_engine.query("What is Messi's hometown?")
 print(response)
@@ -382,7 +384,7 @@ print(response)
 
 输出如下：
 
-```rust
+```text
 Messi's hometown is Rosario.
 ```
 
@@ -433,7 +435,7 @@ summary index 会将所有节点按顺序组织到一个列表中。
 
 对于下一步，请确保你已经满足本章开头提到的技术要求。对于下面的代码示例，我们需要 Wikipedia 包，这样才能解析某个 Wikipedia 文章，并从中提取我们的样例数据。
 
-```ini
+```python
 import models_config
 from llama_index.core import Document, SummaryIndex
 from llama_index.core.node_parser import SentenceSplitter
@@ -481,7 +483,7 @@ while True:
 
 启用基础日志非常简单，只需添加下面这段代码：
 
-```ini
+```python
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
@@ -529,7 +531,7 @@ from config.models import *
 
 下面是 `models.py` 的样子：
 
-```ini
+```python
 from llama_index.core import Settings
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
@@ -596,7 +598,7 @@ AI 智能体是当下技术领域最热门的话题之一，而且有充分理�
 
 对于本书中所有其他示例，包括我们的主项目，我们仍然会坚持使用更轻量、对硬件更友好的 `Gemma 3:4B`。
 
-```code
+```bash
 ollama pull qwen3:8b
 ```
 
@@ -604,7 +606,7 @@ ollama pull qwen3:8b
 
 在这个代码示例中，你会注意到，这次我们没有像之前那样导入 `models_config`，而是直接导入 Ollama 库，并定义了一个自定义 `llm` 对象，用来初始化智能体：
 
-```ini
+```python
 import asyncio
 from llama_index.core.agent.workflow import AgentWorkflow, ReActAgent, AgentStream, ToolCallResult
 from llama_index.core.tools import FunctionTool
@@ -696,7 +698,7 @@ ReAct 智能体会在推理和行动之间交替进行。推理是使用 LLM 决
 
 我们首先从 `config.py` 中的设置开始：
 
-```ini
+```python
 from llama_index.core import Settings
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding

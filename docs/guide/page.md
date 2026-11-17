@@ -1,30 +1,23 @@
 ---
-# 这是文章的标题
-title: 页面配置
-# 这是页面的图标
+title: 模板示例：页面配置
 icon: page
-# 这是侧边栏的顺序
-order: 1
-# 设置作者
-author: Ms.Hope
-# 设置写作时间
-date: 2020-01-01
-# 一个页面可以有多个分类
+order: 3
 category:
-  - 使用指南
-# 一个页面可以有多个标签
+  - 模板示例
 tag:
   - 页面配置
   - 使用指南
-# 此页面会在文章列表置顶
-sticky: true
-# 此页面会出现在文章收藏中
-star: true
-# 你可以自定义页脚
-footer: 这是测试显示的页脚
-# 你可以自定义版权信息
-copyright: 无版权
+article: false
+index: false
+sitemap:
+  exclude: true
+head:
+  - - meta
+    - name: robots
+      content: noindex,nofollow
 ---
+
+> 本页仅用于演示 VuePress 页面配置，不属于知识正文，也不进入公开文章列表或搜索索引。
 
 `more` 注释之前的内容被视为文章摘要。
 
@@ -34,9 +27,10 @@ copyright: 无版权
 
 你可以在 Markdown 的 Frontmatter 中设置页面信息。
 
-- 作者设置为 Ms.Hope。
-- 写作日期为 2020 年 1 月 1 日
-- 分类为 “使用指南”
+- `article: false` 可避免模板页进入公开文章列表。
+- `index: false` 可避免模板页进入站内搜索索引。
+- `sitemap.exclude: true` 可避免模板页进入站点地图。
+- 分类为 “模板示例”
 - 标签为 “页面配置” 和 “使用指南”
 
 ## 页面内容

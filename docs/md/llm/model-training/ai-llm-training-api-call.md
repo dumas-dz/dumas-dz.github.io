@@ -5,8 +5,12 @@ category:
   - LLM Training
 tag:
   - 大模型训练
+description: "如今的大模型就像是一个功能强大的“万能API”，能够通过简单的接口调用即可实现诗歌创作、问题解答、代码编写甚至哲学思辨等复杂任务。"
+order: 20
+outline: [2, 3]
 ---
 
+# 大模型训练 - API 调用实战
 ## 一、OpenAI协议：大模型对话的通用语言
 
 ### 1.1 什么是OpenAI格式？

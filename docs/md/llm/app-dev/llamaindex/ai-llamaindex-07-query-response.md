@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - 响应合成
+description: "本章介绍节点后处理器（过滤型、转换型、Re-ranker 重排型）和响应合成策略（refine、compact、treesummarize 等），完善查询流水线的最后两环。"
+order: 17
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 查询数据 - 后处理与响应合成
 本章介绍节点后处理器（过滤型、转换型、Re-ranker 重排型）和响应合成策略（refine、compact、tree_summarize 等），完善查询流水线的最后两环。
 
 ## 技术要求
@@ -52,7 +54,7 @@ tag:
 
 这个 postprocessor 接收一组节点作为输入，这些节点通常由 retriever 获取，并且每个节点都带有关联相似度分数。postprocessor 可以通过 `similarity_cutoff` 参数配置。这个阈值决定一个节点必须达到的最低分数，才会被视为相关。如果某个节点的 similarity score 是 `None`，或者低于 `similarity_cutoff`，该节点就会被认为不满足阈值要求，因此会从最终列表中排除。本质上，这个 postprocessor 会过滤掉任何相似度分数低于设定阈值的节点。这确保只有与查询紧密相关的节点会被保留下来。达到或超过相似度阈值的节点随后会被传递到进一步处理或响应合成阶段。下面是一个在实践中使用它的简单示例：
 
-```ini
+```python
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 
@@ -75,7 +77,7 @@ for node in nodes:
     print(f"Node: {node.node_id} – Score: {node.score}")
 ```
 
-```scss
+```python
 pp = SimilarityPostprocessor(similarity_cutoff=0.86)
 remaining_nodes = pp.postprocess_nodes(nodes)
 
@@ -109,13 +111,13 @@ Node: 95f15459-dac6-4cf8-86a3-ecc55a54dbfd - Score: 0.8766996524499907
 
 要使用 `KeywordNodePostprocessor`，请确保通过以下命令在环境中安装 spaCy：
 
-```code
+```bash
 pip install spacy
 ```
 
 下面是一个基础示例，展示如何使用这个 postprocessor 基于分类标签过滤掉一些日志条目：
 
-```arduino
+```python
 from llama_index.core.postprocessor import KeywordNodePostprocessor
 from llama_index.core.schema import TextNode, NodeWithScore
 
@@ -138,7 +140,7 @@ nodes = [
 
 下面是剩余代码：
 
-```ini
+```python
 node_with_score_list = [
     NodeWithScore(node=node) for node in nodes
 ]
@@ -195,7 +197,7 @@ for node_with_score in remaining_nodes:
 
 下面是另一个简单示例，可以帮助你理解这个 postprocessor 的功能：
 
-```arduino
+```python
 from llama_index.core.postprocessor import MetadataReplacementPostProcessor
 from llama_index.core.schema import TextNode, NodeWithScore
 
@@ -213,7 +215,7 @@ nodes = [
 
 首先，我们定义了两个示例节点，接下来会将 postprocessor 应用于它们。我们会指示它将每个节点的内容替换为 `summary` 元数据字段中存储的值：
 
-```ini
+```python
 node_with_score_list = [
     NodeWithScore(node=node) for node in nodes
 ]
@@ -232,7 +234,7 @@ for node_with_score in processed_nodes:
 
 处理完成后，输出应如下：
 
-```less
+```text
 Replaced Text: Summary of article 1
 Replaced Text: Summary of article 2
 ```
@@ -251,7 +253,7 @@ Replaced Text: Summary of article 2
 
 实践中可以这样使用它：
 
-```ini
+```python
 from llama_index.core.postprocessor import SentenceEmbeddingOptimizer
 
 optimizer = SentenceEmbeddingOptimizer(
@@ -397,7 +399,7 @@ Cohere 模型判断为最相关的 `top_n` 节点会被选出并返回。
 
 **date_key**：指定用于按日期排序节点的元数据 key。无论你传入哪个元数据字段作为 `date_key`，默认是 `date`，它都应该保存通用解析器能够理解的日期字符串，例如符合 ISO-8601 的格式：
 
-```yaml
+```text
 2025-08-31
 2025-08-31T14:22:00Z
 2025-08-31T14:22:00+02:00
@@ -525,7 +527,7 @@ processor 的工作方式是基于每个节点最后一次被访问的时间调�
 
 下面是一个简单示例，展示如何直接在给定节点集合上使用它：
 
-```arduino
+```python
 from llama_index.core.schema import TextNode, NodeWithScore
 from llama_index.core import get_response_synthesizer
 
@@ -544,7 +546,7 @@ nodes = [
 
 这里，我们定义了一些任意节点。这将成为我们的专有上下文。接下来，我们会使用 response synthesizer 基于上下文运行 LLM 查询：
 
-```ini
+```python
 synth = get_response_synthesizer(
     response_mode="refine",
     streaming=False,
@@ -561,7 +563,7 @@ print(response)
 
 输出如下：
 
-```lua
+```text
 The clock was built in 1895.
 ```
 
@@ -573,7 +575,7 @@ The clock was built in 1895.
 
 synthesizer 首先会构建一个专用 prompt，从列表中的第一个节点开始作为上下文。这个 prompt 包含查询、具体指令和上下文，在本例中就是我们的第一个 Node。它使用默认值，但可以通过 `text_qa_template` 参数定制：
 
-```sql
+```yaml
 System: "You are an expert Q&A system that is trusted around the world. Always answer the query using the provided context information, and not prior knowledge. Some rules to follow: 1. Never directly reference the given context in your answer. 2. Avoid statements like 'Based on the context, .' or 'The context information .' or anything along those lines."
 
 User: "Context information is below. The town square clock was built in 1895. Given the context information and not prior knowledge, answer the query. Query: When was the clock built? Answer: "
@@ -611,13 +613,13 @@ User: "Context information is below. The town square clock was built in 1895. Gi
 
 要使用这些模式中的任何一种，只需将模式名作为字符串传给：
 
-```ini
+```text
 get_response_synthesizer(response_mode="<mode_name>")
 ```
 
 或者传给：
 
-```ini
+```text
 index.as_query_engine(response_mode="<mode_name>")
 ```
 
@@ -629,7 +631,7 @@ index.as_query_engine(response_mode="<mode_name>")
 
 `structured_answer_filtering` 这类功能也可以在 `refine` 和 `compact` synthesizers 上启用。`refine` synthesizer 的一个常见问题是，早期无帮助响应，例如 `I don't know`，可能会在整个 refinement 过程中持续存在，即使后续节点包含正确答案。Structured Answer Filtering（SAF）通过确保只有有意义答案会被向前传递来解决这一点。如果某个节点没有贡献有效响应，它会被过滤掉，允许后续节点提供正确结果。要启用 SAF，只需在创建 response synthesizer 时设置：
 
-```ini
+```text
 structured_answer_filtering=True
 ```
 
@@ -704,7 +706,7 @@ print(response.raw)
 
 运行这个示例后，你可能收到如下输出：
 
-```ini
+```text
 name='Echoes in Bloom' artist='Taylor Swift' songs=["Song 1: 'Paper Lanterns'", "Song 2: 'Fractured Light'", "Song 3: 'Wildfire & Honey'"]
 ```
 
@@ -712,13 +714,13 @@ name='Echoes in Bloom' artist='Taylor Swift' songs=["Song 1: 'Paper Lanterns'", 
 
 你可能已经注意到，在 `Album` 类中，我并没有只写：
 
-```makefile
+```yaml
 name: str
 ```
 
 而是写了：
 
-```ini
+```yaml
 name: str = Field(description="Album title")
 ```
 
@@ -801,7 +803,7 @@ rail 的目的是确保 LLM 输出遵循预定义质量和格式标准，包括�
 
 **format_key**：这个可选参数很有用，当你想基于所需输出格式，将特定格式化指令注入查询中时，可以使用它。
 
-```code
+```bash
 pip install guardrails-ai
 ```
 
@@ -813,13 +815,13 @@ LangChain 中的 response schemas 主要用于结构化输出，重点在于定�
 
 在运行下一段代码前，请运行以下命令安装 LangChain Classic 包：
 
-```code
+```bash
 pip install langchain-classic
 ```
 
 下面是一个示例，基于这种方法实现一个非常简单的 answer-with-citation 系统：
 
-```javascript
+```python
 import models_config
 from langchain_classic.output_parsers import StructuredOutputParser, ResponseSchema
 from llama_index.core.output_parsers import LangchainOutputParser
@@ -840,7 +842,7 @@ nodes = [
 
 接下来，我们必须定义用于结构化 LLM 输出的 response schemas：
 
-```ini
+```text
 schemas = [
     ResponseSchema(
         name="answer",
@@ -860,7 +862,7 @@ schemas = [
 
 正如你所看到的，schema 定义了期望输出结构。现在，我们可以定义 LangChain parser，并将其附加到 `models_config` 已经在 `Settings` 中配置好的 `llm` 对象上：
 
-```ini
+```text
 lc_parser = StructuredOutputParser.from_response_schemas(schemas)
 output_parser = LangchainOutputParser(lc_parser)
 
@@ -868,7 +870,7 @@ llm = Settings.llm
 llm.output_parser = output_parser
 ```
 
-```ini
+```python
 index = VectorStoreIndex(nodes=nodes)
 query_engine = index.as_query_engine(llm=llm)
 
@@ -881,7 +883,7 @@ print(response)
 
 输出如下：
 
-```arduino
+```json
 {'answer': 'no', 'source': 'Oak trees are tall and have green leaves.'}
 ```
 
@@ -916,7 +918,7 @@ class Invoice(BaseModel):
 
 在脚本第一部分中，我们首先确保必要 imports，并定义 `Invoice` 类，它将作为输出结构。接下来，我们准备 schema 和希望从中提取信息的输入文本：
 
-```ini
+```text
 llm = Settings.llm
 schema = json.dumps(Invoice.model_json_schema(), indent=2)
 
@@ -925,7 +927,7 @@ text = "Invoice #INV-001 | Total: $22.90 | Thanks!"
 
 接下来，我们构建一个同时包含 JSON schema 和原始文本的 prompt。prompt 明确指示 LLM 只返回符合 schema 的 JSON 对象，避免额外格式，例如 Markdown 代码块或评论：
 
-```ini
+```text
 prompt = f"""
 You are an information extractor. Using ONLY the schema below,
 return a single JSON object that conforms to this schema.
@@ -942,15 +944,15 @@ TEXT:
 
 然后，我们将这个 prompt 发送给 LLM，以生成 completion。
 
-```ini
+```text
 raw = llm.complete(prompt)
 ```
 
-```ini
+```text
 invoice = Invoice.model_validate_json(raw.text)
 ```
 
-```scss
+```python
 print(invoice)
 ```
 
@@ -974,7 +976,7 @@ LlamaIndex 提供了 `LLMTextCompletionProgram`，它将这种模式包装成一
 
 定义 `QueryEngine` 最简单的方法，是使用 LlamaIndex 提供的高层 API，如下：
 
-```ini
+```text
 query_engine = index.as_query_engine()
 ```
 
@@ -984,7 +986,7 @@ query_engine = index.as_query_engine()
 
 让我们看一个示例：
 
-```javascript
+```python
 import models_config
 from llama_index.core.retrievers import SummaryIndexEmbeddingRetriever
 from llama_index.core.postprocessor import SimilarityPostprocessor
@@ -996,14 +998,14 @@ from llama_index.core import (
 
 和往常一样，我们先处理 imports。接下来，摄取 demo 文件并构建一个简单 `SummaryIndex`：
 
-```ini
+```text
 documents = SimpleDirectoryReader("files").load_data()
 index = SummaryIndex.from_documents(documents)
 ```
 
 然后，我们加入一个 retriever、一个 response synthesizer 和一个 node postprocessor。使用这种低层 API 方法构建 query engine，可以让我们完全定制每个组件：
 
-```ini
+```text
 retriever = SummaryIndexEmbeddingRetriever(
     index=index,
     similarity_top_k=3,
@@ -1017,7 +1019,7 @@ response_synthesizer = get_response_synthesizer(
 pp = SimilarityPostprocessor(similarity_cutoff=0.6)
 ```
 
-```ini
+```python
 query_engine = RetrieverQueryEngine(
     retriever=retriever,
     response_synthesizer=response_synthesizer,
@@ -1033,7 +1035,7 @@ print(response)
 
 输出应该类似如下：
 
-```erlang
+```text
 The iconic buildings in ancient Rome included the Colosseum and the Pantheon.
 ```
 
@@ -1090,7 +1092,7 @@ LlamaIndex 社区已经逐步开发出，并且还在继续开发各种高级查
 
 在下面示例中，我们正在构建一个 `RouterQueryEngine` engine，它操作多个 query engine tools，每一个都建立在不同文档之上。代码如下：
 
-```javascript
+```python
 from llama_index.core.tools import QueryEngineTool
 from llama_index.core.query_engine import RouterQueryEngine
 from llama_index.core.selectors import PydanticMultiSelector
@@ -1102,7 +1104,7 @@ documents = SimpleDirectoryReader("files").load_data()
 
 这部分代码处理 imports 并摄取示例数据。和之前一样，我们使用两个简单文本文件：一个包含关于古罗马的信息，另一个包含关于狗的通用文本。在下一部分中，我们会遍历每篇文档，并使用 `TitleExtractor` 提取标题，将其存储为元数据字段：
 
-```ini
+```text
 title_extractor = TitleExtractor()
 
 for doc in documents:
@@ -1112,7 +1114,7 @@ for doc in documents:
 
 文件被摄取并生成文档标题之后，我们可以为每篇文档定义 `SummaryIndex`、`QueryEngine` 和 `QueryEngineTool`。我们使用文档标题为 selector 提供每个 tool 的描述：
 
-```ini
+```text
 indexes = []
 query_engines = []
 tools = []
@@ -1137,7 +1139,7 @@ for doc in documents:
     tools.append(tool)
 ```
 
-```ini
+```text
 qe = RouterQueryEngine(
     selector=PydanticMultiSelector.from_defaults(),
     query_engine_tools=tools
@@ -1146,7 +1148,7 @@ qe = RouterQueryEngine(
 
 根据查询，selector 会决定使用哪些 tools 来收集响应。每个 tool 响应之后，query engine 会合成并返回最终响应：
 
-```vbscript
+```python
 response = qe.query(
     "Tell me about Rome and dogs"
 )
@@ -1160,7 +1162,7 @@ print(response)
 
 假设你已经构建好了 `QueryEngineTool` 对象列表 `tools`，定义一个基于 LLM 的 selector 非常直接：
 
-```ini
+```text
 qe = RouterQueryEngine(
     selector=LLMMultiSelector.from_defaults(),
     query_engine_tools=tools
@@ -1179,7 +1181,7 @@ qe = RouterQueryEngine(
 
 让我们看一下代码。第一部分与前面关于 `RouterQueryEngine` 的示例非常类似：
 
-```javascript
+```python
 import models_config
 from llama_index.core.tools import QueryEngineTool
 from llama_index.core.question_gen import LLMQuestionGenerator
@@ -1191,7 +1193,7 @@ from llama_index.core import SummaryIndex, SimpleDirectoryReader, Settings
 
 导入必要模块后，我们加载文件并提取它们的标题：
 
-```ini
+```text
 documents = SimpleDirectoryReader("files/sample").load_data()
 
 title_extractor = TitleExtractor()
@@ -1207,7 +1209,7 @@ tools = []
 
 到目前为止，我们完成了与 `RouterQueryEngine` 相同的步骤。下一部分有一个明显变化：我们还会从元数据中提取 `file_name`，并将其作为对应 tool 的名称。这样，我们就能准确知道每个答案来自哪里：
 
-```ini
+```text
 for doc in documents:
     document_title = doc.metadata['document_title']
     file_name = doc.metadata['file_name']
@@ -1230,7 +1232,7 @@ for doc in documents:
     tools.append(tool)
 ```
 
-```ini
+```text
 qgen = LLMQuestionGenerator.from_defaults(llm=Settings.llm)
 
 qe = SubQuestionQueryEngine.from_defaults(
@@ -1242,7 +1244,7 @@ qe = SubQuestionQueryEngine.from_defaults(
 
 到这里，我们已经准备好生成输出：
 
-```vbscript
+```python
 response = qe.query(
     "Compare buildings from ancient Athens and ancient Rome"
 )
@@ -1252,7 +1254,7 @@ print(response)
 
 你应该会看到类似如下内容：
 
-```vbnet
+```text
 Generated 3 sub questions.
 [sample_document3.txt] Q: What were the main types of buildings in ancient Athens?
 [sample_document3.txt] Q: What were the main types of buildings in ancient Rome?

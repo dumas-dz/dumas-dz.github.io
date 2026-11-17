@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "LangChain的回调机制本质是一种事件驱动的监控系统，由CallbackManager管理多个回调处理器（CallbackHandler），允许我们在LLM应用执行的不同节点（如请求开始/结束、Token生成、工具调用等）插入自定..."
+order: 40
+outline: [2, 3]
 ---
 
-
+# LangChain - 回调与可观测性
 ## 15.1 CallbackHandler 的作用
 
 LangChain的回调机制本质是一种事件驱动的监控系统，由CallbackManager管理多个回调处理器（CallbackHandler），允许我们在LLM应用执行的不同节点（如请求开始/结束、Token生成、工具调用等）插入自定义逻辑[superscript:1]。简单来说，CallbackHandler就是“埋在应用里的钩子”，能捕获整个执行链路的关键信息，解决AI应用“黑盒化”问题[superscript:3]。
@@ -16,19 +19,15 @@ LangChain的回调机制本质是一种事件驱动的监控系统，由Callback
 
 - 可观测性支撑：捕获链、Agent、工具的执行细节，包括输入输出、耗时、Token消耗，让执行过程可视化。
 
-可观测性支撑：捕获链、Agent、工具的执行细节，包括输入输出、耗时、Token消耗，让执行过程可视化。
 
 - 自定义扩展：支持开发者根据业务需求，插入日志、监控、告警等自定义逻辑，适配企业级场景。
 
-自定义扩展：支持开发者根据业务需求，插入日志、监控、告警等自定义逻辑，适配企业级场景。
 
 - 异常可控：在执行出错时触发回调，便于捕获异常、定位问题，甚至实现自动重试、降级等兜底逻辑。
 
-异常可控：在执行出错时触发回调，便于捕获异常、定位问题，甚至实现自动重试、降级等兜底逻辑。
 
 - 性能监控：统计各环节耗时、调用频率，为性能优化提供数据支撑。
 
-性能监控：统计各环节耗时、调用频率，为性能优化提供数据支撑。
 
 ### 核心回调节点（必记）
 
@@ -38,7 +37,7 @@ LangChain的回调覆盖了应用执行的全流程，关键节点如下（对�
 
 用最基础的StdOutCallbackHandler（内置回调），查看LLM调用的全过程，代码简洁可直接运行：
 
-```
+```python
 from langchain.callbacks import StdOutCallbackHandler
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -67,7 +66,7 @@ LangChain内置了多种常用回调处理器，无需自定义，直接导入�
 
 核心特点：轻量、无额外依赖，默认打印所有关键事件，也可通过配置过滤日志级别。
 
-```
+```python
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
 
@@ -86,7 +85,7 @@ print("最终结果：", result)
 
 用于统计LLM调用过程中的Token消耗（输入Token、输出Token、总Token），对于控制成本（尤其是GPT-4等付费模型）至关重要，无需手动计算，回调自动统计[superscript:3]。
 
-```
+```python
 from langchain.callbacks import TokenCountingCallbackHandler
 
 # 初始化Token统计回调
@@ -113,7 +112,7 @@ print("总Token数：", token_handler.total_tokens)
 
 在LLM生成内容时，实现“边生成边输出”的流式效果，避免用户长时间等待，提升交互体验[superscript:2]。常见于聊天机器人、实时问答等场景，需配合支持流式的LLM（如GPT-3.5/4、Ollama等）。
 
-```
+```python
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 # 初始化流式回调（实时打印生成的Token）
@@ -141,7 +140,7 @@ chain.invoke({})  # 执行后会实时打印生成的内容，无需等待全部
 
 所有自定义回调都需继承BaseCallbackHandler，重写对应事件方法，基础模板如下[superscript:7]：
 
-```
+```python
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.outputs import LLMResult
 
@@ -169,7 +168,7 @@ Prometheus是开源监控系统，常用于收集系统指标、生成可视化�
 
 前置依赖：安装prometheus_client库（pip install prometheus\_client）
 
-```
+```python
 import time
 from prometheus_client import Counter, Histogram, start_http_server
 
@@ -214,7 +213,7 @@ Datadog是商业监控平台，提供更全面的监控、告警和可视化能�
 
 前置依赖：安装datadog-api-client库（pip install datadog\-api\-client），并配置Datadog API Key（环境变量DD_API_KEY）。
 
-```
+```python
 from datadog_api_client import Configuration
 from datadog_api_client.v2.api.metrics_api import MetricsApi
 from datadog_api_client.v2.model.metric_intake_payload import MetricIntakePayload
@@ -266,7 +265,7 @@ LangChain支持异步调用（如async invoke），对应的异步回调（Async
 
 异步回调需继承AsyncCallbackHandler，重写的方法需用async/await修饰，适配异步调用场景，核心方法与同步回调一致，仅增加异步支持。
 
-```
+```python
 from langchain_core.callbacks import AsyncCallbackHandler
 
 # 自定义异步回调
@@ -300,25 +299,21 @@ asyncio.run(async_llm_call())
 
 - 优势：异步回调不会阻塞LLM调用的执行，在回调中执行耗时操作（如上报监控、写入日志）时，不会影响主线程的并发处理能力，提升应用吞吐量[superscript:2]。
 
-优势：异步回调不会阻塞LLM调用的执行，在回调中执行耗时操作（如上报监控、写入日志）时，不会影响主线程的并发处理能力，提升应用吞吐量[superscript:2]。
 
 - 风险点1：回调耗时过长：如果异步回调中包含大量耗时操作（如复杂计算、远程调用），会导致回调队列堆积，占用过多资源，间接影响LLM调用性能。
 
-风险点1：回调耗时过长：如果异步回调中包含大量耗时操作（如复杂计算、远程调用），会导致回调队列堆积，占用过多资源，间接影响LLM调用性能。
 
 - 风险点2：线程安全问题：如果异步回调中操作了共享资源（如全局变量、数据库连接），需确保线程安全，否则会出现数据错乱。
 
-风险点2：线程安全问题：如果异步回调中操作了共享资源（如全局变量、数据库连接），需确保线程安全，否则会出现数据错乱。
 
 - 优化建议：回调中尽量只做“轻量操作”（如指标上报、简单日志），耗时操作可放入异步队列（如Celery、Redis Queue），异步处理，避免阻塞回调流程。
 
-优化建议：回调中尽量只做“轻量操作”（如指标上报、简单日志），耗时操作可放入异步队列（如Celery、Redis Queue），异步处理，避免阻塞回调流程。
 
 ### 同步 vs 异步回调性能对比（极简测试）
 
 通过并发调用测试，直观感受两者的性能差异（使用FastAPI模拟高并发场景）：
 
-```
+```python
 from fastapi import FastAPI
 from langchain_core.callbacks import BaseCallbackHandler, AsyncCallbackHandler
 
@@ -360,19 +355,15 @@ LangSmith是LangChain官方推出的可观测性平台，能零代码或低代�
 
 - 零代码插桩：只需设置环境变量，无需修改业务代码，就能自动追踪链、LLM、工具的执行过程[superscript:6]。
 
-零代码插桩：只需设置环境变量，无需修改业务代码，就能自动追踪链、LLM、工具的执行过程[superscript:6]。
 
 - 全链路可视化：在控制台查看完整的调用链路（Prompt→LLM→工具→输出），直观看到每一步的输入输出、耗时、Token消耗。
 
-全链路可视化：在控制台查看完整的调用链路（Prompt→LLM→工具→输出），直观看到每一步的输入输出、耗时、Token消耗。
 
 - 错误定位：自动记录执行过程中的异常，点击异常详情就能查看错误堆栈，快速定位问题。
 
-错误定位：自动记录执行过程中的异常，点击异常详情就能查看错误堆栈，快速定位问题。
 
 - 性能分析：统计各环节耗时、调用频率，生成可视化报表，辅助性能优化。
 
-性能分析：统计各环节耗时、调用频率，生成可视化报表，辅助性能优化。
 
 ### 15.5.2 快速上手：LangSmith 配置与使用
 
@@ -382,14 +373,14 @@ LangSmith是LangChain官方推出的可观测性平台，能零代码或低代�
 
 步骤3：配置环境变量（两种方式，二选一）：
 
-```
+```bash
 # 方式1：终端临时配置（仅当前会话有效）
 export LANGCHAIN_TRACING_V2=true  # 开启追踪
 export LANGCHAIN_API_KEY="你的LangSmith API Key"  # 替换为自己的API Key
 export LANGCHAIN_PROJECT="langchain-demo"  # 项目名称（可选，默认default）
 ```
 
-```
+```python
 # 方式2：代码中配置（永久生效）
 import os
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
@@ -399,7 +390,7 @@ os.environ["LANGCHAIN_PROJECT"] = "langchain-demo"
 
 步骤4：编写业务代码（无需添加任何追踪相关代码，自动追踪）：
 
-```
+```python
 
 # 1. 配置环境变量（如果未在终端配置）
 os.environ["LANGCHAIN_API_KEY"] = "ls__xxxxxx"  # 替换为你的API Key
@@ -420,19 +411,15 @@ print("执行结果：", result)
 
 - 追踪列表：显示所有链、LLM的调用记录，包含调用时间、耗时、状态（成功/失败）、Token消耗。
 
-追踪列表：显示所有链、LLM的调用记录，包含调用时间、耗时、状态（成功/失败）、Token消耗。
 
 - 链路详情：点击任意追踪记录，可查看完整的调用链路，包括Prompt模板、格式化后的Prompt、LLM响应、输出结果，甚至能看到每一步的耗时。
 
-链路详情：点击任意追踪记录，可查看完整的调用链路，包括Prompt模板、格式化后的Prompt、LLM响应、输出结果，甚至能看到每一步的耗时。
 
 - 错误排查：如果执行失败，会在状态中显示“Error”，点击详情可查看错误堆栈、异常信息，快速定位问题（如API Key错误、Prompt格式错误）。
 
-错误排查：如果执行失败，会在状态中显示“Error”，点击详情可查看错误堆栈、异常信息，快速定位问题（如API Key错误、Prompt格式错误）。
 
 - 性能分析：在“Metrics”页面，可查看LLM调用次数、平均耗时、Token消耗趋势，生成可视化报表，辅助优化性能。
 
-性能分析：在“Metrics”页面，可查看LLM调用次数、平均耗时、Token消耗趋势，生成可视化报表，辅助优化性能。
 
 ## 15.6 错误回调与异常处理
 
@@ -444,7 +431,7 @@ LangChain应用的执行链路较长（用户输入→Prompt→LLM→工具→�
 
 通过重写BaseCallbackHandler（或AsyncCallbackHandler）的on_llm_error、on_chain_error、on_tool_error方法，捕获不同环节的异常，实现错误日志记录、告警等逻辑。
 
-```
+```python
 
 # 自定义错误回调，捕获所有环节的异常
 class ErrorCallback(BaseCallbackHandler):
@@ -480,7 +467,7 @@ LangChain应用中常见的异常类型及对应处理策略如下，结合实�
 
 LangChain的Runnable接口（链、LLM、工具都实现了该接口）内置了with_retry（自动重试）和withFallbacks（兜底策略）方法，可配合错误回调，实现更优雅的异常处理[superscript:5]。
 
-```
+```python
 from langchain_core.callbacks import ErrorCallback
 
 # 1. 初始化错误回调和LLM
@@ -512,7 +499,7 @@ result = chain.invoke({})
 
 LangChain支持将多个回调组合成一个列表，通过config参数传入，多个回调会按顺序执行，常用组合场景：日志记录+Token统计+监控上报。
 
-```
+```python
 from langchain.callbacks import StdOutCallbackHandler, TokenCountingCallbackHandler
 
 # 1. 初始化多个回调
@@ -541,17 +528,14 @@ print("总Token消耗：", token_handler.total_tokens)
 
 - 顺序优先级：组合回调的列表中，靠前的回调先执行（如上述示例中，log_handler先执行，再执行token_handler）。
 
-顺序优先级：组合回调的列表中，靠前的回调先执行（如上述示例中，log_handler先执行，再执行token_handler）。
 
 - 作用域优先级：回调的作用域分为“全局回调”（构造函数传入，如llm = ChatOpenAI(callbacks=[...])）和“局部回调”（invoke时传入，如chain.invoke(config={&#34;callbacks&#34;: [...]})），局部回调优先级高于全局回调。
 
-作用域优先级：回调的作用域分为“全局回调”（构造函数传入，如llm = ChatOpenAI(callbacks=[...])）和“局部回调”（invoke时传入，如chain.invoke(config={&#34;callbacks&#34;: [...]})），局部回调优先级高于全局回调。
 
 - 覆盖规则：如果全局回调和局部回调监听同一个事件，局部回调会覆盖全局回调的执行（即只执行局部回调，不执行全局回调）。
 
-覆盖规则：如果全局回调和局部回调监听同一个事件，局部回调会覆盖全局回调的执行（即只执行局部回调，不执行全局回调）。
 
-```
+```python
 
 # 1. 全局回调（构造函数传入）
 global_handler = StdOutCallbackHandler()
@@ -571,15 +555,12 @@ llm.invoke("测试回调优先级", config={"callbacks": [local_handler]})
 
 - 开发环境：StdOutCallbackHandler（日志）+ TokenCountingCallbackHandler（Token统计），快速调试和成本预估。
 
-开发环境：StdOutCallbackHandler（日志）+ TokenCountingCallbackHandler（Token统计），快速调试和成本预估。
 
 - 生产环境：AsyncCallbackHandler（异步日志）+ PrometheusCallback（监控上报）+ ErrorCallback（异常处理），兼顾高并发、可监控和异常兜底。
 
-生产环境：AsyncCallbackHandler（异步日志）+ PrometheusCallback（监控上报）+ ErrorCallback（异常处理），兼顾高并发、可监控和异常兜底。
 
 - 注意事项：避免组合过多回调，尤其是耗时回调，建议控制在3-5个以内，防止影响应用性能。
 
-注意事项：避免组合过多回调，尤其是耗时回调，建议控制在3-5个以内，防止影响应用性能。
 
 ## 15.8 【实战】构建带审计日志的企业级应用
 
@@ -587,51 +568,41 @@ llm.invoke("测试回调优先级", config={"callbacks": [local_handler]})
 
 - 记录用户输入、LLM输出、调用时间、Token消耗（审计日志）；
 
-记录用户输入、LLM输出、调用时间、Token消耗（审计日志）；
 
 - 实现流式输出，提升用户体验；
 
-实现流式输出，提升用户体验；
 
 - 上报监控指标到Prometheus，支持可视化；
 
-上报监控指标到Prometheus，支持可视化；
 
 - 异常处理（自动重试、兜底），避免应用崩溃；
 
-异常处理（自动重试、兜底），避免应用崩溃；
 
 - 使用LangSmith追踪全链路，便于问题定位。
 
-使用LangSmith追踪全链路，便于问题定位。
 
 ### 15.8.1 技术栈与环境准备
 
 - 核心框架：LangChain、FastAPI（提供API服务）；
 
-核心框架：LangChain、FastAPI（提供API服务）；
 
 - LLM：OpenAI GPT-3.5-turbo（支持流式）；
 
-LLM：OpenAI GPT-3.5-turbo（支持流式）；
 
 - 监控：Prometheus（指标上报）；
 
-监控：Prometheus（指标上报）；
 
 - 可观测性：LangSmith（全链路追踪）；
 
-可观测性：LangSmith（全链路追踪）；
 
 - 依赖安装：pip install langchain langsmith openai fastapi uvicorn prometheus\_client。
 
-依赖安装：pip install langchain langsmith openai fastapi uvicorn prometheus\_client。
 
 ### 15.8.2 完整代码实现
 
 代码分为3个部分：回调定义（审计日志、监控上报）、异常处理、FastAPI服务，可直接复制运行，注释清晰，便于修改。
 
-```
+```python
 import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse

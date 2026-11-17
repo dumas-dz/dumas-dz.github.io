@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - Agent
+description: "本章探索高级智能体用例：多智能体协作（AgentWorkflow + Handoff 机制）、LoadAndSearchToolSpec 处理大型工具输出、Human-in-the-loop 编排等。"
+order: 20
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 高级智能体用例
 本章探索高级智能体用例：多智能体协作（AgentWorkflow + Handoff 机制）、LoadAndSearchToolSpec 处理大型工具输出、Human-in-the-loop 编排等。
 
 ### 技术要求
@@ -76,7 +78,7 @@ LLM，被封装在 LlamaIndex 的 LLM 抽象中，因此所有模型，例如 Op
 
 `LoadAndSearchToolSpec` 接收一个现有工具，并生成两个独立工具：一个用于加载和索引数据，默认使用向量索引；另一个用于在这些已索引数据上执行搜索。这种模式专门用于处理那些否则会因为过大而无法直接传给 LLM 的工具输出。智能体会先使用 Load 工具摄入数据，然后把它存储到索引中。在下一步中，智能体再使用 Search 工具，通过内置 query engine 只抽取所需信息。
 
-```javascript
+```python
 import asyncio
 import models_config
 from llama_index.core.agent.workflow import ReActAgent
@@ -86,7 +88,7 @@ from llama_index.tools.database import DatabaseToolSpec
 
 我们先导入 `asyncio`，因为我们要异步运行所有内容。我们还导入 `models_config`，它在幕后为我们完成那些枯燥但重要的设置工作：它把默认 LLM 设置为 `gemma3:4b`，把 embedding 模型设置为 `nomic-embed-text`。我们使用 `ReActAgent`，是因为我们想要一个能够在循环中推理并决定何时调用工具的智能体，即使模型本身不支持原生函数调用。我们还导入了 `LoadAndSearchToolSpec`，这是这里的关键 utility：它允许我们拿一个可能返回大型 payload 的工具，把工作流拆成“加载并索引”阶段，以及“搜索”阶段。接下来，我们定义一个异步 `main()` 函数：
 
-```ini
+```text
 async def main() -> None:
     db_tools = DatabaseToolSpec(uri="sqlite:///files/database/employees.db")
     tool_list = db_tools.to_tool_list()
@@ -95,7 +97,7 @@ async def main() -> None:
 
 接下来，我们不再把原始的 `load_data` 工具直接交给智能体，而是用 `LoadAndSearchToolSpec` 包装它：
 
-```ini
+```text
 tools = LoadAndSearchToolSpec.from_defaults(load_data_tool).to_tool_list()
 ```
 
@@ -150,13 +152,13 @@ if __name__ == "__main__":
 
 运行代码之前，请确保安装 Wikipedia 集成包：
 
-```perl
+```bash
 pip install llama-index-readers-wikipedia
 ```
 
 下面是示例代码。我们从 imports 开始：
 
-```javascript
+```python
 import asyncio
 import models_config
 from llama_index.core.agent.workflow import ReActAgent
@@ -166,7 +168,7 @@ from llama_index.readers.wikipedia import WikipediaReader
 
 我们先导入 `asyncio`，因为我们将异步运行智能体；同时导入 `models_config`，这样默认 LLM 和 embedding 模型已经为我们配置好。然后导入 `ReActAgent`，它将运行推理循环；导入 `OnDemandLoaderTool`，它会把 data loader 包装成智能体工具；以及 `WikipediaReader`，这是我们希望智能体使用的 loader。接下来，让我们基于 `WikipediaReader` 为智能体定义一个按需工具：
 
-```ini
+```text
 async def main() -> None:
     tool = OnDemandLoaderTool.from_defaults(
         WikipediaReader(),
@@ -179,7 +181,7 @@ async def main() -> None:
 
 之后，我们用这一个工具创建一个 `ReActAgent`：
 
-```ini
+```text
 agent = ReActAgent(
         tools=[tool],
         verbose=True,
@@ -189,7 +191,7 @@ agent = ReActAgent(
 
 然后启动运行：
 
-```ini
+```text
 handler = agent.run("List top 3 countries by population")
 ```
 
@@ -206,7 +208,7 @@ async for ev in handler.stream_events():
 
 这会给我们一个简单的实时 trace，展示智能体何时决定调用工具、工具何时返回，以及运行过程如何推进。
 
-```ini
+```python
 response = await handler
     print(response)
 if __name__ == "__main__":
@@ -281,7 +283,7 @@ LlamaIndex 提供了一种索引任意 Python 对象的通用机制：`ObjectInd
 
 下面是一个实际例子，展示如何使用 `ObjectIndex` 为一组工具建立索引，针对给定查询只检索相关工具，并把过滤后的子集传给 `ReActAgent`。虽然这个例子刻意简化，但示例代码应该能让你大致了解如何应用这项技术：
 
-```javascript
+```python
 import asyncio
 import models_config
 from llama_index.core import VectorStoreIndex
@@ -321,7 +323,7 @@ def util_generate_uuid() -> str:
 
 之后，我们进入 `main()`，并使用 `FunctionTool.from_defaults` 从这些函数构建真正的 LlamaIndex 工具。对于每个工具，我们提供名称和描述，因为这段文本正是驱动工具检索的内容。也正是在这里，我们为检索器编码语义：如果描述清晰且彼此区分明显，检索器就有强信号，可以把用户意图匹配到正确能力上。
 
-```rust
+```text
 async def main() -> None:
     tools = [
         FunctionTool.from_defaults(
@@ -357,7 +359,7 @@ async def main() -> None:
     ]
 ```
 
-```ini
+```text
 tool_index = ObjectIndex.from_objects(tools, index_cls=VectorStoreIndex)
 ```
 
@@ -365,20 +367,20 @@ tool_index = ObjectIndex.from_objects(tools, index_cls=VectorStoreIndex)
 
 工具索引准备好之后，我们通过 `tool_index.as_retriever()` 创建一个 retriever，并设置 `similarity_top_k=2`：
 
-```ini
+```text
 tool_retriever = tool_index.as_retriever(similarity_top_k=2)
 ```
 
 在真正运行智能体之前，我们先用 `tool_retriever.retrieve()` 做一次快速预览检索，并打印返回的工具名称：
 
-```ini
+```python
 preview = tool_retriever.retrieve("vacation policy exceptions for contractors")
     print([t.metadata.name for t in preview])
 ```
 
 这让我们确认检索是否按照预期运行：你应该看到 HR 政策相关工具排在前面，而 Slack 消息或 UUID 生成等无关能力不应被选中。然后我们通过传入 `tool_retriever`，而不是完整工具列表，来构造 `ReActAgent`。这是让智能体具备检索增强能力的关键部分。我没有改变推理循环；我只是改变了智能体如何获得工具菜单。
 
-```ini
+```python
 agent = ReActAgent(
         tool_retriever=tool_retriever,
         verbose=True,
@@ -397,7 +399,7 @@ if __name__ == "__main__":
 
 你应该期待以下输出：
 
-```css
+```json
 ['hr_vacation_policy_lookup', 'hr_holiday_calendar', 'finance_sales_by_region']
 *   Contractors are generally not eligible for paid vacation.
 *   Exceptions to this rule require VP approval and must be documented in a contract addendum.
@@ -543,11 +545,11 @@ Handoff 约束：不是每个智能体都应该被允许 handoff 给其他所有
 
 运行示例前，请确保你已经下载模型。`Qwen3.5:9b` 下载大小约为 6.6 GB，因此你至少需要 7 GB 可用磁盘空间。使用以下命令拉取模型：
 
-```code
+```bash
 ollama pull qwen3.5:9b
 ```
 
-```javascript
+```python
 import asyncio
 from llama_index.core import Settings
 from llama_index.core.agent.workflow import (
@@ -563,7 +565,7 @@ from llama_index.llms.ollama import Ollama
 
 我们从 agent workflow 模块导入 `AgentWorkflow` 和 `ReActAgent`，以及将在运行期间用于观察发生情况的事件类型：`AgentOutput`，也就是每个推理步骤后的模型响应；`ToolCall`，即即将发生的工具调用；`ToolCallResult`，即完成后的工具调用输出。我们还从 workflow 模块导入 `Context`，因为智能体将通过共享状态存储使用它在彼此之间传递数据。由于我们不会使用常规 Gemma 模型，因此也不再像往常一样导入 `models_config`，而是直接使用 `Settings` 来设置底层 LLM：
 
-```ini
+```text
 Settings.llm = Ollama(
     model="qwen3.5:9b",
     base_url="http://localhost:11434",
@@ -617,7 +619,7 @@ def lookup_worker_rules(worker_type: str) -> str:
 
 现在我们再定义两个工具，用于处理智能体之间的共享状态：
 
-```python
+```text
 async def save_policy_finding(ctx: Context, finding: str) -> str:
     """Save the policy finding for the response agent."""
     async with ctx.store.edit_state() as ctx_state:
@@ -638,7 +640,7 @@ async def read_policy_finding(ctx: Context) -> str:
 
 工具准备好之后，我就可以定义两个智能体，并把它们连接进一个 `AgentWorkflow`：
 
-```ini
+```text
 async def main() -> None:
     policy_agent = ReActAgent(
         name="PolicyAgent",
@@ -729,7 +731,7 @@ if __name__ == "__main__":
 
 下面是运行这个示例得到的实际输出：
 
-```vbnet
+```text
 INPUT: A contractor asks whether they can expense a 180 EUR monitor for
 remote work. Check the policy and write a short answer.
 

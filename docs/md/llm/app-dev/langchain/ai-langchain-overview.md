@@ -5,9 +5,12 @@ category:
   - LangChain
 tag:
   - LangChain
+description: "LangChain 是一个开源的大模型应用编排框架，核心作用是“连接”——连接大语言模型（LLM）与外部数据源（文档、数据库、API）、工具（搜索、计算、自动化工具），并通过“链式调用”将多个组件组合起来，快速构建复杂的AI应用（如智..."
+order: 130
+outline: [2, 3]
 ---
 
-
+# LangChain - LangChain 概览
 ## 1.1 什么是 LangChain？为什么需要它？
 
 ### 1.1.1 一句话读懂LangChain
@@ -22,15 +25,12 @@ LangChain 是一个开源的大模型应用编排框架，核心作用是“连�
 
 - 重复造轮子：每次开发新应用，都要重新写“调用LLM、处理对话历史、连接外部工具”的代码，效率极低；
 
-重复造轮子：每次开发新应用，都要重新写“调用LLM、处理对话历史、连接外部工具”的代码，效率极低；
 
 - 流程难编排：复杂场景（如“提问→搜索→分析结果→生成回答”）需要手动管理组件间的依赖和数据流转，逻辑混乱且易出错；
 
-流程难编排：复杂场景（如“提问→搜索→分析结果→生成回答”）需要手动管理组件间的依赖和数据流转，逻辑混乱且易出错；
 
 - 扩展性差：更换LLM（如从GPT-3.5换成 llama 3）、替换向量数据库（如从FAISS换成Pinecone），需要大面积修改代码。
 
-扩展性差：更换LLM（如从GPT-3.5换成 llama 3）、替换向量数据库（如从FAISS换成Pinecone），需要大面积修改代码。
 
 而LangChain的核心价值，就是解决这3个痛点：通过模块化设计，让组件可复用、可替换；通过链式调用，让复杂流程可编排、可调试；通过统一接口，让开发者无需关注底层细节，快速实现从原型到产品的落地。
 
@@ -40,19 +40,15 @@ LangChain的应用场景几乎覆盖所有LLM驱动的场景，最常见的有4�
 
 - RAG（检索增强生成）：连接本地文档、PDF、网页，让LLM基于指定数据生成回答（企业知识库、文档问答）；
 
-RAG（检索增强生成）：连接本地文档、PDF、网页，让LLM基于指定数据生成回答（企业知识库、文档问答）；
 
 - 聊天机器人：支持多轮对话记忆，实现拟人化交互（客服机器人、私人助手）；
 
-聊天机器人：支持多轮对话记忆，实现拟人化交互（客服机器人、私人助手）；
 
 - 智能工具调用：让LLM自主决定调用搜索、计算、数据库查询等工具（智能数据分析、自动化办公）；
 
-智能工具调用：让LLM自主决定调用搜索、计算、数据库查询等工具（智能数据分析、自动化办公）；
 
 - 多模态应用：结合文本、图片、音频，构建多模态交互应用（图文生成、语音问答）。
 
-多模态应用：结合文本、图片、音频，构建多模态交互应用（图文生成、语音问答）。
 
 ## 1.2 LangChain 的发展历程与生态全景
 
@@ -62,21 +58,17 @@ LangChain 由 Harrison Chase 于2022年10月正式推出，恰逢ChatGPT引爆�
 
 - 2022年10月 - 初创期：LangChain 在GitHub发布首个版本，核心功能是“Prompt模板”和“简单链式调用”，主打“快速原型开发”，解决开发者“重复写调用代码”的痛点；
 
-2022年10月 - 初创期：LangChain 在GitHub发布首个版本，核心功能是“Prompt模板”和“简单链式调用”，主打“快速原型开发”，解决开发者“重复写调用代码”的痛点；
 
 - 2023年 - 爆发期：GitHub星标数突破38000，成为年度增速最快的开源项目之一。推出LangSmith调试平台，完善RAG、Agent等核心功能，生态开始扩张，支持更多LLM和工具集成；
 
-2023年 - 爆发期：GitHub星标数突破38000，成为年度增速最快的开源项目之一。推出LangSmith调试平台，完善RAG、Agent等核心功能，生态开始扩张，支持更多LLM和工具集成；
 
 - 2024年 - 商业化与成熟化：完成红杉资本领投的融资，发布LangServe部署工具，支持将LangChain应用部署为REST API，推动企业级落地；同时优化核心库，解决“抽象过重”的争议；
 
-2024年 - 商业化与成熟化：完成红杉资本领投的融资，发布LangServe部署工具，支持将LangChain应用部署为REST API，推动企业级落地；同时优化核心库，解决“抽象过重”的争议；
 
-- 2025年至今 - 生态完善期：推出langgraph库，强化多智能体系统构建能力；深化与云平台、垂直行业的合作，持续优化多模态支持，愿景是成为“大模型应用开发的通用语言”。
+- 持续演进期：LangGraph、LangSmith 以及部署、观测和集成生态持续发展；具体能力、版本和支持范围以官方发布说明为准。
 
-2025年至今 - 生态完善期：推出langgraph库，强化多智能体系统构建能力；深化与云平台、垂直行业的合作，持续优化多模态支持，愿景是成为“大模型应用开发的通用语言”。
 
-截至2026年3月，LangChain GitHub星标数已突破70k+，成为大模型应用开发领域最主流的框架之一，拥有庞大的开发者社区和丰富的第三方集成。
+LangChain 已形成较大的开发者社区和第三方集成生态，是学习大模型应用编排的常用框架之一。
 
 ### 1.2.2 生态全景（核心组件与集成）
 
@@ -88,27 +80,21 @@ LangChain的核心骨架，包含所有基础组件，是构建应用的基础�
 
 - 模型（Models）：统一的LLM调用接口，支持OpenAI、Anthropic、Meta（llama 3）、Google等主流模型，以及本地部署的开源模型；
 
-模型（Models）：统一的LLM调用接口，支持OpenAI、Anthropic、Meta（llama 3）、Google等主流模型，以及本地部署的开源模型；
 
 - 提示（Prompts）：Prompt模板、少样本提示、提示优化等功能，简化提示工程的复杂度；
 
-提示（Prompts）：Prompt模板、少样本提示、提示优化等功能，简化提示工程的复杂度；
 
 - 链（Chains）：将多个组件串联起来，实现复杂流程（如LLMChain、SequentialChain）；
 
-链（Chains）：将多个组件串联起来，实现复杂流程（如LLMChain、SequentialChain）；
 
 - 记忆（Memory）：管理多轮对话上下文，让LLM“记住”之前的交互内容；
 
-记忆（Memory）：管理多轮对话上下文，让LLM“记住”之前的交互内容；
 
 - 工具（Tools）：定义外部工具的调用接口，支持搜索、数据库、API等工具的集成；
 
-工具（Tools）：定义外部工具的调用接口，支持搜索、数据库、API等工具的集成；
 
 - 检索（Retrievers）：连接向量数据库，实现外部数据的检索，是RAG场景的核心组件。
 
-检索（Retrievers）：连接向量数据库，实现外部数据的检索，是RAG场景的核心组件。
 
 #### 2. 工具集成（生态核心优势）
 
@@ -116,19 +102,15 @@ LangChain的最大优势之一就是“生态丰富”，已集成100+第三方�
 
 - 大语言模型（LLM）：OpenAI、Anthropic（Claude）、Google（Gemini）、Meta（llama 3）、Hugging Face等；
 
-大语言模型（LLM）：OpenAI、Anthropic（Claude）、Google（Gemini）、Meta（llama 3）、Hugging Face等；
 
 - 向量数据库：FAISS、Pinecone、Chroma、Milvus等，用于存储和检索文本嵌入；
 
-向量数据库：FAISS、Pinecone、Chroma、Milvus等，用于存储和检索文本嵌入；
 
 - 外部工具：Google搜索、Bing搜索、Python解释器、数据库（MySQL、PostgreSQL）、Slack、邮件等；
 
-外部工具：Google搜索、Bing搜索、Python解释器、数据库（MySQL、PostgreSQL）、Slack、邮件等；
 
 - 文档加载器：支持PDF、Word、Excel、Markdown、网页等多种格式的文档加载。
 
-文档加载器：支持PDF、Word、Excel、Markdown、网页等多种格式的文档加载。
 
 #### 3. 辅助平台（开发-部署闭环）
 
@@ -136,11 +118,9 @@ LangChain的最大优势之一就是“生态丰富”，已集成100+第三方�
 
 - LangSmith：调试、监控和评估平台，可查看链的运行日志、优化Prompt、评估回答质量，解决“链式调用难调试”的痛点；
 
-LangSmith：调试、监控和评估平台，可查看链的运行日志、优化Prompt、评估回答质量，解决“链式调用难调试”的痛点；
 
 - LangServe：部署工具，可将LangChain的链或Agent快速部署为REST API，方便集成到Web应用、APP等产品中。
 
-LangServe：部署工具，可将LangChain的链或Agent快速部署为REST API，方便集成到Web应用、APP等产品中。
 
 ## 1.3 LangChain 与其他框架对比（LlamaIndex、Haystack 等）
 
@@ -152,19 +132,15 @@ LangServe：部署工具，可将LangChain的链或Agent快速部署为REST API�
 
 - 如果你是新手，想快速入门，尝试各种LLM应用场景（不限于RAG），优先选LangChain——社区资源多，踩坑成本低；
 
-如果你是新手，想快速入门，尝试各种LLM应用场景（不限于RAG），优先选LangChain——社区资源多，踩坑成本低；
 
 - 如果你的需求只专注于RAG（如企业知识库），且追求高效开发，优先选LlamaIndex——开箱即用，无需手动拼接组件；
 
-如果你的需求只专注于RAG（如企业知识库），且追求高效开发，优先选LlamaIndex——开箱即用，无需手动拼接组件；
 
 - 如果你的项目需要部署到生产环境，且要求高稳定性、可监控，优先选Haystack——企业级特性完善；
 
-如果你的项目需要部署到生产环境，且要求高稳定性、可监控，优先选Haystack——企业级特性完善；
 
 - 如果你的项目是研究型，需要优化RAG性能、自动调优Prompt，可尝试DSPy——创新的声明式编程理念。
 
-如果你的项目是研究型，需要优化RAG性能、自动调优Prompt，可尝试DSPy——创新的声明式编程理念。
 
 补充：LangChain与LlamaIndex可混合使用（如用LlamaIndex做检索，LangChain做Agent），灵活应对复杂场景。
 
@@ -182,15 +158,12 @@ LangChain的所有设计，都是围绕“打通最后一公里”展开的，�
 
 - 上下文感知：让LLM能“记住”对话历史、“理解”当前场景，而不是孤立地生成文本（通过Memory组件实现）；
 
-上下文感知：让LLM能“记住”对话历史、“理解”当前场景，而不是孤立地生成文本（通过Memory组件实现）；
 
 - 外部连接：让LLM能“访问”外部数据和工具，打破“预训练数据有限”的限制（通过Retrievers、Tools组件实现）；
 
-外部连接：让LLM能“访问”外部数据和工具，打破“预训练数据有限”的限制（通过Retrievers、Tools组件实现）；
 
 - 流程自动化：让LLM能“自主决策”，根据用户需求，自动调用工具、处理数据、生成最终回答（通过Agent、Chains组件实现）。
 
-流程自动化：让LLM能“自主决策”，根据用户需求，自动调用工具、处理数据、生成最终回答（通过Agent、Chains组件实现）。
 
 ### 1.4.2 设计理念的核心：模块化与可组合性
 
@@ -198,11 +171,9 @@ LangChain的所有设计，都是围绕“打通最后一公里”展开的，�
 
 - 模块化：将大模型应用的各个环节（调用LLM、处理Prompt、管理记忆、检索数据、调用工具）拆分成独立的组件，每个组件负责单一功能，可单独修改、替换；
 
-模块化：将大模型应用的各个环节（调用LLM、处理Prompt、管理记忆、检索数据、调用工具）拆分成独立的组件，每个组件负责单一功能，可单独修改、替换；
 
 - 可组合：通过“链（Chains）”将多个组件串联或并联，形成复杂的业务流程。比如“Prompt模板 → LLM调用 → 记忆存储 → 工具调用”，可根据需求自由组合。
 
-可组合：通过“链（Chains）”将多个组件串联或并联，形成复杂的业务流程。比如“Prompt模板 → LLM调用 → 记忆存储 → 工具调用”，可根据需求自由组合。
 
 这种设计的优势的是：开发者无需从零开发，只需像“搭积木”一样，组合现有组件，就能快速实现复杂场景；同时，当需求变化时（如更换LLM、替换向量数据库），只需修改对应组件，无需重构整个代码。
 
@@ -222,19 +193,15 @@ LangChain 支持Python和JavaScript/TypeScript两种语言（分别对应langcha
 
 - LLM API：OpenAI、Anthropic、Hugging Face等官方SDK，均优先提供Python版本，调用更便捷；
 
-LLM API：OpenAI、Anthropic、Hugging Face等官方SDK，均优先提供Python版本，调用更便捷；
 
 - 数据处理：Pandas、NumPy、OpenCV等数据处理库，可无缝与LangChain集成，处理文本、图片等多模态数据；
 
-数据处理：Pandas、NumPy、OpenCV等数据处理库，可无缝与LangChain集成，处理文本、图片等多模态数据；
 
 - 向量数据库：FAISS、Chroma、Pinecone等，均提供Python SDK，与LangChain的检索组件可一键对接；
 
-向量数据库：FAISS、Chroma、Pinecone等，均提供Python SDK，与LangChain的检索组件可一键对接；
 
 - 部署工具：FastAPI、Flask等Web框架，可快速将LangChain应用部署为API，与Python生态完美兼容。
 
-部署工具：FastAPI、Flask等Web框架，可快速将LangChain应用部署为API，与Python生态完美兼容。
 
 简单说：用Python开发LangChain应用，能“一站式”搞定“数据处理→模型调用→部署上线”，无需跨语言切换，效率更高。
 
@@ -244,15 +211,12 @@ Python的语法简洁、可读性强，相比JavaScript/TypeScript，更适合�
 
 - 无需编译，写完代码即可运行，适合调试链式调用的复杂流程；
 
-无需编译，写完代码即可运行，适合调试链式调用的复杂流程；
 
 - 语法简洁，实现相同功能，Python代码量远少于其他语言（如Java）；
 
-语法简洁，实现相同功能，Python代码量远少于其他语言（如Java）；
 
 - 支持交互式开发（如Jupyter Notebook），可逐行调试，快速定位问题。
 
-支持交互式开发（如Jupyter Notebook），可逐行调试，快速定位问题。
 
 对于LangChain这样“组件拼接、流程调试”为主的开发场景，Python的优势尤为明显。
 
@@ -262,15 +226,12 @@ LangChain的Python社区远大于JavaScript社区：
 
 - GitHub上，langchain（Python）的星标数是langchain-js的3倍以上，更新频率更高；
 
-GitHub上，langchain（Python）的星标数是langchain-js的3倍以上，更新频率更高；
 
 - 掘金、CSDN、Stack Overflow等平台，Python版本的教程、问题解答、实战案例远多于其他语言；
 
-掘金、CSDN、Stack Overflow等平台，Python版本的教程、问题解答、实战案例远多于其他语言；
 
 - 第三方插件和集成，优先支持Python版本（如很多自定义工具、文档加载器，仅提供Python实现）。
 
-第三方插件和集成，优先支持Python版本（如很多自定义工具、文档加载器，仅提供Python实现）。
 
 对于新手来说，丰富的社区资源意味着“遇到问题能快速找到解决方案”，大大降低学习和开发成本。
 
@@ -280,11 +241,9 @@ Python的灵活性，完美匹配LangChain的设计理念：
 
 - 新手：可直接使用LangChain的高层API，无需关注底层细节，快速实现功能；
 
-新手：可直接使用LangChain的高层API，无需关注底层细节，快速实现功能；
 
 - 资深开发者：可通过自定义组件（如自定义Prompt模板、自定义工具），灵活扩展LangChain的功能，满足复杂场景需求。
 
-资深开发者：可通过自定义组件（如自定义Prompt模板、自定义工具），灵活扩展LangChain的功能，满足复杂场景需求。
 
 补充：如果你的需求是“前端+LLM应用”（如网页聊天机器人），可选择langchain-js；如果是后端服务、数据处理、RAG、Agent等场景，优先选Python。
 
@@ -296,23 +255,18 @@ Python的灵活性，完美匹配LangChain的设计理念：
 
 - LangChain 官方文档：python.langchain.com/docs/get_st…（Python版本，最权威、最全面，包含入门教程、API文档、实战案例）；
 
-LangChain 官方文档：python.langchain.com/docs/get_st…（Python版本，最权威、最全面，包含入门教程、API文档、实战案例）；
 
 - LangChain 中文官网：www.langchain-china.com/（适合英文基础较弱的开发者，包含中文文档、社区动态）；
 
-LangChain 中文官网：www.langchain-china.com/（适合英文基础较弱的开发者，包含中文文档、社区动态）；
 
 - LangSmith 文档：docs.smith.langchain.com/（调试、监控平台的使用文档，生产环境必备）；
 
-LangSmith 文档：docs.smith.langchain.com/（调试、监控平台的使用文档，生产环境必备）；
 
 - LangServe 文档：python.langchain.com/docs/langse…（部署工具文档，教你如何将LangChain应用部署为API）；
 
-LangServe 文档：python.langchain.com/docs/langse…（部署工具文档，教你如何将LangChain应用部署为API）；
 
 - GitHub 仓库：github.com/langchain-a…（查看源码、提交Issue、贡献代码，了解最新版本更新）。
 
-GitHub 仓库：github.com/langchain-a…（查看源码、提交Issue、贡献代码，了解最新版本更新）。
 
 ### 1.6.2 社区学习资源（新手首选）
 
@@ -320,61 +274,49 @@ GitHub 仓库：github.com/langchain-a…（查看源码、提交Issue、贡献�
 
 - 掘金：搜索“LangChain”，有大量新手教程、实战案例（如RAG、Agent开发），贴合国内开发者需求；
 
-掘金：搜索“LangChain”，有大量新手教程、实战案例（如RAG、Agent开发），贴合国内开发者需求；
 
 - CSDN：LangChain专栏，包含详细的API解析和问题排查教程；
 
-CSDN：LangChain专栏，包含详细的API解析和问题排查教程；
 
 - LangChain 中文社区：langchainchina.com/（国内开发者交流平台，可提问、分享案例）。
 
-LangChain 中文社区：langchainchina.com/（国内开发者交流平台，可提问、分享案例）。
 
 #### 2. 国外社区（英文资源）
 
 - LangChain Discord：discord.com/invite/lang…（官方社区，可与核心开发者交流，提问解答）；
 
-LangChain Discord：discord.com/invite/lang…（官方社区，可与核心开发者交流，提问解答）；
 
 - Stack Overflow：搜索“LangChain”，可找到大量实际开发中的问题及解决方案；
 
-Stack Overflow：搜索“LangChain”，可找到大量实际开发中的问题及解决方案；
 
 - YouTube：LangChain官方频道，有详细的视频教程，包含实战演示。
 
-YouTube：LangChain官方频道，有详细的视频教程，包含实战演示。
 
 ### 1.6.3 实用工具与插件（提升开发效率）
 
 - LangChain Hub：hub.langchain.com/（官方Prompt模板、链模板仓库，可直接复用）；
 
-LangChain Hub：hub.langchain.com/（官方Prompt模板、链模板仓库，可直接复用）；
 
 - LangChain CLI：命令行工具，可快速创建LangChain项目、部署应用；
 
-LangChain CLI：命令行工具，可快速创建LangChain项目、部署应用；
 
 - Hugging Face Hub：huggingface.co/models（可下载开源LLM、Embedding模型，与LangChain无缝集成）。
 
-Hugging Face Hub：huggingface.co/models（可下载开源LLM、Embedding模型，与LangChain无缝集成）。
 
 ### 1.6.4 学习技巧（新手必看）
 
 - 官方文档的“Getting Started”章节是新手入门的最佳路径，先跟着完成基础示例，再深入学习核心组件；
 
-官方文档的“Getting Started”章节是新手入门的最佳路径，先跟着完成基础示例，再深入学习核心组件；
 
 - 遇到问题，优先查官方文档的API参考，再去社区搜索（避免被过时的教程误导）；
 
-遇到问题，优先查官方文档的API参考，再去社区搜索（避免被过时的教程误导）；
 
 - 关注LangChain GitHub的“Releases”页面，及时了解版本更新和新功能（如langgraph、中间件系统）。
 
-关注LangChain GitHub的“Releases”页面，及时了解版本更新和新功能（如langgraph、中间件系统）。
 
-## 1.7 本书学习路线与配套代码说明
+## 1.7 学习路线与配套代码说明
 
-为了帮助大家系统掌握LangChain，避免“碎片化学习”，下面明确本书的学习路线和配套代码说明，无论你是新手还是有一定基础的开发者，都能快速跟上节奏。
+为了避免碎片化学习，下面给出统一学习路线和配套代码组织方式。
 
 ### 1.7.1 学习路线（从入门到精通）
 
@@ -382,37 +324,32 @@ Hugging Face Hub：huggingface.co/models（可下载开源LLM、Embedding模型�
 
 - 第一阶段：基础入门（第1章）：认识LangChain、了解核心概念、完成第一个LangChain程序，建立基础认知；
 
-第一阶段：基础入门（第1章）：认识LangChain、了解核心概念、完成第一个LangChain程序，建立基础认知；
 
 - 第二阶段：核心组件（第2-6章）：逐一学习LangChain的核心组件（Prompt、Model、Chain、Memory、Retriever），掌握每个组件的使用方法和实战技巧；
 
-第二阶段：核心组件（第2-6章）：逐一学习LangChain的核心组件（Prompt、Model、Chain、Memory、Retriever），掌握每个组件的使用方法和实战技巧；
 
 - 第三阶段：实战场景（第7-10章）：聚焦核心应用场景（RAG知识库、聊天机器人、Agent工具调用、多模态应用），手把手教你开发完整项目；
 
-第三阶段：实战场景（第7-10章）：聚焦核心应用场景（RAG知识库、聊天机器人、Agent工具调用、多模态应用），手把手教你开发完整项目；
 
 - 第四阶段：优化与部署（第11-12章）：学习LangChain应用的优化技巧（Prompt优化、性能优化），以及部署方法（LangServe、Docker部署）；
 
-第四阶段：优化与部署（第11-12章）：学习LangChain应用的优化技巧（Prompt优化、性能优化），以及部署方法（LangServe、Docker部署）；
 
 - 第五阶段：高级进阶（第13-15章）：学习自定义组件、LangGraph多智能体、企业级实践，提升开发能力，应对复杂场景。
 
-第五阶段：高级进阶（第13-15章）：学习自定义组件、LangGraph多智能体、企业级实践，提升开发能力，应对复杂场景。
 
 学习建议：不要跳过任何一个阶段，基础组件是后续实战的核心，只有掌握了组件的使用，才能灵活组合出复杂的应用。
 
 ### 1.7.2 配套代码说明
 
-#### 1. 代码仓库地址（免费获取）
+#### 1. 代码组织原则
 
-本书所有配套代码，均托管在GitHub上，可直接克隆、运行，地址：github.com/xxx/langcha…（注：实际使用时替换为真实仓库地址）。
+配套代码按主题和学习阶段组织；示例通过环境变量读取密钥，不提交 `.env`、凭据或客户数据。对外发布代码时，应补充真实仓库地址和可复现的依赖锁定文件。
 
 #### 2. 代码结构说明
 
 代码仓库按章节划分，结构清晰，便于查找和运行：
 
-```
+```text
 langchain-learning/
 ├── chapter01/  # 第1章 初识LangChain
 │   ├── hello_langchain.py  # 第一个LangChain程序
@@ -429,29 +366,23 @@ langchain-learning/
 
 - Python 版本：3.8+（推荐3.10，兼容性最好）；
 
-Python 版本：3.8+（推荐3.10，兼容性最好）；
 
-- LangChain 版本：最新稳定版（本书代码基于LangChain 1.0+编写）；
+- LangChain 版本：最新稳定版（本知识库示例以 LangChain 1.x API 风格讲解）；
 
-LangChain 版本：最新稳定版（本书代码基于LangChain 1.0+编写）；
 
 - 依赖包安装：每个章节的requirements.txt文件中，包含该章节所需的所有依赖，执行pip install -r requirements.txt即可安装。
 
-依赖包安装：每个章节的requirements.txt文件中，包含该章节所需的所有依赖，执行pip install -r requirements.txt即可安装。
 
 #### 4. 注意事项
 
 - 代码中涉及LLM API（如OpenAI）的部分，需要替换为你自己的API密钥（如何获取API密钥，将在后续章节详细说明）；
 
-代码中涉及LLM API（如OpenAI）的部分，需要替换为你自己的API密钥（如何获取API密钥，将在后续章节详细说明）；
 
 - 部分代码（如RAG、工具调用）需要联网运行，确保网络通畅；
 
-部分代码（如RAG、工具调用）需要联网运行，确保网络通畅；
 
 - 代码会持续更新，适配LangChain的最新版本，若运行出错，可查看仓库的README文件，获取最新说明。
 
-代码会持续更新，适配LangChain的最新版本，若运行出错，可查看仓库的README文件，获取最新说明。
 
 ## 1.8 动手体验：你的第一个 LangChain 程序
 
@@ -469,39 +400,33 @@ LangChain 版本：最新稳定版（本书代码基于LangChain 1.0+编写）�
 
 打开命令行，执行以下命令，安装所需依赖（指定最新稳定版）：
 
-```
-pip install langchain==0.1.10 openai==1.13.3 python-dotenv
+```bash
+python -m pip install langchain langchain-openai python-dotenv
 ```
 
 依赖说明：
 
 - langchain：核心框架；
 
-langchain：核心框架；
 
 - openai：OpenAI官方SDK，用于调用GPT模型；
 
-openai：OpenAI官方SDK，用于调用GPT模型；
 
 - python-dotenv：用于加载环境变量（存储API密钥，避免硬编码）。
 
-python-dotenv：用于加载环境变量（存储API密钥，避免硬编码）。
 
 #### 步骤3：获取OpenAI API密钥
 
 - 前往OpenAI平台，注册/登录账号；
 
-前往OpenAI平台，注册/登录账号；
 
 - 进入“Personal → View API keys”，点击“Create new secret key”，生成API密钥；
 
-进入“Personal → View API keys”，点击“Create new secret key”，生成API密钥；
 
 - 新建一个.env文件，将API密钥写入，格式如下：
 
-新建一个.env文件，将API密钥写入，格式如下：
 
-```
+```text
 OPENAI_API_KEY=你的API密钥
 ```
 
@@ -511,7 +436,7 @@ OPENAI_API_KEY=你的API密钥
 
 新建一个hello_langchain.py文件，复制以下代码（注释详细，可直接运行），代码来源：LangChain官方入门示例（python.langchain.com/docs/get_st…）：
 
-```
+```python
 # 导入所需组件
 from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
@@ -554,19 +479,17 @@ while True:
 
 - 将.env文件和hello_langchain.py文件放在同一目录下；
 
-将.env文件和hello_langchain.py文件放在同一目录下；
 
 - 打开命令行，进入该目录，执行以下命令：
 
-打开命令行，进入该目录，执行以下命令：
 
-```
+```bash
 python hello_langchain.py
 ```
 
 - 测试对话（示例）：
 
-```
+```text
 欢迎使用LangChain对话机器人！输入'退出'结束对话。
 你：介绍一下LangChain
 机器人：LangChain是一个用于构建大语言模型（LLM）应用的开源框架，它的核心作用是将LLM与外部数据源、工具等连接起来，通过链式调用组合多个组件，帮助开发者快速构建复杂的AI应用，比如聊天机器人、知识库问答、智能工具调用等...
@@ -582,15 +505,12 @@ python hello_langchain.py
 
 - ChatOpenAI：LangChain封装的OpenAI聊天模型接口，统一了LLM的调用方式，后续更换其他模型（如llama 3），只需修改这部分代码；
 
-ChatOpenAI：LangChain封装的OpenAI聊天模型接口，统一了LLM的调用方式，后续更换其他模型（如llama 3），只需修改这部分代码；
 
 - ConversationBufferMemory：最基础的记忆组件，用于存储完整的对话历史，让LLM能“记住”之前的对话内容，实现多轮对话；
 
-ConversationBufferMemory：最基础的记忆组件，用于存储完整的对话历史，让LLM能“记住”之前的对话内容，实现多轮对话；
 
 - ConversationChain：预定义的对话链，已经帮我们封装了“Prompt模板→LLM调用→记忆存储”的流程，无需手动拼接组件。
 
-ConversationChain：预定义的对话链，已经帮我们封装了“Prompt模板→LLM调用→记忆存储”的流程，无需手动拼接组件。
 
 思考：如果没有LangChain，我们需要手动调用OpenAI API、手动存储对话历史、手动拼接Prompt，代码量会增加很多，这就是LangChain的价值所在。
 
@@ -598,15 +518,12 @@ ConversationChain：预定义的对话链，已经帮我们封装了“Prompt模
 
 - 问题1：运行报错“API key not provided”——检查.env文件是否正确，API密钥是否填写正确，是否加载了环境变量；
 
-问题1：运行报错“API key not provided”——检查.env文件是否正确，API密钥是否填写正确，是否加载了环境变量；
 
 - 问题2：运行报错“Rate limit exceeded”——OpenAI API有调用频率限制，可等待片刻再试，或升级API套餐；
 
-问题2：运行报错“Rate limit exceeded”——OpenAI API有调用频率限制，可等待片刻再试，或升级API套餐；
 
 - 问题3：对话无法记住历史——检查是否初始化了Memory组件，并将其传入ConversationChain。
 
-问题3：对话无法记住历史——检查是否初始化了Memory组件，并将其传入ConversationChain。
 
 ## 本章小结
 
@@ -616,18 +533,14 @@ ConversationChain：预定义的对话链，已经帮我们封装了“Prompt模
 
 - LangChain是大模型应用的“脚手架”，核心价值是“连接”和“编排”，解决“最后一公里”问题；
 
-LangChain是大模型应用的“脚手架”，核心价值是“连接”和“编排”，解决“最后一公里”问题；
 
 - LangChain的优势是生态丰富、入门门槛低，适合快速原型开发，缺点是抽象过重，调试难度较大；
 
-LangChain的优势是生态丰富、入门门槛低，适合快速原型开发，缺点是抽象过重，调试难度较大；
 
 - Python是LangChain的首选语言，生态适配性、开发效率和社区支持都更有优势；
 
-Python是LangChain的首选语言，生态适配性、开发效率和社区支持都更有优势；
 
 - 动手实践是学习LangChain的关键，第一个程序虽然简单，但已经涵盖了“LLM+记忆+链”的核心逻辑。
 
-动手实践是学习LangChain的关键，第一个程序虽然简单，但已经涵盖了“LLM+记忆+链”的核心逻辑。
 
 下一章，我们将深入学习LangChain的核心组件——Prompt模板，掌握Prompt工程的技巧，让LLM生成更精准、更符合需求的回答。

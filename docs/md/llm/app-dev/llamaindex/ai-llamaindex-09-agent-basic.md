@@ -6,10 +6,12 @@ category:
 tag:
   - LlamaIndex
   - Agent
+description: "本章详解 LlamaIndex 的对话系统：ChatEngine 模式（Simple、Context、Condense Question 等）、FunctionAgent 与 ReActAgent 两种智能体范式，以及工具和对话记忆机制。"
+order: 19
+outline: [2, 3]
 ---
 
----
-
+# LlamaIndex - 基础智能体架构
 本章详解 LlamaIndex 的对话系统：ChatEngine 模式（Simple、Context、Condense Question 等）、FunctionAgent 与 ReActAgent 两种智能体范式，以及工具和对话记忆机制。
 
 ## 技术要求
@@ -53,7 +55,7 @@ ChatOps 指的是将聊天平台与运营工作流集成的能力，促进团队
 
 在最简单形式下，chat engine 可以像这样基于一个索引初始化：
 
-```ini
+```text
 chat_engine = index.as_chat_engine()
 response = chat_engine.chat("Hi, how are you?")
 ```
@@ -70,7 +72,7 @@ response = chat_engine.chat("Hi, how are you?")
 
 与 chat engine 交互的另一个选项，是使用 `ChatEngine` 启动一个 Read-Eval-Print Loop，也就是 REPL 循环：
 
-```scss
+```text
 chat_engine.chat_repl()
 ```
 
@@ -78,7 +80,7 @@ REPL chat 类似于 ChatGPT 界面，用户发送消息或问题，LLM 处理输
 
 要重置聊天对话，可以使用以下命令：
 
-```scss
+```text
 chat_engine.reset()
 ```
 
@@ -88,7 +90,7 @@ chat_engine.reset()
 
 默认情况下，`ChatEngine` 会将对话保存在内存中。这非常适合快速运行，但进程结束后历史就会消失。为了让对话可以跨重启持久化，我们可以使用 `SimpleChatStore` 作为持久化层，它会按照 `session_id` 保存和恢复 `ChatMessage` 对象列表。下面是一个实际示例：
 
-```ini
+```python
 from llama_index.core.storage.chat_store import SimpleChatStore
 from llama_index.core.chat_engine import SimpleChatEngine
 
@@ -105,19 +107,19 @@ except FileNotFoundError:
 
 这里我们获取该 session 之前保存过的消息。如果还没有保存过任何内容，它就只是一个空列表：
 
-```ini
+```text
 seed_history = chat_store.get_messages(SESSION_ID)
 ```
 
 接下来，我们使用默认设置初始化一个新的 chat engine 实例。这个 engine 会负责与 LLM 交互，并在当前运行期间，也就是内存中，维护对话：
 
-```ini
+```text
 chat_engine = SimpleChatEngine.from_defaults()
 ```
 
 这样，我们就创建了一个基础 chat engine。它会为本次运行维护一个 turns 列表，但本身不会持久化这些内容。现在我们可以运行实际对话循环。在第一轮中，我们注入任何已保存历史，让 engine 从上一次 session 停止的位置继续：
 
-```ini
+```python
 first_turn = True
 while True:
     user_message = input("You: ")
@@ -133,7 +135,7 @@ while True:
 
 在第一轮中，我们用之前的消息为 engine 提供初始历史，让它记住你上次停在哪里。之后，你只需要正常调用 `chat()`，engine 会持续将新 turns 追加到内存历史中。
 
-```ini
+```text
 chat_store.set_messages(SESSION_ID, chat_engine.chat_history)
 chat_store.persist(persist_path=STORE_PATH)
 ```
@@ -158,7 +160,7 @@ LlamaIndex 提供了几种 chat engine modes，每种模式都实现一种不同
 
 要初始化这种模式，可以使用以下代码：
 
-```java
+```python
 import models_config
 from llama_index.core.chat_engine import SimpleChatEngine
 
@@ -210,7 +212,7 @@ chat_engine.chat_repl()
 
 下面是一个基于示例数据文件的快速示例，这些文件可以在本书 GitHub 仓库的 `ch9/files` 子文件夹中找到：
 
-```ini
+```python
 import models_config
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 
@@ -231,7 +233,7 @@ chat_engine.chat_repl()
 
 在这个示例中，我们从索引初始化了 `chat_engine`。另一种方式是，我们也可以独立定义它，并将 retriever 作为参数提供，如下：
 
-```ini
+```text
 retriever = index.as_retriever(retriever_mode='default')
 chat_engine = ContextChatEngine.from_defaults(
     retriever=retriever
@@ -268,13 +270,13 @@ chat_engine = ContextChatEngine.from_defaults(
 
 如果没有提供自定义 `condense_question_prompt`，engine 会使用内置默认 template，将最新用户消息改写成一个自包含问题，并纳入相关对话上下文。为了让你更好理解其工作方式，下面是实际 prompt：
 
-```ini
+```text
 DEFAULT_TEMPLATE = """Given a conversation (between Human and Assistant) and a follow up message from Human, rewrite the message to be a standalone question that captures all relevant context from the conversation."""
 ```
 
 下面是一个简短实现示例：
 
-```ini
+```python
 import models_config
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.core.chat_engine import CondenseQuestionChatEngine
@@ -299,7 +301,7 @@ chat_history = [
 
 在代码第一部分中，我们摄取示例文件，创建索引，然后创建一个简单 query engine。接着，我们通过创建由两个 `ChatMessage` 对象组成的 chat history，引入之前的对话上下文。具体来说，我们指示 chat engine 不要将 Pantheon 视为著名建筑。
 
-```ini
+```python
 chat_engine = CondenseQuestionChatEngine.from_defaults(
     query_engine=query_engine,
     chat_history=chat_history
@@ -318,17 +320,17 @@ print(response)
 
 如果没有添加 chat history，示例输出可能类似如下：
 
-```erlang
+```text
 The Colosseum and the Pantheon.
 ```
 
-```sql
+```text
 The Colosseum and the Arch of Constantine are two famous buildings in ancient Rome.
 ```
 
 初始化这个 chat engine 的另一种方式，是直接从索引初始化：
 
-```ini
+```text
 index.as_chat_engine(chat_mode="condense_question")
 ```
 
@@ -370,7 +372,7 @@ index.as_chat_engine(chat_mode="condense_question")
 
 要从索引构建这种特定 chat engine，可以使用以下命令：
 
-```ini
+```text
 index.as_chat_engine(chat_mode="condense_plus_context")
 ```
 
@@ -448,7 +450,7 @@ active queue 会被直接注入 prompt，而归档行仍然可供 blocks 拉取�
 
 如果需要清空或轮换某个对话，可以使用：
 
-```scss
+```text
 memory.reset()
 ```
 
@@ -531,25 +533,25 @@ LlamaHub agent tool repository 是 LlamaHub 的一个重要补充，它提供了
 
 因为这不是 LlamaIndex core 组件，而是作为 integration package 提供，所以必须先在环境中安装：
 
-```perl
+```bash
 pip install llama-index-tools-database
 ```
 
 接下来，要初始化这个 `ToolSpec`，只需导入它：
 
-```javascript
+```python
 from llama_index.tools.database import DatabaseToolSpec
 ```
 
 然后，我们必须配置数据库访问，如下：
 
-```ini
+```text
 db_tools = DatabaseToolSpec(<db_specific_configuration>)
 ```
 
 下面是如何轻松将 `ToolSpec` 类转换成 tool 对象列表：
 
-```ini
+```text
 tool_list = db_tools.to_tool_list()
 ```
 
@@ -604,7 +606,7 @@ function calling 模型会解释 prompts 和上下文，根据训练中学到的
 
 数据库文件本身可以在本书 GitHub 仓库的 `ch9/files/database` 子文件夹中找到。让我们看代码：
 
-```javascript
+```python
 import asyncio
 from llama_index.core import Settings
 from llama_index.llms.ollama import Ollama
@@ -632,7 +634,7 @@ def write_text_to_file(text, filename):
 
 定义函数后，我们必须将其包装成一个名为 `save_tool` 的新 tool。我们还从导入的 `DatabaseToolSpec` 初始化一个完整 `ToolSpec` 类。我们需要这些 tools，因为 agent 必须从 SQLite 数据库读取数据来解决任务：
 
-```ini
+```text
 save_tool = FunctionTool.from_defaults(fn=write_text_to_file)
 db_tools = DatabaseToolSpec(uri="sqlite:///files//database//employees.db")
 tools = [save_tool]+db_tools.to_tool_list()
@@ -640,7 +642,7 @@ tools = [save_tool]+db_tools.to_tool_list()
 
 创建 `db_tools` 后，我们必须将其与 `save_tool` 合并，放入一个名为 `tools` 的列表中。我们会将这个列表作为初始化 agent 的参数。
 
-```ini
+```text
 llm=Ollama(model="qwen3:8b",
     base_url="http://localhost:11434",
     temperature=0.8,
@@ -654,7 +656,7 @@ agent = FunctionAgent(
 )
 ```
 
-```csharp
+```python
 async def main():
     handler = agent.run(
         "For each IT department employee with a salary lower "
@@ -732,7 +734,7 @@ if __name__ == "__main__":
 
 我们初始化并使用 `ReActAgent` 的方式与 `FunctionAgent` 相同，只是这次你不需要先安装任何集成包；这种 agent 是 LlamaIndex core 组件的一部分：
 
-```ini
+```python
 from llama_index.core.agent import ReActAgent
 
 agent = ReActAgent.from_tools(tools)
@@ -764,7 +766,7 @@ agent = ReActAgent.from_tools(tools)
 
 让我们看代码。第一部分包含所有必要 imports：
 
-```javascript
+```python
 import streamlit as st
 import os
 from utils import load_policies_index, load_report
@@ -776,7 +778,7 @@ from llama_index.core.readers.file.base import SimpleDirectoryReader
 
 函数第一部分检查是否提供了合同名称。如果没有，它会给出警告并提前返回，这样 UI 的其余部分不会尝试初始化：
 
-```python
+```text
 contract_filename = None
 for ext in [".txt", ".pdf"]:
     potential_path = os.path.join("data/contracts", f"{contract_name}{ext}")
@@ -787,7 +789,7 @@ for ext in [".txt", ".pdf"]:
 
 这段代码会查找所请求合同是否存在 `.txt` 或 `.pdf` 版本。它按顺序遍历两个扩展名，并分配找到的第一个匹配文件名，然后立即停止，不再检查剩余扩展名。如果两者都不存在，函数会显示错误并退出。这避免后续步骤因缺失文件失败。接下来，如果找到了合同的 `.txt` 或 `.pdf` 版本，我们处理 chat engine 构建和缓存：
 
-```ini
+```yaml
 chat_engine_key = f"chat_engine_{contract_name}"
 if chat_engine_key not in st.session_state:
     with st.spinner("Loading contract and policies."):
@@ -833,7 +835,7 @@ engine 实例会存储在 `st.session_state` 中，key 包含合同名称，因�
 
 同一合同的后续运行会复用缓存 engine，并跳过整个代码块。下一段代码在 UI 中追踪聊天历史：
 
-```ini
+```text
 chat_key = f"chat_history_{contract_name}"
 if chat_key not in st.session_state:
     st.session_state[chat_key] = []
@@ -841,7 +843,7 @@ if chat_key not in st.session_state:
 
 engine 本身会在进程生命周期内内部追踪历史，但我们也会在 `st.session_state` 中保存一个显示 transcript。这只是为了渲染。它按合同从空列表开始，并保存 `(question, answer)` 元组。接下来，我们收集输入并在 UI 中实现对话控制：
 
-```ini
+```text
 user_input = st.text_input(
     f"Ask about '{contract_name}':",
     key=f"chat_input_{contract_name}",
@@ -863,7 +865,7 @@ text input 捕获问题。`Ask` 按钮触发对 engine 的调用。`Clear Chat` 
 
 为了提供良好用户体验，我们的 chat engine 应该能够处理常见错误。所以我们在下面代码块中实现这一点：
 
-```scss
+```yaml
 if ask_button and user_input.strip():
     with st.spinner("Thinking."):
         try:
@@ -884,7 +886,7 @@ if ask_button and user_input.strip():
 
 下一段代码负责在用户界面中渲染对话：
 
-```python
+```yaml
 if st.session_state[chat_key]:
     st.markdown("### Chat History")
     with st.container():
